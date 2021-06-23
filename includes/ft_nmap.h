@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/23 17:02:36 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/23 19:33:31 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,16 @@
                                     NULL            \
                                 })
 /**/
+
+typedef struct                  s_nmap
+{
+    t_opts_args                 *opts_args;
+}                               t_nmap;
+
+void                            exit_routine(t_nmap *nmap, uint8_t status);
+void                            print_unallowed_opt(t_opts_args *opts_args);
+void                            print_usage(void);
+uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
+void                            free_nmap(t_nmap *nmap);
 
 #endif

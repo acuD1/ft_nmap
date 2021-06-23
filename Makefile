@@ -76,8 +76,9 @@ PATHS				+=	$(O_PATH)
 # Files
 
 SRC					+= $(S_PATH)main.c
-
-
+SRC					+= $(S_PATH)memory.c
+SRC					+= $(S_PATH)opts_args.c
+SRC					+= $(S_PATH)display.c
 
 # Headers
 
