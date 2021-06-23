@@ -49,14 +49,9 @@ LNAME				=	libft.a
 
 # Build information that can be added the predefines buffer at compilation
 
-BUILD_FILE			=	.build
-BUILD_DATE			=	$$(date +'%Y%m%d')
+
 BUILD_BRANCH		=	$$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
-BUILD_RELEASE		=	$$(awk 'NR==3 {print $$3}' $(BUILD_FILE))
-BUILD_VERSION		=	$$(awk 'NR==4 {print $$3}' $(BUILD_FILE))
-BUILD_PATCH			=	$$(awk 'NR==5 {print $$3}' $(BUILD_FILE))
-DEFAULT_BUILD_FILE	=	"Build information, patch level is incremented at \
-compilation.\n\nRELEASE\t=\t0\nVERSION\t=\t0\nPATCH\t=\t0"
+
 
 # Dir/Files Path (Do not modify)
 
@@ -73,19 +68,10 @@ L_PATH				=	libft/
 
 # Add custom dir for .o
 
-# CORE				=	core/
-# DB					=	db/
-# SIGNALS				= 	signals/
-# DISPLAY				=	display/
-
 # Add previous custom dir with $(O_PATH){custom dir} to PATH varriable
 
 PATHS				+=	$(B_PATH)
 PATHS				+=	$(O_PATH)
-# PATHS				+=	$(O_PATH)$(CORE)
-# PATHS				+=	$(O_PATH)$(DB)
-# PATHS				+=	$(O_PATH)$(DISPLAY)
-# PATHS				+=	$(O_PATH)$(SIGNALS)
 
 # Files
 
@@ -171,40 +157,16 @@ else
 TEST				=
 endif
 
-$(NAME): $(OBJ) $(BUILD_FILE) $(TEST)
+$(NAME): $(OBJ) $(TEST)
 	$(ECHO) $(GCFIL) $(NAME)
 	$(CMPLO) $(NAME) $(OBJ) $(LIB)
 	$(GCSUC)
 	echo "---\nCFLAGS - =$(B_C) $(CFLAGS)$(RESET_C)\n---"
-	echo "\n$(G_C)[$(BUILD_BRANCH)] $(RESET_C)$@ $(F_C) \
-	v.$(BUILD_RELEASE)_$(BUILD_VERSION)_$(BUILD_PATCH)_$(BUILD_DATE) $(RESET_C) is ready !"
-	cp $(NAME) \
-	$(B_PATH)$(NAME)_$(BUILD_RELEASE)_$(BUILD_VERSION)_$(BUILD_PATCH + 1)_$(BUILD_DATE)
+	echo "\n$(G_C)[$(BUILD_BRANCH)] $(RESET_C) $@ is ready !"
 
 $(OBJ): $(O_PATH)%.o: $(S_PATH)%.c $(HDR)
-	$(CMPLC) -DBUILDR=$(BUILD_RELEASE) -DBUILDV=$(BUILD_VERSION) \
-	-DBUILDP=$$(echo "$(BUILD_PATCH) + 1" | bc) -DDATE=$(BUILD_DATE) $< -o $@
+	$(CMPLC) $< -o $@
 	$(ECHO) $(GCFIL) $<
-
-# Check if .build exist, then incremente patch level each compilation.
-# If not exist, create it with default values
-
-UNAME_S				:=	$(shell uname -s)
-
-ifeq ($(UNAME_S), Darwin)
-$(BUILD_FILE): $(OBJ)
-	if ! test -f $(BUILD_FILE); \
-	then echo $(DEFAULT_BUILD_FILE) > $(BUILD_FILE); fi
-	sed -i '.bak' "5s/$(BUILD_PATCH)/$$(echo $$(($(BUILD_PATCH) + 1)))/g" \
-	$(BUILD_FILE)
-	rm $(BUILD_FILE).bak
-else
-$(BUILD_FILE): $(OBJ)
-	if ! test -f $(BUILD_FILE); \
-	then echo $(DEFAULT_BUILD_FILE) > $(BUILD_FILE); fi
-	sed -i "5s/$(BUILD_PATCH)/$$(echo $$(($(BUILD_PATCH) + 1)))/g" \
-	$(BUILD_FILE)
-endif
 
 $(PATHS):
 	$(MKDIR) $(PATHS)
