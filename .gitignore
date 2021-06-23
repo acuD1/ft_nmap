@@ -3,7 +3,7 @@
 
 **/ft_nmap
 **/build/*
-#*.build
+*.build
 
 # Dir
 
