@@ -100,3 +100,4 @@ tags
 # Ignore all local history of files
 
 ### DEBUG ###
+pyrightconfig.json
