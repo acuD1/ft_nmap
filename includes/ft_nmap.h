@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/23 14:55:22 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/23 17:02:36 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 # define FT_NMAP_H
 
 # include "libft.h"
-
-# define FAILURE                2
-# define SUCCESS                0
 
 /* OPTIONS */
 # define UNALLOWED_OPT          1ULL << 63
