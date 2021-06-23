@@ -1,4 +1,3 @@
-
 define MSG
 # **************************************************************************** #
 #                                                                              #
@@ -225,6 +224,9 @@ fclean: libc
 	$(RM_RF) $(NAME)
 	$(ECHO) $(RMSHW) $(NAME)
 	$(CLSUC)
+
+test:
+	behave
 
 # Libc rules
 
