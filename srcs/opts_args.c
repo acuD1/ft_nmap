@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/24 18:42:13 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/24 19:45:59 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     if (argc == 1)
     {
         print_usage();
-        free_opts_args(&opts_args);
         exit_routine(nmap, EXIT_SUCCESS);
     }
 
