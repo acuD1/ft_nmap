@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/23 19:36:02 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/24 13:01:40 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,5 @@ void     print_unallowed_opt(t_opts_args *opts_args)
     else
         fprintf(stderr,
             "ft_nmap: invalid option -- '%c'\n", (char)(opts_args->all % 128));
+    free_opts_args(opts_args);
 }

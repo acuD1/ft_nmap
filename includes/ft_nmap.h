@@ -6,14 +6,21 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/23 19:33:31 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/24 18:33:35 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_NMAP_H
 # define FT_NMAP_H
 
+# pragma clang diagnostic ignored "-Wreserved-id-macro"
+# define _GNU_SOURCE
+
 # include "libft.h"
+# include <netdb.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <arpa/inet.h>
 
 /* OPTIONS */
 # define UNALLOWED_OPT          1ULL << 63
@@ -45,13 +52,18 @@
 
 typedef struct                  s_nmap
 {
-    t_opts_args                 *opts_args;
+    int8_t                      scan;
+    size_t                      speedup;
+    char                        *ports;
+    char                        target_ipv4[INET_ADDRSTRLEN];
 }                               t_nmap;
 
 void                            exit_routine(t_nmap *nmap, uint8_t status);
+void                            free_nmap(t_nmap *nmap);
+void                            getaddrinfo_error_handler(char *arg, int status);
 void                            print_unallowed_opt(t_opts_args *opts_args);
 void                            print_usage(void);
+uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
-void                            free_nmap(t_nmap *nmap);
 
 #endif
