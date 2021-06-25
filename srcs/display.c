@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 14:10:19 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 17:08:30 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,3 +29,17 @@ void     print_unallowed_opt(t_opts_args *opts_args)
             "ft_nmap: invalid option -- '%c'\n", (char)(opts_args->all % 128));
     free_opts_args(opts_args);
 }
+
+void    print_requires_arg_opt_long(char *current)
+{
+    dprintf(STDERR_FILENO, "%s%s%s\n%s\n",
+        "ft_nmap: option '--", current, "' requires an argument",
+        "See the output of ft_nmap --help for a summary of options.");
+}
+
+// void    print_requires_arg_opt(char option)
+// {
+//     dprintf(STDERR_FILENO, "%s%c'\n%s\n",
+//         "ft_nmap: option requires an argument -- '", option,
+//         "See the output of ft_nmap --help for a summary of options.");
+// }
