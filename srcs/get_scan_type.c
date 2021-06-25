@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 18:32:00 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:28:10 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:35:28 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static uint8_t  is_scan_type_found(const char *type)
     return (FALSE);
 }
 
-static void     get_scan_type_mask(uint8_t *scan, const char *type)
+static void     set_scan_type_mask(uint8_t *scan, const char *type)
 {
     if (ft_strequ(type, SCAN_SYN_STR))
         *scan |= SCAN_SYN;
@@ -85,7 +85,7 @@ uint8_t         get_scan_type(uint8_t *scan, const char *arg)
                 return (get_scan_type_failure(split, split[i], WRONG_FORMAT));
         }
         if (is_scan_type_found(split[i]) == TRUE)
-            get_scan_type_mask(scan, split[i]);
+            set_scan_type_mask(scan, split[i]);
         else
             return (get_scan_type_failure(split, split[i], WRONG_TYPE));
     }
