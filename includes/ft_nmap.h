@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 18:35:29 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 18:41:01 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ typedef struct                  s_port
 }                               t_port;
 
 /* SCAN TYPES */
+# define WRONG_FORMAT           0x0001
+# define WRONG_TYPE             0x0002
 # define SCAN_SYN               0x0001
 # define SCAN_SYN_STR           "SYN"
 # define SCAN_NULL              0x0002

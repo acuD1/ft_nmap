@@ -6,13 +6,19 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 18:36:01 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 18:57:56 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
-uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
+static uint8_t  set_opts_args_failure(t_opts_args *opts_args)
+{
+    free_opts_args(opts_args);
+    return (FAILURE);
+}
+
+uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
 {
     t_opts_args     opts_args;
     t_opts_conf     opts_conf;
@@ -32,24 +38,19 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     }
 
     if (ft_get_opts_args(&opts_args, &opts_conf, argc, argv) != SUCCESS)
-    {
-        free_opts_args(&opts_args);
-        return (FAILURE);
-    }
+        return (set_opts_args_failure(&opts_args));
 
     if (opts_args.args)
     {
         dprintf(STDERR_FILENO, "ft_nmap: extra argument '%s'\n", get_arg(&opts_args.args, POSITION(0))->arg);
         print_usage();
-        free_opts_args(&opts_args);
-        return (FAILURE);
+        return (set_opts_args_failure(&opts_args));
     }
 
     if (opts_args.all & UNALLOWED_OPT)
     {
         print_unallowed_opt(&opts_args);
-        free_opts_args(&opts_args);
-        return (FAILURE);
+        return (set_opts_args_failure(&opts_args));
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, IP_OPT_ARRAY)) != NULL)
@@ -57,16 +58,12 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
         if (tmp->arg)
         {
             if ((resolve_target_ipv4(nmap, tmp->arg) != SUCCESS))
-            {
-                free_opts_args(&opts_args);
-                return (FAILURE);
-            }
+                return (set_opts_args_failure(&opts_args));
         }
         else
         {
             print_requires_arg_opt_long(tmp->current);
-            free_opts_args(&opts_args);
-            return (FAILURE);
+            return (set_opts_args_failure(&opts_args));
         }
     }
 
@@ -75,6 +72,11 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
         if (tmp->arg)
         {
             // parse_ports(tmp->arg);
+        }
+        else
+        {
+            print_requires_arg_opt_long(tmp->current);
+            return (set_opts_args_failure(&opts_args));
         }
     }
 
@@ -85,8 +87,7 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
         else
         {
             print_requires_arg_opt_long(tmp->current);
-            free_opts_args(&opts_args);
-            return (FAILURE);
+            return (set_opts_args_failure(&opts_args));
         }
     }
 
@@ -95,21 +96,17 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
         if (tmp->arg)
         {
             if (get_scan_type(&nmap->scan, tmp->arg) != SUCCESS)
-            {
-                free_opts_args(&opts_args);
-                return (FAILURE);
-            }
+                return (set_opts_args_failure(&opts_args));
         }
         else
         {
             print_requires_arg_opt_long(tmp->current);
-            free_opts_args(&opts_args);
-            return (FAILURE);
+            return (set_opts_args_failure(&opts_args));
         }
     }
 
-    debug_scan_type(nmap->scan);    /* DEBUG */
-    debug_opts_args(&opts_args);    /* DEBUG */
+    // debug_scan_type(nmap->scan);    /* DEBUG */
+    // debug_opts_args(&opts_args);    /* DEBUG */
     free_opts_args(&opts_args);
     return (SUCCESS);
 }

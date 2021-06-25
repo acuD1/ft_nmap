@@ -6,13 +6,13 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 18:32:00 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 18:36:47 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 18:52:14 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
-void     debug_scan_type(uint8_t scan)
+void            debug_scan_type(uint8_t scan)
 {
     dprintf(STDOUT_FILENO,
         "\n>> SCAN_TYPE DEBUG\n\n%s%s\n%s%s\n%s%s\n%s%s\n%s%s\n%s%s\n\n",
@@ -23,6 +23,22 @@ void     debug_scan_type(uint8_t scan)
         "XMAS   -> ", scan & SCAN_XMAS ? "OK" : "NO",
         "UDP    -> ", scan & SCAN_UDP ? "OK" : "NO"
         );
+}
+
+static uint8_t  get_scan_type_failure(char **tab, char *scan, uint8_t type)
+{
+    if (type & WRONG_FORMAT)
+    {
+        dprintf(STDERR_FILENO,
+            "ft_nmap: wrong format '%s' for option '--scan'\n", scan);
+    }
+    if (type & WRONG_TYPE)
+    {
+        dprintf(STDERR_FILENO,
+            "ft_nmap: unsupported type '%s' for option '--scan'\n", scan);
+    }
+    ft_tabdel(&tab);
+    return (FAILURE);
 }
 
 static uint8_t  is_scan_type_found(const char *type)
@@ -57,8 +73,8 @@ uint8_t         get_scan_type(uint8_t *scan, const char *arg)
         return (FAILURE);
     if (!split[0])
     {
-        ft_tabdel(&split);
         print_requires_arg_opt_long(T_OPT_ARRAY);
+        ft_tabdel(&split);
         return (FAILURE);
     }
     for (size_t i = 0; split[i]; i++)
@@ -66,20 +82,12 @@ uint8_t         get_scan_type(uint8_t *scan, const char *arg)
         for (size_t j = 0; split[i][j]; j++)
         {
             if (ft_isalpha(split[i][j]) == FALSE)
-            {
-                printf("Bad format |%s|\n", split[i]);
-                ft_tabdel(&split);
-                return (FAILURE);
-            }
+                return (get_scan_type_failure(split, split[i], WRONG_FORMAT));
         }
         if (is_scan_type_found(split[i]) == TRUE)
             get_scan_type_mask(scan, split[i]);
         else
-        {
-            printf("Wrong type |%s|\n", split[i]);
-            ft_tabdel(&split);
-            return (FAILURE);
-        }
+            return (get_scan_type_failure(split, split[i], WRONG_TYPE));
     }
     ft_tabdel(&split);
     return (SUCCESS);
