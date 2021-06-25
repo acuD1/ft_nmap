@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vct_insert_string.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:37 by cempassi          #+#    #+#             */
-/*   Updated: 2020/07/23 03:12:37 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 21:22:59 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,13 @@ int8_t	vct_insert_string(t_vector *vector,
 		return (-1);
 	if ((vct_len(vector) + ft_strlen(str) + 1) >= vector->size)
 		vct_resize(vector, (vct_len(vector) + ft_strlen(str) + 2));
-	idx = -1;
+	idx = 0;
 	len = ft_strlen(str);
-	shift_nright(vector, index, len);
-	while (++idx < len)
+	shift_nright(vector, index, (uint32_t)len);
+	while (idx < len)
+	{
 		vector->buffer[index + idx] = str[idx];
+		idx++;
+	}
 	return (0);
 }
