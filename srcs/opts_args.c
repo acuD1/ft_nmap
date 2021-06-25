@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/24 19:45:59 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 13:51:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         if (tmp->arg)
         {
-            nmap->ports = ft_strdup(tmp->arg);
+            // Ports handling
         }
     }
 
@@ -68,7 +68,7 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         if (tmp->arg)
         {
-            nmap->speedup = ft_atoi(tmp->arg);
+            nmap->threads = (uint16_t)ft_atoi(tmp->arg);
         }
     }
 
@@ -80,7 +80,7 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     //     }
     // }
 
-    debug_opts_args(&opts_args);
+    // debug_opts_args(&opts_args); /* DEBUG */
     free_opts_args(&opts_args);
     return (SUCCESS);
 }
