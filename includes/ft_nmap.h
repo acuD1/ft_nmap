@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 16:38:09 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 16:47:25 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,12 @@ typedef struct  s_nmap
     t_list   *ports;
     char     pad[1];
 }               t_nmap;
+
+typedef struct s_lexer
+{
+    t_list *result;
+
+} t_lexer;
 
 uint8_t init_nmap(t_nmap *nmap, int ac, char **av);
 void    exit_routine(t_nmap *nmap, uint8_t status);
