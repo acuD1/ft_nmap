@@ -80,6 +80,8 @@ SRC					+= $(S_PATH)opts_args.c
 SRC					+= $(S_PATH)display.c
 SRC					+= $(S_PATH)errors.c
 SRC					+= $(S_PATH)resolve.c
+SRC 				+= $(S_PATH)init.c
+SRC 				+= $(S_PATH)ports.c
 
 # Headers
 
