@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 18:32:00 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 18:52:14 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:28:10 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ uint8_t         get_scan_type(uint8_t *scan, const char *arg)
         return (FAILURE);
     if (!split[0])
     {
-        print_requires_arg_opt_long(T_OPT_ARRAY);
+        print_requires_arg_opt_long(SCAN_STR);
         ft_tabdel(&split);
         return (FAILURE);
     }

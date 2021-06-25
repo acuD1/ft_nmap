@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 18:41:01 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:28:10 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,28 +29,28 @@
 /* OPTIONS */
 # define POSITION(x)            x
 # define UNALLOWED_OPT          1ULL << 63
-# define H_OPT_ARRAY            "help"
-# define P_OPT_ARRAY            "ports"
-# define IP_OPT_ARRAY           "ip"
-# define S_OPT_ARRAY            "speedup"
-# define T_OPT_ARRAY            "scan"
+# define HELP_STR               "help"
+# define PORTS_STR              "ports"
+# define IP_STR                 "ip"
+# define THREADS_STR            "speedup"
+# define SCAN_STR               "scan"
 # define ALLOWED_OPT            NULL
 # define ALLOWED_OPT_ARG        NULL
 # define ALLOWED_OPT_TAB        ((const char *[])   \
                                 {                   \
-                                    H_OPT_ARRAY,    \
-                                    P_OPT_ARRAY,    \
-                                    IP_OPT_ARRAY,   \
-                                    S_OPT_ARRAY,    \
-                                    T_OPT_ARRAY,    \
+                                    HELP_STR,    \
+                                    PORTS_STR,    \
+                                    IP_STR,   \
+                                    THREADS_STR,    \
+                                    SCAN_STR,    \
                                     NULL            \
                                 })
 # define ALLOWED_OPT_TAB_ARG    ((const char *[])   \
                                 {                   \
-                                    P_OPT_ARRAY,    \
-                                    IP_OPT_ARRAY,   \
-                                    S_OPT_ARRAY,    \
-                                    T_OPT_ARRAY,    \
+                                    PORTS_STR,    \
+                                    IP_STR,   \
+                                    THREADS_STR,    \
+                                    SCAN_STR,    \
                                     NULL            \
                                 })
 /**/

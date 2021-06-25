@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:20:21 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:29:04 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,13 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
         return (set_opts_args_failure(&opts_args));
     }
 
-    if ((tmp = get_opt_set_db(&opts_args.opt_set, IP_OPT_ARRAY)) != NULL)
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, HELP_STR)) != NULL)
+    {
+        print_usage();
+        exit_routine(nmap, EXIT_SUCCESS);
+    }
+
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, IP_STR)) != NULL)
     {
         if (tmp->arg)
         {
@@ -67,7 +73,7 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
         }
     }
 
-    if ((tmp = get_opt_set_db(&opts_args.opt_set, P_OPT_ARRAY)) != NULL)
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, PORTS_STR)) != NULL)
     {
         if (tmp->arg)
         {
@@ -80,7 +86,7 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
         }
     }
 
-    if ((tmp = get_opt_set_db(&opts_args.opt_set, S_OPT_ARRAY)) != NULL)
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, THREADS_STR)) != NULL)
     {
         if (tmp->arg)
             nmap->threads = (uint16_t)ft_atoi(tmp->arg);
@@ -91,7 +97,7 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
         }
     }
 
-    if ((tmp = get_opt_set_db(&opts_args.opt_set, T_OPT_ARRAY)) != NULL)
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, SCAN_STR)) != NULL)
     {
         if (tmp->arg)
         {
