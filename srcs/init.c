@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 15:09:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/25 15:36:50 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 16:11:25 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,5 +26,5 @@ int init_nmap(t_nmap *nmap, int argc, char **argv)
     set_defaults(nmap);
     if (set_opts_args(nmap, argc, argv) != SUCCESS)
         exit_routine(nmap, FAILURE);
-    return (0);
+    return (SUCCESS);
 }

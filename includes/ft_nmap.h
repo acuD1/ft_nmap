@@ -54,8 +54,8 @@ typedef enum e_port_type
 
 typedef union   u_port_data
 {
-    int port;
-    int range[2];
+    uint8_t port;
+    uint8_t range[2];
 }               t_port_data;
 
 typedef struct  s_port
