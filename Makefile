@@ -192,7 +192,6 @@ fclean: libc
 
 test:
 	behave
-	cat behave.log
 
 # Libc rules
 
