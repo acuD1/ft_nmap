@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:30:35 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 16:27:48 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 17:23:28 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include "memory.h"
 # include "str.h"
 # include "list.h"
+# include "vector.h"
 
 # define BUFF_SIZE  4096
 # define TRUE       1
