@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:55:45 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 21:26:48 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,27 +55,6 @@
                                 })
 /**/
 
-# define RANGE_START            0
-# define RANGE_END              1
-
-typedef enum                    e_port_type
-{
-    E_PORT_SINGLE,
-    E_PORT_RANGE
-}                               e_port;
-
-typedef union                   u_port_data
-{
-    uint8_t                     port;
-    uint8_t                     range[2];
-}                               t_port_data;
-
-typedef struct                  s_port
-{
-    e_port                      type;
-    t_port_data                 data;
-}                               t_port;
-
 /* SCAN TYPES */
 # define WRONG_FORMAT           0x0001
 # define WRONG_TYPE             0x0002
@@ -102,9 +81,47 @@ typedef struct                  s_port
                                     NULL            \
                                 })
 /**/
+
+# define RANGE_START            0
+# define RANGE_END              1
+
+typedef enum                    e_lexer_state{
+    L_BASE,
+    L_OUT,
+    L_LBRACE,
+    L_RBRACE,
+    L_PARENT,
+    L_EXCLUDE,
+    L_FINISH,
+    L_ERROR
+}                               t_lexer_state;
+
+typedef enum                    e_port_type
+{
+    E_PORT_UNSET,
+    E_PORT_SINGLE,
+    E_PORT_RANGE
+}                               e_port;
+
+typedef union                   u_port_data
+{
+    uint8_t                     port;
+    uint8_t                     range[2];
+}                               t_port_data;
+
+typedef struct                  s_port
+{
+    e_port                      type;
+    t_port_data                 data;
+}                               t_port;
+
 typedef struct                  s_lexer
 {
+    t_port                      tmp_port;
     t_list                      *result;
+    t_vector                    *vector;
+    char                        *source;
+    t_lexer_state               state;
 }                               t_lexer;
 
 typedef struct                  s_nmap
@@ -130,7 +147,5 @@ uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **arg
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
-
-
 
 #endif
