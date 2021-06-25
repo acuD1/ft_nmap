@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 18:57:56 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:20:21 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         if (tmp->arg)
         {
-            // parse_ports(tmp->arg);
+            parse_ports(tmp->arg);
         }
         else
         {
