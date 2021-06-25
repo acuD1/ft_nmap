@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:56:59 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 21:53:41 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,14 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
     if ((tmp = get_opt_set_db(&opts_args.opt_set, THREADS_STR)) != NULL)
     {
         if (tmp->arg)
+        {
+            if (ft_isnumeric(tmp->arg) != TRUE)
+            {
+                dprintf(STDERR_FILENO, "ft_nmap: unsupported type '%s' for option '--speedup'\n", tmp->arg);
+                return (set_opts_args_failure(&opts_args));
+            }
             nmap->threads = (uint16_t)ft_atoi(tmp->arg);
+        }
         else
         {
             print_requires_arg_opt_long(tmp->current);
