@@ -6,11 +6,24 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 17:09:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 17:09:58 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+
+static uint8_t scan_args_parser(const char *arg)
+{
+    char        **split                 = NULL;
+    // int8_t  scan    = 0;
+
+    split = ft_strsplit(arg, ",");
+    for (size_t i = 0; split[i]; i++)
+    {
+        printf("[%zu]|%s|\n", i, split[i]);
+    }
+    return (SUCCESS);
+}
 
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
 {
@@ -76,15 +89,25 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
         {
             nmap->threads = (uint16_t)ft_atoi(tmp->arg);
         }
+        else
+        {
+            print_requires_arg_opt_long(tmp->current);
+            free_opts_args(&opts_args);
+            return (FAILURE);
+        }
     }
 
-    // if ((tmp = get_opt_set_db(&opts_args.opt_set, T_OPT_ARRAY)) != NULL)
-    // {
-    //     if (tmp->arg)
-    //     {
-    //         // Handle type MASK
-    //     }
-    // }
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, T_OPT_ARRAY)) != NULL)
+    {
+        if (tmp->arg)
+        {
+            if ((nmap->scan = scan_args_parser(tmp->arg)) != SUCCESS)
+            {
+                free_opts_args(&opts_args);
+                return (FAILURE);
+            }
+        }
+    }
 
     // debug_opts_args(&opts_args); /* DEBUG */
     free_opts_args(&opts_args);
