@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:29:09 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/24 18:22:26 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 17:59:17 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void                debug_opts_args(t_opts_args *opts_args)
 }
 
 /* get arg with his position */
-t_list              *get_arg(t_list **alist_args, int argc)
+t_args_db             *get_arg(t_list **alist_args, int argc)
 {
     t_list  *args    = *alist_args;
     size_t  i        = 1;
@@ -95,7 +95,7 @@ t_list              *get_arg(t_list **alist_args, int argc)
         i++;
     }
     if (args)
-        return (args);
+        return ((t_args_db *)args->data);
     return (NULL);
 }
 
@@ -196,7 +196,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
         {
             if (!(ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
                 return (FAILURE);
-            i++;
+            continue;
         }
 
         /* '--' handling */

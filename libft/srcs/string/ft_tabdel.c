@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ports.c                                            :+:      :+:    :+:   */
+/*   ft_tabdel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/25 17:38:49 by arsciand         ###   ########.fr       */
+/*   Created: 2021/04/26 17:56:25 by arsciand          #+#    #+#             */
+/*   Updated: 2021/06/25 17:40:54 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_nmap.h"
-#include <stdio.h>
+#include "libft.h"
 
-uint8_t parse_ports(char *ports)
+void    ft_tabdel(char ***array)
 {
-    printf("Ports string: %s", ports);
-    return (EXIT_SUCCESS);
+    char    **tmp = *array;
+
+    if (!tmp)
+        return ;
+    for (size_t i = 0; tmp[i]; i++)
+        ft_strdel(&(tmp[i]));
+    free(*array);
+    *array = NULL;
 }

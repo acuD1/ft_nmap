@@ -6,24 +6,11 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 17:09:58 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 18:36:01 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
-
-static uint8_t scan_args_parser(const char *arg)
-{
-    char        **split                 = NULL;
-    // int8_t  scan    = 0;
-
-    split = ft_strsplit(arg, ",");
-    for (size_t i = 0; split[i]; i++)
-    {
-        printf("[%zu]|%s|\n", i, split[i]);
-    }
-    return (SUCCESS);
-}
 
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
 {
@@ -46,6 +33,14 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
 
     if (ft_get_opts_args(&opts_args, &opts_conf, argc, argv) != SUCCESS)
     {
+        free_opts_args(&opts_args);
+        return (FAILURE);
+    }
+
+    if (opts_args.args)
+    {
+        dprintf(STDERR_FILENO, "ft_nmap: extra argument '%s'\n", get_arg(&opts_args.args, POSITION(0))->arg);
+        print_usage();
         free_opts_args(&opts_args);
         return (FAILURE);
     }
@@ -79,16 +74,14 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         if (tmp->arg)
         {
-            parse_ports(tmp->arg);
+            // parse_ports(tmp->arg);
         }
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, S_OPT_ARRAY)) != NULL)
     {
         if (tmp->arg)
-        {
             nmap->threads = (uint16_t)ft_atoi(tmp->arg);
-        }
         else
         {
             print_requires_arg_opt_long(tmp->current);
@@ -101,15 +94,22 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         if (tmp->arg)
         {
-            if ((nmap->scan = scan_args_parser(tmp->arg)) != SUCCESS)
+            if (get_scan_type(&nmap->scan, tmp->arg) != SUCCESS)
             {
                 free_opts_args(&opts_args);
                 return (FAILURE);
             }
         }
+        else
+        {
+            print_requires_arg_opt_long(tmp->current);
+            free_opts_args(&opts_args);
+            return (FAILURE);
+        }
     }
 
-    // debug_opts_args(&opts_args); /* DEBUG */
+    debug_scan_type(nmap->scan);    /* DEBUG */
+    debug_opts_args(&opts_args);    /* DEBUG */
     free_opts_args(&opts_args);
     return (SUCCESS);
 }

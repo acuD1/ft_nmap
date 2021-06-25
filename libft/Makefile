@@ -120,6 +120,7 @@ SRC += ft_strspn.c
 SRC += ft_strstr.c
 SRC += ft_strsub.c
 SRC += ft_strtrim.c
+SRC += ft_tabdel.c
 
 SRC += ft_bzero.c
 SRC += ft_memalloc.c
