@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_scan_type.c                                    :+:      :+:    :+:   */
+/*   set_scan_type.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 18:32:00 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:35:28 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:56:23 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void     set_scan_type_mask(uint8_t *scan, const char *type)
         *scan |= SCAN_XMAS;
 }
 
-uint8_t         get_scan_type(uint8_t *scan, const char *arg)
+uint8_t         set_scan_type(uint8_t *scan, const char *arg)
 {
     char    **split = NULL;
 

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:29:04 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:56:59 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         if (tmp->arg)
         {
-            if (get_scan_type(&nmap->scan, tmp->arg) != SUCCESS)
+            if (set_scan_type(&nmap->scan, tmp->arg) != SUCCESS)
                 return (set_opts_args_failure(&opts_args));
         }
         else

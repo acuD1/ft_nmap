@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:28:10 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 19:55:45 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ uint8_t                         init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
 void                            getaddrinfo_error_handler(char *arg, int status);
-uint8_t                         get_scan_type(uint8_t *scan, const char *arg);
+uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
 void                            print_requires_arg_opt_long(char *current);
 void                            print_unallowed_opt(t_opts_args *opts_args);
 void                            print_usage(void);

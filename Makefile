@@ -82,7 +82,7 @@ SRC					+= $(S_PATH)errors.c
 SRC					+= $(S_PATH)resolve.c
 SRC 				+= $(S_PATH)init.c
 SRC 				+= $(S_PATH)ports.c
-SRC 				+= $(S_PATH)get_scan_type.c
+SRC 				+= $(S_PATH)set_scan_type.c
 
 # Headers
 
