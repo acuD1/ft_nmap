@@ -103,3 +103,5 @@ tags
 
 ### DEBUG ###
 pyrightconfig.json
+behave.log
+.cache/
