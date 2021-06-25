@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:31:17 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 15:31:06 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 16:15:56 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,5 @@ int main(int argc, char *argv[])
         return (FAILURE);
     }
     free_nmap(&nmap);
-    return (SUCCESS);
+    return (EXIT_SUCCESS);
 }
