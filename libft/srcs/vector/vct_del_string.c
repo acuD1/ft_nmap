@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vct_del_string.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:37 by cempassi          #+#    #+#             */
-/*   Updated: 2020/07/23 03:12:37 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 21:19:32 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,8 @@
 **	Always returns 0.
 */
 
-int8_t	vct_del_string(t_vector *vector,
-					uint64_t start, uint64_t len)
+int8_t	vct_del_string(t_vector *vector, uint64_t start, uint64_t len)
 {
-	shift_nleft(vector, start, len);
+	shift_nleft(vector, start, (uint32_t)len);
 	return (0);
 }

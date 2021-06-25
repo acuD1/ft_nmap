@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:18 by cempassi          #+#    #+#             */
-/*   Updated: 2020/07/23 03:36:24 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 21:24:45 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@
 
 typedef struct		s_vector
 {
-	char			*buffer;
 	uint64_t		size;
+	char			*buffer;
 	uint16_t		scale;
+	char			pad[6];
 }					t_vector;
 
 void				vct_del(t_vector **vector);
@@ -57,10 +58,11 @@ int8_t				vct_add(t_vector *vector, char c);
 int8_t				vct_push(t_vector *vector, char c);
 int8_t				vct_pop(t_vector *vector);
 int8_t				vct_cut(t_vector *vector);
+char				*vct_getcopy(t_vector *vector);
 void				shift_nleft(t_vector *vector, uint64_t start,
-						uint32_t offset);
+						uint64_t offset);
 void				shift_nright(t_vector *vector, uint64_t start,
-						uint32_t offset);
+						uint64_t offset);
 void				shift_left(t_vector *vector, uint64_t start);
 void				shift_right(t_vector *vector, uint64_t start);
 #endif
