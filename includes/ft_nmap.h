@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 15:36:21 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 16:38:09 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ typedef struct  s_nmap
     char     pad[1];
 }               t_nmap;
 
-int     init_nmap(t_nmap *nmap, int ac, char **av);
+uint8_t init_nmap(t_nmap *nmap, int ac, char **av);
 void    exit_routine(t_nmap *nmap, uint8_t status);
 void    free_nmap(t_nmap *nmap);
 void    getaddrinfo_error_handler(char *arg, int status);
@@ -81,5 +81,6 @@ void    print_unallowed_opt(t_opts_args *opts_args);
 void    print_usage(void);
 uint8_t resolve_target_ipv4(t_nmap *nmap, char *arg);
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv);
+uint8_t parse_ports(char *ports);
 
 #endif
