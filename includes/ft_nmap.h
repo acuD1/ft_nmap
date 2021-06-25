@@ -102,6 +102,10 @@ typedef struct                  s_port
                                     NULL            \
                                 })
 /**/
+typedef struct                  s_lexer
+{
+    t_list                      *result;
+}                               t_lexer;
 
 typedef struct                  s_nmap
 {
@@ -126,5 +130,7 @@ uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **arg
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
+
+
 
 #endif

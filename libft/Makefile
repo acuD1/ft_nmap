@@ -142,12 +142,42 @@ SRC += ft_toupper.c
 
 SRC += ft_get_opts_args.c
 
+SRC += vct_add.c
+SRC += vct_charat.c
+SRC += vct_cut.c
+SRC += vct_del.c
+SRC += vct_delchar.c
+SRC += vct_del_string.c
+SRC += vct_dup.c
+SRC += vct_dups.c
+SRC += vct_getcopy.c
+SRC += vct_getstring.c
+SRC += vct_insert_char.c
+SRC += vct_insert_string.c
+SRC += vct_len.c
+SRC += vct_ncat.c
+SRC += vct_ncpy.c
+SRC += vct_new.c
+SRC += vct_pop.c
+SRC += vct_push.c
+SRC += vct_replace_char.c
+SRC += vct_replace_string.c
+SRC += vct_reset.c
+SRC += vct_resize.c
+SRC += vct_scale.c
+SRC += vct_scat.c
+SRC += vct_scpy.c
+SRC += vct_set_scale.c
+SRC += vct_shift_tool.c
+SRC += vct_size.c
+SRC += vct_sub.c
 
 vpath %.c srcs
 vpath %.c srcs/list
 vpath %.c srcs/string
 vpath %.c srcs/memory
 vpath %.c srcs/other
+vpath %.c srcs/vector
 vpath %.h includes
 
 # Objects and Headers
@@ -157,6 +187,7 @@ HDR				+=	list.h
 HDR				+=	str.h
 HDR				+=	memory.h
 HDR				+=	other.h
+HDR				+=	vector.h
 
 # STD				+=	gnu17
 

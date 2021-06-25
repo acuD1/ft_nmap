@@ -21,6 +21,7 @@
 # include "memory.h"
 # include "str.h"
 # include "list.h"
+# include "vector.h"
 
 # define BUFF_SIZE  4096
 # define TRUE       1
