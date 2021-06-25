@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/24 18:33:35 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 13:50:14 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,10 @@
 
 typedef struct                  s_nmap
 {
-    int8_t                      scan;
-    size_t                      speedup;
-    char                        *ports;
     char                        target_ipv4[INET_ADDRSTRLEN];
+    uint16_t                    threads;
+    uint8_t                     scan;
+    char                        pad[1];
 }                               t_nmap;
 
 void                            exit_routine(t_nmap *nmap, uint8_t status);
