@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:18 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/25 16:08:35 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/25 17:41:56 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,7 @@ uint8_t				ft_isnumeric(char *str);
 int					ft_strcheck(char *str, int (*f)(int));
 int					ft_getdelim(const int fd, char **line, char delim);
 char				*ft_strnstr(const char *haystack, const char *needle,\
-					size_t len);
+						size_t len);
+void    			ft_tabdel(char ***array);
+
 #endif

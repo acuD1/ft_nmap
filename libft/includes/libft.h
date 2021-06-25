@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:30:35 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 17:23:28 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/25 18:19:19 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ typedef struct      s_opts_conf
 uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_conf, int argc, char **argv);
 void                debug_opts_args(t_opts_args *opts_args);
 void                free_opts_args(t_opts_args *opts_args);
-t_list               *get_arg(t_list **alist_args, int argc);
+t_args_db           *get_arg(t_list **alist_args, int argc);
 t_opt_set_db        *get_opt_set_db(t_list **alist_opt_set, char *to_find);
 
 #endif

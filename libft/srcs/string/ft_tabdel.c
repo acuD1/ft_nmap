@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_tabdel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/23 11:31:17 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 16:15:56 by arsciand         ###   ########.fr       */
+/*   Created: 2021/04/26 17:56:25 by arsciand          #+#    #+#             */
+/*   Updated: 2021/06/25 17:40:54 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_nmap.h"
+#include "libft.h"
 
-int main(int argc, char *argv[])
+void    ft_tabdel(char ***array)
 {
-    t_nmap nmap;
+    char    **tmp = *array;
 
-    if (init_nmap(&nmap, argc, argv))
-    {
-        return (FAILURE);
-    }
-    free_nmap(&nmap);
-    return (EXIT_SUCCESS);
+    if (!tmp)
+        return ;
+    for (size_t i = 0; tmp[i]; i++)
+        ft_strdel(&(tmp[i]));
+    free(*array);
+    *array = NULL;
 }
