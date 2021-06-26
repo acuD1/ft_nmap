@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:55:45 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/26 12:23:07 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ typedef struct                  s_nmap
     char                        pad[5];
 }                               t_nmap;
 
-uint8_t                         init_nmap(t_nmap *nmap, int ac, char **av);
+void                            init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
 void                            getaddrinfo_error_handler(char *arg, int status);
