@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/26 12:23:07 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/26 13:07:08 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,19 +38,19 @@
 # define ALLOWED_OPT_ARG        NULL
 # define ALLOWED_OPT_TAB        ((const char *[])   \
                                 {                   \
-                                    HELP_STR,    \
-                                    PORTS_STR,    \
-                                    IP_STR,   \
+                                    HELP_STR,       \
+                                    PORTS_STR,      \
+                                    IP_STR,         \
                                     THREADS_STR,    \
-                                    SCAN_STR,    \
+                                    SCAN_STR,       \
                                     NULL            \
                                 })
 # define ALLOWED_OPT_TAB_ARG    ((const char *[])   \
                                 {                   \
-                                    PORTS_STR,    \
-                                    IP_STR,   \
+                                    PORTS_STR,      \
+                                    IP_STR,         \
                                     THREADS_STR,    \
-                                    SCAN_STR,    \
+                                    SCAN_STR,       \
                                     NULL            \
                                 })
 /**/
@@ -114,6 +114,7 @@ typedef struct                  s_nmap
     uint16_t                    threads;
     uint8_t                     scan;
     char                        pad[5];
+    struct sockaddr_storage     target;
 }                               t_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
@@ -127,6 +128,11 @@ void                            print_usage(void);
 uint8_t                         parse_ports(char *ports);
 uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
+void                            exec_nmap(t_nmap *nmap);
+
+/* DEV */
+void                            test_send_SYN(t_nmap *nmap);
+
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
