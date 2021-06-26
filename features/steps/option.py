@@ -19,9 +19,13 @@ def use_option_with_argument(context, option: str, argument:str):
     context.args.append(option)
     context.args.append(argument)
 
+@given ('the argument {argument}')
+def use_argument(context, argument: str):
+    context.args.append(argument)
+
 @when('we run the program')
 def run_nmap(context):
-   context.program = run(context.args, text=True, capture_output=True)
+    context.program = run(context.args, text=True, capture_output=True)
 
 @then('we get an error')
 def check_error_message(context):

@@ -34,6 +34,42 @@ Feature: Arguments
     #         See the output of ft_nmap --help for a summary of options.
     #         """
 
+    Scenario: run '--scan' with wrong format 'test1'
+        Given the argument SYN,test1 with option --scan
+        When we run the program
+        Then we get an error
+        """
+        ft_nmap: wrong format 'test1' for option '--scan'
+        """
+
+    Scenario: run '--scan' with wrong type 'a'
+        Given the argument a with option --scan
+        When we run the program
+        Then we get an error
+        """
+        ft_nmap: unsupported type 'a' for option '--scan'
+        """
+
+    Scenario: run '--speedup' with wrong type 'a'
+        Given the argument a with option --speedup
+        When we run the program
+        Then we get an error
+        """
+        ft_nmap: unsupported type 'a' for option '--speedup'
+        """
+
+    Scenario: run with an argument
+        Given the argument test1
+        When we run the program
+        Then we get an error
+        """
+        ft_nmap: extra argument 'test1'
+        """
+        Then we get usage
+        """
+        ft_nmap [--help] [--ports [NOMBRE/PLAGE]] --ip ADRESSE IP [--speedup [NOMBRE]] [--scan [TYPE]]
+        """
+
     Scenario: run with the --help option
         Given the option --help
         When we run the program
