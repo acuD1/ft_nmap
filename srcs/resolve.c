@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 13:11:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/24 19:51:21 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/06/26 13:10:19 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ uint8_t     resolve_target_ipv4(t_nmap *nmap, char *arg)
         {
             return (FAILURE);
         }
+
+	((struct sockaddr_in *)&nmap->target)->sin_addr.s_addr = ((struct sockaddr_in*)res->ai_addr)->sin_addr.s_addr;
+    ((struct sockaddr_in *)&nmap->target)->sin_family      = (sa_family_t)res->ai_family;
 
     for (struct addrinfo *tmp = NULL; res; res = tmp)
     {
