@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/26 17:53:35 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/26 17:54:37 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@
 
 typedef enum                    e_lexer_state{
     L_BASE,
-    L_OUT,
     L_LBRACE,
     L_RBRACE,
     L_RRANGE,
@@ -99,6 +98,7 @@ typedef enum                    e_lexer_state{
     L_SET_START,
     L_SET_END,
     L_TOKENIZE,
+    L_OUT,
     L_FINISH,
     L_ERROR
 }                               t_lexer_state;
