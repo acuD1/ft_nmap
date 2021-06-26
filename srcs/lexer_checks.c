@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 17:04:00 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/26 17:05:01 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/26 17:22:31 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 bool is_source_finished(t_lexer *lexer)
 {
-    if (lexer->vector->buffer[0] == '\0')
-        return (lexer->source[0] == '\0' ? true : false);
+    if (lexer->vector->buffer[0] == '\0' && lexer->source[0] == '\0')
+        return (true);
     return (false);
 }
 
