@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/26 17:06:25 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/26 17:16:49 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ uint8_t parse_ports(char *ports)
     t_lexer lexer;
 
     init_lexer(&lexer, ports);
-    while(lexer.state != L_FINISH)
+    while(lexer.state != L_FINISH && lexer.state != L_ERROR)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
     printf("Ports string: %s", ports);
     return (EXIT_SUCCESS);
