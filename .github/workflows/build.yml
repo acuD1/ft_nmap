@@ -12,6 +12,6 @@ jobs:
     - name: make
       run: make
     - name: env
-      run: pip3 install -r requierements.txt
+      run: pip3 install -r requirements.txt
     - name: test
       run: make test
