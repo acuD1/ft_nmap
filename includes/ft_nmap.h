@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/26 17:52:53 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/26 17:53:35 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "libft.h"
 # include <arpa/inet.h>
 # include <netdb.h>
+# include <stdbool.h>
 # include <sys/socket.h>
 # include <sys/types.h>
 
@@ -84,14 +85,20 @@
 
 # define RANGE_START            0
 # define RANGE_END              1
+# define UINT
 
 typedef enum                    e_lexer_state{
     L_BASE,
     L_OUT,
     L_LBRACE,
     L_RBRACE,
+    L_RRANGE,
     L_PARENT,
     L_EXCLUDE,
+    L_SET_SINGLE,
+    L_SET_START,
+    L_SET_END,
+    L_TOKENIZE,
     L_FINISH,
     L_ERROR
 }                               t_lexer_state;
@@ -105,8 +112,8 @@ typedef enum                    e_port_type
 
 typedef union                   u_port_data
 {
-    uint8_t                     port;
-    uint8_t                     range[2];
+    uint16_t                     port;
+    uint16_t                     range[2];
 }                               t_port_data;
 
 typedef struct                  s_port
@@ -150,6 +157,11 @@ void                            exec_nmap(t_nmap *nmap);
 /* DEV */
 void                            test_send_SYN(t_nmap *nmap);
 
+
+/* LEXER */
+void                            process_base(t_lexer *lexer);
+bool                            is_set_state(t_lexer *lexer);
+bool                            is_source_finished(t_lexer *lexer);
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);

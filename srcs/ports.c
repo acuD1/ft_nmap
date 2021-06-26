@@ -6,13 +6,15 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/25 21:26:04 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/26 17:06:25 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+#include "str.h"
+#include "vector.h"
 #include <stdio.h>
-#include <stdbool.h>
+#include <limits.h>
 
 uint8_t init_lexer(t_lexer *lexer, char *ports)
 {
@@ -25,26 +27,44 @@ uint8_t init_lexer(t_lexer *lexer, char *ports)
     return (EXIT_SUCCESS);
 }
 
-bool is_source_finished(t_lexer *lexer)
+void set_port(t_lexer *lexer)
 {
-    return (lexer->source[0] == '\0'? true : false);
-}
+    uint16_t *port;
+    uint32_t check;
 
-void process_base(t_lexer *lexer)
-{
-    if (lexer->vector->buffer[0] == '\0')
+    if (lexer->state == L_SET_SINGLE)
+        port = &lexer->tmp_port.data.port;
+    else if (lexer->state == L_SET_START)
+        port = &lexer->tmp_port.data.range[RANGE_START];
+    else if (lexer->state == L_SET_END)
+        port = &lexer->tmp_port.data.range[RANGE_END];
+    check = ft_atoi(lexer->vector->buffer);
+    if (check > USHRT_MAX)
     {
-        if(ft_isdigit(lexer->source[0]))
-            vct_add(lexer->vector, lexer->source[0]);
-        else if (lexer->source[0] == '[')
-            lexer->state = L_LBRACE;
-        else if (lexer->source[0] == '(')
-            lexer->state = L_PARENT;
-        else if (lexer->source[0] == '~')
-            lexer->state = L_EXCLUDE;
+        lexer->state = L_ERROR;
+        dprintf(STDERR_FILENO, "Port trop grand");
+    }
+    else
+    {
+        *port = (uint16_t)check;
+        if (lexer->state == L_SET_SINGLE || lexer->state == L_SET_END)
+            lexer->state = L_TOKENIZE;
+        else if (lexer->state == L_SET_START)
+            lexer->state = L_RRANGE;
     }
 }
 
+void tokenizer(t_lexer *lexer)
+{
+    t_list *node;
+
+    node = ft_lstnew(&lexer->tmp_port, sizeof(t_port));
+    ft_lstaddback(&lexer->result, node);
+    ft_bzero(&lexer->tmp_port, sizeof(t_port));
+    ft_strclr(lexer->vector->buffer);
+    lexer->tmp_port.type = E_PORT_UNSET;
+    lexer->state = L_BASE;
+}
 
 void process_lexer(t_lexer *lexer)
 {
@@ -52,10 +72,15 @@ void process_lexer(t_lexer *lexer)
         lexer->state = L_OUT;
     else if (lexer->state == L_BASE)
         process_base(lexer);
+    else if (is_set_state(lexer))
+        set_port(lexer);
+    else if (lexer->state == L_TOKENIZE)
+        tokenizer(lexer);
 }
 
 void out_lexer(t_lexer *lexer)
 {
+    vct_del(&lexer->vector);
     lexer->state = L_FINISH;
 }
 
