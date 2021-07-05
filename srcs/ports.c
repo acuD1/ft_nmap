@@ -28,7 +28,7 @@ static uint8_t init_lexer(t_lexer *lexer, char *ports)
     lexer->source = ports;
     lexer->tmp_port.type = E_PORT_UNSET;
     lexer->tmp_port.data.port = 0;
-    return (EXIT_SUCCESS);
+    return (SUCCESS);
 }
 
 static void set_port(t_lexer *lexer)
@@ -101,5 +101,5 @@ uint8_t parse_ports(char *ports)
     while (is_exit_state(&lexer) == false)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
     printf("Ports string: %s", ports);
-    return (EXIT_SUCCESS);
+    return (SUCCESS);
 }
