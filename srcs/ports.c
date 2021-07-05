@@ -34,7 +34,7 @@ static uint8_t init_lexer(t_lexer *lexer, char *ports)
 static void set_port(t_lexer *lexer)
 {
     uint16_t *port;
-    uint32_t check;
+    uint32_t  check;
 
     if (lexer->state == L_SET_SINGLE)
         port = &lexer->tmp_port.data.port;
@@ -42,7 +42,7 @@ static void set_port(t_lexer *lexer)
         port = &lexer->tmp_port.data.range[RANGE_START];
     else if (lexer->state == L_SET_END)
         port = &lexer->tmp_port.data.range[RANGE_END];
-    check = ft_atoi(lexer->vector->buffer);
+    check = (uint32_t)ft_atoi(lexer->vector->buffer);
     if (check > USHRT_MAX)
     {
         lexer->state = L_ERROR;
