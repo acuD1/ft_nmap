@@ -12,7 +12,7 @@
 
 #include "ft_nmap.h"
 
-void handle_vector_empty(t_lexer *lexer)
+static void handle_vector_empty(t_lexer *lexer)
 {
     if (lexer->source[0] == '[')
         lexer->state = L_LBRACE;
@@ -24,7 +24,7 @@ void handle_vector_empty(t_lexer *lexer)
         lexer->state = L_ERROR;
 }
 
-void handle_vector_data(t_lexer *lexer)
+static void handle_vector_data(t_lexer *lexer)
 {
     if (lexer->source[0] == '\0' || lexer->source[0] == ',')
     {

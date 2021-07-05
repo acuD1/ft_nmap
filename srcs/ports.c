@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <limits.h>
 
-uint8_t init_lexer(t_lexer *lexer, char *ports)
+static uint8_t init_lexer(t_lexer *lexer, char *ports)
 {
     lexer->result = NULL;
     lexer->state = L_BASE;
@@ -27,7 +27,7 @@ uint8_t init_lexer(t_lexer *lexer, char *ports)
     return (EXIT_SUCCESS);
 }
 
-void set_port(t_lexer *lexer)
+static void set_port(t_lexer *lexer)
 {
     uint16_t *port;
     uint32_t check;
@@ -54,7 +54,7 @@ void set_port(t_lexer *lexer)
     }
 }
 
-void tokenizer(t_lexer *lexer)
+static void tokenizer(t_lexer *lexer)
 {
     t_list *node;
 
@@ -66,7 +66,7 @@ void tokenizer(t_lexer *lexer)
     lexer->state = L_BASE;
 }
 
-void process_lexer(t_lexer *lexer)
+static void process_lexer(t_lexer *lexer)
 {
     if (is_source_finished(lexer))
         lexer->state = L_OUT;
@@ -78,7 +78,7 @@ void process_lexer(t_lexer *lexer)
         tokenizer(lexer);
 }
 
-void out_lexer(t_lexer *lexer)
+static void out_lexer(t_lexer *lexer)
 {
     vct_del(&lexer->vector);
     lexer->state = L_FINISH;
