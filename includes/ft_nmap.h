@@ -125,10 +125,11 @@ typedef struct                  s_port
 typedef struct                  s_lexer
 {
     t_port                      tmp_port;
+    char                        *source;
     t_list                      *result;
     t_vector                    *vector;
-    char                        *source;
     t_lexer_state               state;
+    uint8_t                     _padding[4];
 }                               t_lexer;
 
 typedef struct                  s_nmap
