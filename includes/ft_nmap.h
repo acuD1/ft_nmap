@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/05 19:32:58 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/05 19:54:12 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,8 @@ typedef enum                    e_port_type
 
 typedef union                   u_port_data
 {
-    uint16_t                     port;
-    uint16_t                     range[2];
+    uint16_t                    port;
+    uint16_t                    range[2];
 }                               t_port_data;
 
 typedef struct                  s_port
