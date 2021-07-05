@@ -117,9 +117,9 @@ else ifeq ($(DEBUG), hard)
 else ifeq ($(DEBUG), dev)
 	CFLAGS			=
 endif
-CC					=	clang $(CFLAGS)
+CC					= 	clang
 IFLAGS				+=	$(addprefix -I, $(H_PATH))
-CMPLC				=	$(CC) -c $(IFLAGS)
+CMPLC				=	$(CC) -c $(CFLAGS) $(IFLAGS)
 CMPLO				=	$(CC) -o
 BUILD				=	$(PATHS)
 AR_RC				=	ar rc

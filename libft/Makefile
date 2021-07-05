@@ -206,8 +206,8 @@ else ifeq ($(DEBUG), hard)
 else ifeq ($(DEBUG), dev)
 	CFLAGS		=
 endif
-CC				=	clang $(CFLAGS)
-COMPL			=	$(CC) -c -I$(H_PATH)
+CC				=	clang
+COMPL			=	$(CC) $(CFLAGS) -c -I$(H_PATH)
 BUILD			=	$(PATHS)
 AR_RC			=	ar rc
 RANLI			=	ranlib
