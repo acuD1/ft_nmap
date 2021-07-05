@@ -11,10 +11,8 @@
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
-#include "str.h"
-#include "vector.h"
-#include <stdio.h>
 #include <limits.h>
+#include <stdio.h>
 
 static uint8_t init_lexer(t_lexer *lexer, char *ports)
 {

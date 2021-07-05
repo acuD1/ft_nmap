@@ -100,6 +100,7 @@ typedef enum                    e_lexer_state{
     L_TOKENIZE,
     L_OUT,
     L_FINISH,
+    L_FAILURE,
     L_ERROR
 }                               t_lexer_state;
 
@@ -163,6 +164,7 @@ void                            test_send_SYN(t_nmap *nmap);
 void                            process_base(t_lexer *lexer);
 bool                            is_set_state(t_lexer *lexer);
 bool                            is_source_finished(t_lexer *lexer);
+bool                            is_exit_state(t_lexer *lexer);
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
