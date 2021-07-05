@@ -20,7 +20,11 @@ static uint8_t init_lexer(t_lexer *lexer, char *ports)
 {
     lexer->result = NULL;
     lexer->state = L_BASE;
-    lexer->vector = vct_new(DEFAULT_VECTOR_SIZE);
+    if ((lexer->vector = vct_new(DEFAULT_VECTOR_SIZE)) == NULL)
+    {
+        lexer->state = L_FAILURE;
+        return (FAILURE);
+    }
     lexer->source = ports;
     lexer->tmp_port.type = E_PORT_UNSET;
     lexer->tmp_port.data.port = 0;
@@ -58,7 +62,11 @@ static void tokenizer(t_lexer *lexer)
 {
     t_list *node;
 
-    node = ft_lstnew(&lexer->tmp_port, sizeof(t_port));
+    if ((node = ft_lstnew(&lexer->tmp_port, sizeof(t_port))) == NULL)
+    {
+        lexer->state = L_FAILURE;
+        return;
+    }
     ft_lstaddback(&lexer->result, node);
     ft_bzero(&lexer->tmp_port, sizeof(t_port));
     ft_strclr(lexer->vector->buffer);
@@ -88,8 +96,9 @@ uint8_t parse_ports(char *ports)
 {
     t_lexer lexer;
 
-    init_lexer(&lexer, ports);
-    while(lexer.state != L_FINISH && lexer.state != L_ERROR)
+    if (init_lexer(&lexer, ports) == FAILURE)
+        return (FAILURE);
+    while (is_exit_state(&lexer) == false)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
     printf("Ports string: %s", ports);
     return (EXIT_SUCCESS);

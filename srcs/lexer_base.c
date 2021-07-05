@@ -42,7 +42,7 @@ static void handle_vector_data(t_lexer *lexer)
 
 void process_base(t_lexer *lexer)
 {
-    if(ft_isdigit(lexer->source[0]))
+    if(ft_isdigit(lexer->source[0]) == true)
         vct_add(lexer->vector, lexer->source[0]);
     else if (lexer->vector->buffer[0] == '\0')
         handle_vector_empty(lexer);
