@@ -36,6 +36,7 @@ static void set_port(t_lexer *lexer)
     uint16_t *port;
     uint32_t  check;
 
+    port = NULL;
     if (lexer->state == L_SET_SINGLE)
         port = &lexer->tmp_port.data.port;
     else if (lexer->state == L_SET_START)
