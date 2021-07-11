@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/26 12:50:00 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/09 20:54:41 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,15 @@ void    setup_sockfd(t_nmap *nmap, struct sockaddr_in *dest, int *sockfd)
         exit_routine(nmap, FAILURE);
     }
 }
+
+void    setup_th_flags(t_nmap *nmap, t_packet *packet)
+{
+    if (nmap->scan & SCAN_SYN)
+        packet->tcphdr.th_flags = TH_SYN;
+    if (nmap->scan & SCAN_FIN)
+        packet->tcphdr.th_flags = TH_FIN;
+}
+
 void    setup_packet(t_nmap *nmap, t_packet *packet, struct sockaddr_in *src, struct sockaddr_in *dest)
 {
     static uint32_t static_seq  = 420000;
@@ -45,9 +54,13 @@ void    setup_packet(t_nmap *nmap, t_packet *packet, struct sockaddr_in *src, st
 	packet->tcphdr.th_seq    = htonl(static_seq++);
 	packet->tcphdr.th_off    = sizeof(struct tcphdr) / 4;
 
+    setup_th_flags(nmap, packet);
+
 	packet->tcphdr.th_win    = htons(1024);
 	packet->tcphdr.th_sum    = in_cksum(packet, sizeof(t_packet));
 }
+
+
 void    TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *src, struct sockaddr_in *dest)
 {
     int         bytes_sent  = 0;
