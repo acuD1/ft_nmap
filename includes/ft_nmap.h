@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/05 19:54:12 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/09 19:26:33 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,13 @@
 # include <netinet/ip.h>
 # include <sys/socket.h>
 # include <sys/types.h>
+# include <errno.h>
+# include <stdbool.h>
 # include <ifaddrs.h>
 # include <linux/if_link.h>
 # include <net/if.h>
+
+# define errno                  (*__errno_location ())
 
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
