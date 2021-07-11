@@ -27,6 +27,21 @@ void    setup_sockfd(t_nmap *nmap, struct sockaddr_in *dest, int *sockfd)
         exit_routine(nmap, FAILURE);
     }
 }
+void    TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *src, struct sockaddr_in *dest)
+{
+    int         bytes_sent  = 0;
+    t_packet    packet;
+
+
+    if ((bytes_sent = sendto(sockfd, &packet.tcphdr, sizeof(struct tcphdr), 0, (struct sockaddr *)dest, sizeof(struct sockaddr))) == -1)
+    {
+        printf("[DEBUG] sendto(): ERROR: %s , errno %d\n", strerror(errno), errno);
+        exit_routine(nmap, FAILURE);
+    }
+    printf("[DEBUG] BYTES_SENT \t\t\t-> |%d|\n", bytes_sent);
+}
+
+
 void    send_packets(t_nmap *nmap)
 {
     struct sockaddr_in  dest;
@@ -48,5 +63,6 @@ void    send_packets(t_nmap *nmap)
         dest.sin_port = htons(d_port);
         src.sin_port = htons(tmp_s_port++);
 
+        TEST_send_SYN_or_FIN(nmap, sockfd, &src, &dest);
     }
 }
