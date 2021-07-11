@@ -136,7 +136,6 @@ typedef struct                  s_lexer
 typedef struct                  s_nmap
 {
     t_list                      *ports;
-    char                        target_ipv4[INET_ADDRSTRLEN];
     uint16_t                    threads;
     uint8_t                     scan;
     char                        pad[5];

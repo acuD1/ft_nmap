@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/26 12:54:21 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/09 19:24:55 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void    exec_nmap(t_nmap *nmap)
 {
-    dprintf(STDOUT_FILENO, "[DEBUG]\nIP  : |%s|\n", nmap->target_ipv4);
+    dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
+        inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
 
     if (nmap->scan & SCAN_SYN)
         test_send_SYN(nmap);
