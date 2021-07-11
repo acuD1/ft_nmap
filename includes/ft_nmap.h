@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 16:42:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 17:52:13 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
-# define DEFAULT_SCAN           0x01
+# define DEFAULT_SCAN           0x0040
 
 /* OPTIONS */
 # define POSITION(x)            x
