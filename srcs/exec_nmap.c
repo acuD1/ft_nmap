@@ -19,6 +19,5 @@ void    exec_nmap(t_nmap *nmap)
     dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
        inet_ntoa(((struct sockaddr_in *)&nmap->target)->sin_addr));
 
-    if (nmap->scan & SCAN_SYN)
-        test_send_SYN(nmap);
+    send_packets(nmap);
 }
