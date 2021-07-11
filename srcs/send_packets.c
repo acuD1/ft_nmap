@@ -77,7 +77,7 @@ static void setup_packet(
 	packet->tcphdr.th_sum    = in_cksum(packet, sizeof(t_packet));
 }
 
-static void TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *src,
+static void send_tcp_packet(t_nmap *nmap, int sockfd, struct sockaddr_in *src,
             struct sockaddr_in *dest)
 {
     ssize_t     bytes_sent  = 0;
@@ -114,6 +114,6 @@ void        send_packets(t_nmap *nmap)
         dest.sin_port = htons(d_port);
         src.sin_port = htons(tmp_s_port++);
 
-        TEST_send_SYN_or_FIN(nmap, sockfd, &src, &dest);
+        send_tcp_packet(nmap, sockfd, &src, &dest);
     }
 }
