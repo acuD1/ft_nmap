@@ -136,6 +136,15 @@ typedef struct                  s_lexer
     uint8_t                     _padding[4];
 }                               t_lexer;
 
+typedef struct                  s_packet
+{
+    uint32_t                    saddr;
+	uint32_t                    daddr;
+	uint16_t                    tcp_len;
+	uint8_t                     tos;
+	uint8_t                     protocol;
+    struct tcphdr               tcphdr;
+}                               t_packet;
 typedef struct                  s_nmap
 {
     t_list                      *ports;

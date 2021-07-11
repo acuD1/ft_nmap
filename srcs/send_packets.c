@@ -27,11 +27,30 @@ void    setup_sockfd(t_nmap *nmap, struct sockaddr_in *dest, int *sockfd)
         exit_routine(nmap, FAILURE);
     }
 }
+void    setup_packet(t_nmap *nmap, t_packet *packet, struct sockaddr_in *src, struct sockaddr_in *dest)
+{
+
+    ft_bzero(packet, sizeof(t_packet));
+
+    /* Pseudo Header */
+	packet->saddr            = src->sin_addr.s_addr;
+	packet->daddr            = dest->sin_addr.s_addr;
+	packet->protocol         = IPPROTO_TCP;
+	packet->tcp_len          = htons(sizeof(struct tcphdr));
+
+	/* TCP Header */
+	packet->tcphdr.th_sport  = src->sin_port;
+	packet->tcphdr.th_dport  = dest->sin_port;
+	packet->tcphdr.th_off    = sizeof(struct tcphdr) / 4;
+
+	packet->tcphdr.th_win    = htons(1024);
+}
 void    TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *src, struct sockaddr_in *dest)
 {
     int         bytes_sent  = 0;
     t_packet    packet;
 
+    setup_packet(nmap, &packet, src, dest);
 
     if ((bytes_sent = sendto(sockfd, &packet.tcphdr, sizeof(struct tcphdr), 0, (struct sockaddr *)dest, sizeof(struct sockaddr))) == -1)
     {
