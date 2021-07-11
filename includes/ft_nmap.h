@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/09 19:26:33 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 16:42:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
-uint16_t                        in_cksum(const void *buffer, size_t len);
+uint16_t                        in_cksum(void *buffer, size_t len);
 void                            send_packets(t_nmap *nmap);
 
 /* LEXER */
