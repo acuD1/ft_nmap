@@ -31,9 +31,22 @@ void    send_packets(t_nmap *nmap)
 {
     struct sockaddr_in  dest;
 	struct sockaddr_in  src;
+    int                 sockfd        =  0;
+
+    /* TMP */
+    uint16_t            tmp_range[2]    = {440, 443};
+    uint16_t            tmp_s_port      = 33000;
 
     setup_ipv4_sockaddr_in(&src, &nmap->local);
     setup_ipv4_sockaddr_in(&dest, &nmap->target);
 
 
+    for (uint16_t d_port = tmp_range[0]; d_port <= tmp_range[1]; d_port++)
+    {
+        setup_sockfd(nmap, &dest, &sockfd);
+
+        dest.sin_port = htons(d_port);
+        src.sin_port = htons(tmp_s_port++);
+
+    }
 }
