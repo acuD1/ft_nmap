@@ -29,6 +29,7 @@ void    setup_sockfd(t_nmap *nmap, struct sockaddr_in *dest, int *sockfd)
 }
 void    setup_packet(t_nmap *nmap, t_packet *packet, struct sockaddr_in *src, struct sockaddr_in *dest)
 {
+    static uint32_t static_seq  = 420000;
 
     ft_bzero(packet, sizeof(t_packet));
 
@@ -41,6 +42,7 @@ void    setup_packet(t_nmap *nmap, t_packet *packet, struct sockaddr_in *src, st
 	/* TCP Header */
 	packet->tcphdr.th_sport  = src->sin_port;
 	packet->tcphdr.th_dport  = dest->sin_port;
+	packet->tcphdr.th_seq    = htonl(static_seq++);
 	packet->tcphdr.th_off    = sizeof(struct tcphdr) / 4;
 
 	packet->tcphdr.th_win    = htons(1024);

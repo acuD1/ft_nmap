@@ -20,6 +20,8 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
+# include <netinet/tcp.h>
+# include <netinet/ip.h>
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <ifaddrs.h>
