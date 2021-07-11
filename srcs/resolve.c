@@ -48,14 +48,28 @@ uint8_t     resolve_target_ipv4(t_nmap *nmap, char *arg)
     return (SUCCESS);
 }
 
-    ((struct sockaddr_in *)&nmap->target)->sin_addr.s_addr = ((struct sockaddr_in*)res->ai_addr)->sin_addr.s_addr;
-    ((struct sockaddr_in *)&nmap->target)->sin_family      = (sa_family_t)res->ai_family;
 
-    for (struct addrinfo *tmp = NULL; res; res = tmp)
+uint8_t     resolve_local_ipv4(t_nmap *nmap)
+{
+    struct ifaddrs  *ifap   = NULL;
+
+    if (getifaddrs(&ifap) == -1)
     {
-        tmp = res->ai_next;
-        free(res);
+        printf("[DEBUG] getifaddrs(): ERROR: %s , errno %d\n", strerror(errno), errno);
+        exit_routine(nmap, FAILURE);
     }
 
+    for (struct ifaddrs *ifa = ifap; ifa; ifa = ifa->ifa_next)
+    {
+        if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET
+            && !(ifa->ifa_flags & (IFF_LOOPBACK))
+            && (ifa->ifa_flags & (IFF_RUNNING)))
+        {
+            ((struct sockaddr_in *)&nmap->local)->sin_addr
+                = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+        }
+    }
+
+    freeifaddrs(ifap);
     return (SUCCESS);
 }

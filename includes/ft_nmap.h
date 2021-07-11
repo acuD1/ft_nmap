@@ -22,6 +22,9 @@
 # include <stdbool.h>
 # include <sys/socket.h>
 # include <sys/types.h>
+# include <ifaddrs.h>
+# include <linux/if_link.h>
+# include <net/if.h>
 
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
@@ -155,10 +158,7 @@ uint8_t                         parse_ports(char *ports);
 uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
-
-/* DEV */
-void                            test_send_SYN(t_nmap *nmap);
-
+uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 
 /* LEXER */
 void                            process_base(t_lexer *lexer);
