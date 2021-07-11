@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 16:41:17 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 17:57:14 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,21 @@ static void setup_th_flags(t_nmap *nmap, t_packet *packet)
         packet->tcphdr.th_flags = TH_SYN;
     if (nmap->scan & SCAN_FIN)
         packet->tcphdr.th_flags = TH_FIN;
+    if (nmap->scan & SCAN_ACK)
+        packet->tcphdr.th_flags = TH_ACK;
+    if (nmap->scan & SCAN_XMAS)
+    {
+        packet->tcphdr.th_flags |= TH_FIN;
+        packet->tcphdr.th_flags |= TH_PUSH;
+        packet->tcphdr.th_flags |= TH_URG;
+    }
+    if (nmap->scan & SCAN_NULL)
+        packet->tcphdr.th_flags = 0;
+    if (nmap->scan & DEFAULT_SCAN)
+    {
+        dprintf(STDERR_FILENO, "[NOT IMPLEMENTED] Multi scans\n");
+        exit_routine(nmap, FAILURE);
+    }
 }
 
 static void setup_packet(
