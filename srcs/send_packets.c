@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 16:39:20 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 16:41:17 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static void setup_packet(
 static void TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *src,
             struct sockaddr_in *dest)
 {
-    int         bytes_sent  = 0;
+    ssize_t     bytes_sent  = 0;
     t_packet    packet;
 
     setup_packet(nmap, &packet, src, dest);
@@ -76,7 +76,7 @@ static void TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *s
         printf("[DEBUG] sendto(): ERROR: %s , errno %d\n", strerror(errno), errno);
         exit_routine(nmap, FAILURE);
     }
-    printf("[DEBUG] BYTES_SENT \t\t\t-> |%d|\n", bytes_sent);
+    printf("[DEBUG] BYTES_SENT \t\t\t-> |%zd|\n", bytes_sent);
 }
 
 void        send_packets(t_nmap *nmap)
