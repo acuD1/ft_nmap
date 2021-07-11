@@ -18,6 +18,15 @@ void    setup_ipv4_sockaddr_in(
     ft_bzero(setup, sizeof(struct sockaddr_in));
     ft_memcpy(setup,  (struct sockaddr_in *)type, sizeof(struct sockaddr_in));
 }
+
+void    setup_sockfd(t_nmap *nmap, struct sockaddr_in *dest, int *sockfd)
+{
+    if ((*sockfd = socket(dest->sin_family, SOCK_RAW, IPPROTO_TCP)) == -1)
+    {
+        printf("[DEBUG] socket(): ERROR: %s , errno %d\n", strerror(errno), errno);
+        exit_routine(nmap, FAILURE);
+    }
+}
 void    send_packets(t_nmap *nmap)
 {
     struct sockaddr_in  dest;
