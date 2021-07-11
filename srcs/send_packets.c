@@ -46,6 +46,7 @@ void    setup_packet(t_nmap *nmap, t_packet *packet, struct sockaddr_in *src, st
 	packet->tcphdr.th_off    = sizeof(struct tcphdr) / 4;
 
 	packet->tcphdr.th_win    = htons(1024);
+	packet->tcphdr.th_sum    = in_cksum(packet, sizeof(t_packet));
 }
 void    TEST_send_SYN_or_FIN(t_nmap *nmap, int sockfd, struct sockaddr_in *src, struct sockaddr_in *dest)
 {
