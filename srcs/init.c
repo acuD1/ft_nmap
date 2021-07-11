@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 15:09:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/09 16:52:03 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 17:52:46 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ static void set_defaults(t_nmap *nmap)
 {
     ft_bzero(nmap, sizeof(t_nmap));
     nmap->threads = DEFAULT_THREADS;
-    nmap->scan = DEFAULT_SCAN;
     nmap->ports = NULL;
 }
 

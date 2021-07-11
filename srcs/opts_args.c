@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 16:35:44 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 18:00:25 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ uint8_t         set_opts_args(t_nmap *nmap, int argc, char **argv)
             return (set_opts_args_failure(&opts_args));
         }
     }
+    else
+        nmap->scan = DEFAULT_SCAN;
 
     // debug_scan_type(nmap->scan);    /* DEBUG */
     // debug_opts_args(&opts_args);    /* DEBUG */
