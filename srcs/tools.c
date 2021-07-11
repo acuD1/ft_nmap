@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   tools.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/25 15:09:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/11 17:52:46 by arsciand         ###   ########.fr       */
+/*   Created: 2021/07/09 15:58:34 by arsciand          #+#    #+#             */
+/*   Updated: 2021/07/11 16:43:19 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
-static void set_defaults(t_nmap *nmap)
+uint16_t in_cksum(void *buffer, size_t len)
 {
-    ft_bzero(nmap, sizeof(t_nmap));
-    nmap->threads = DEFAULT_THREADS;
-    nmap->ports = NULL;
+	uint16_t *tmp   = (uint16_t *)buffer;
+	uint32_t sum    = 0;
+
+	while (len > 1)
+	{
+		sum += *tmp++;
+		len -= 2;
+	}
+
+	if (len > 0)
+		sum += *(uint8_t *)tmp;
+
+	while (sum >> 16)
+		sum = (sum & 0xFFFF) + (sum >> 16);
+
+	return ((uint16_t)~sum);
 }
 
-void     init_nmap(t_nmap *nmap, int argc, char **argv)
-{
-    set_defaults(nmap);
-    if (set_opts_args(nmap, argc, argv) != SUCCESS)
-        exit_routine(nmap, FAILURE);
-    if (resolve_local_ipv4(nmap) != SUCCESS)
-        exit_routine(nmap, FAILURE);
-}

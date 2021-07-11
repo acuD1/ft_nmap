@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/05 19:54:12 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/11 17:52:13 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,21 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
+# include <netinet/tcp.h>
+# include <netinet/ip.h>
 # include <sys/socket.h>
 # include <sys/types.h>
+# include <errno.h>
+# include <stdbool.h>
+# include <ifaddrs.h>
+# include <linux/if_link.h>
+# include <net/if.h>
+
+# define errno                  (*__errno_location ())
 
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
-# define DEFAULT_SCAN           0x01
+# define DEFAULT_SCAN           0x0040
 
 /* OPTIONS */
 # define POSITION(x)            x
@@ -133,14 +142,23 @@ typedef struct                  s_lexer
     uint8_t                     _padding[4];
 }                               t_lexer;
 
+typedef struct                  s_packet
+{
+    uint32_t                    saddr;
+	uint32_t                    daddr;
+	uint16_t                    tcp_len;
+	uint8_t                     tos;
+	uint8_t                     protocol;
+    struct tcphdr               tcphdr;
+}                               t_packet;
 typedef struct                  s_nmap
 {
     t_list                      *ports;
-    char                        target_ipv4[INET_ADDRSTRLEN];
     uint16_t                    threads;
     uint8_t                     scan;
     char                        pad[5];
     struct sockaddr_storage     target;
+    struct sockaddr_storage     local;
 }                               t_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
@@ -155,10 +173,9 @@ uint8_t                         parse_ports(char *ports);
 uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
-
-/* DEV */
-void                            test_send_SYN(t_nmap *nmap);
-
+uint8_t                         resolve_local_ipv4(t_nmap *nmap);
+uint16_t                        in_cksum(void *buffer, size_t len);
+void                            send_packets(t_nmap *nmap);
 
 /* LEXER */
 void                            process_base(t_lexer *lexer);

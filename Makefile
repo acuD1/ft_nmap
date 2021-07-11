@@ -87,6 +87,7 @@ SRC 				+= $(S_PATH)send_packets.c
 SRC 				+= $(S_PATH)ports.c
 SRC 				+= $(S_PATH)lexer_base.c
 SRC 				+= $(S_PATH)lexer_checks.c
+SRC 				+= $(S_PATH)tools.c
 
 # Headers
 
