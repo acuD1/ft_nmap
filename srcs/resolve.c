@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 13:11:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/09 20:16:46 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/11 16:39:32 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ uint8_t     resolve_target_ipv4(t_nmap *nmap, char *arg)
 
     return (SUCCESS);
 }
-
 
 uint8_t     resolve_local_ipv4(t_nmap *nmap)
 {
