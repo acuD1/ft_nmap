@@ -140,6 +140,7 @@ typedef struct                  s_nmap
     uint8_t                     scan;
     char                        pad[5];
     struct sockaddr_storage     target;
+    struct sockaddr_storage     local;
 }                               t_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
