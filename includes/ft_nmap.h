@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 17:52:13 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/12 10:42:38 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,5 +185,6 @@ bool                            is_exit_state(t_lexer *lexer);
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
+void                            display_token(void *data);
 
 #endif
