@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 17:08:30 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/12 10:41:16 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,23 @@ void    print_requires_arg_opt_long(char *current)
         "See the output of ft_nmap --help for a summary of options.");
 }
 
-// void    print_requires_arg_opt(char option)
-// {
-//     dprintf(STDERR_FILENO, "%s%c'\n%s\n",
-//         "ft_nmap: option requires an argument -- '", option,
-//         "See the output of ft_nmap --help for a summary of options.");
-// }
+void    display_token(void *data)
+{
+    t_port *port;
+
+    port = data;
+    printf("-------------\n");
+    if (port->type == E_PORT_UNSET)
+    {
+        printf("TYPE: UNSET\n");
+    }
+    else if (port->type == E_PORT_SINGLE)
+    {
+        printf("TYPE: SINGLE\nDATA: %d\n", port->data.port);
+    }
+    else
+    {
+        printf("TYPE: RANGE\nDATA: [%d - %d]\n", port->data.range[0], port->data.range[1]);
+    }
+    printf("-------------\n");
+}
