@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/12 10:44:02 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/12 14:36:03 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,11 @@ static void set_port(t_lexer *lexer)
     else
     {
         *port = (uint16_t)check;
+        ft_strclr(lexer->vector->buffer);
         if (lexer->state == L_SET_SINGLE || lexer->state == L_SET_END)
             lexer->state = L_TOKENIZE;
         else if (lexer->state == L_SET_START)
-            lexer->state = L_RRANGE;
+            lexer->state = L_SET_RANGE;
     }
 }
 
@@ -73,16 +74,31 @@ static void tokenizer(t_lexer *lexer)
     lexer->state = L_BASE;
 }
 
+static void process_range(t_lexer *lexer)
+{
+    if(ft_isdigit(lexer->source[0]) == true)
+    {
+        vct_add(lexer->vector, lexer->source[0]);
+        ++lexer->source;
+    }
+    else if(lexer->source[0] == '\0')
+    {
+        lexer->state = L_SET_END;
+    }
+}
+
 static void process_lexer(t_lexer *lexer)
 {
-    if (is_source_finished(lexer))
+    if (lexer->state == L_TOKENIZE)
+        tokenizer(lexer);
+    else if (is_source_finished(lexer))
         lexer->state = L_OUT;
     else if (lexer->state == L_BASE)
         process_base(lexer);
+    else if (lexer->state == L_SET_RANGE)
+        process_range(lexer);
     else if (is_set_state(lexer))
         set_port(lexer);
-    else if (lexer->state == L_TOKENIZE)
-        tokenizer(lexer);
 }
 
 static void out_lexer(t_lexer *lexer)
