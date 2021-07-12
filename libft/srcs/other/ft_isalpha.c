@@ -6,13 +6,13 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:27 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/24 17:23:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/12 10:11:55 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "other.h"
 
-int		ft_isalpha(int c)
+bool	ft_isalpha(int c)
 {
 	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ? 1 : 0);
 }
