@@ -114,11 +114,11 @@ vpath %.h $(H_PATH)
 DEBUG				=
 CFLAGS				=	-Wall -Wextra -Werror #-std=$(STD)
 ifeq ($(DEBUG), g)
-	CFLAGS			=	-g
+	CFLAGS			+=	-g
 else ifeq ($(DEBUG), fsanitize)
-	CFLAGS			=	-fsanitize=address -g3
+	CFLAGS			+=	-fsanitize=address -g3
 else ifeq ($(DEBUG), hard)
-	CFLAGS			+=	-Weverything -fsanitize=address,undefined # -Wno-cast-qual -Wno-missing-noreturn -Wno-disabled-macro-expansion -Wno-reserved-id-macro
+	CFLAGS			+=	-g3 -Weverything -fsanitize=address,undefined # -Wno-cast-qual -Wno-missing-noreturn -Wno-disabled-macro-expansion -Wno-reserved-id-macro
 else ifeq ($(DEBUG), dev)
 	CFLAGS			=
 endif
