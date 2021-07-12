@@ -6,13 +6,13 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:27 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/23 14:56:11 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/12 10:01:46 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "other.h"
 
-int		ft_isalnum(int c)
+bool	ft_isalnum(int c)
 {
 	return (ft_isalpha(c) || ft_isdigit(c) ? 1 : 0);
 }
