@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/18 16:46:35 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 13:39:14 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,16 +107,16 @@ static void out_lexer(t_lexer *lexer)
     lexer->state = L_FINISH;
 }
 
-uint8_t parse_ports(char *ports)
+t_list *parse_ports(char *ports)
 {
     t_lexer lexer;
 
     if (init_lexer(&lexer, ports) == FAILURE)
-        return (FAILURE);
+        return (NULL);
     while (is_exit_state(&lexer) == false)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
     ft_lstiter(lexer.result, display_token);
     printf("Ports string: %s", ports);
     ft_lstdel(&lexer.result, NULL);
-    return (SUCCESS);
+    return (lexer.result);
 }

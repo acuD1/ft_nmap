@@ -187,6 +187,7 @@ uint16_t                        in_cksum(void *buffer, size_t len);
 void                            send_packets(t_nmap *nmap);
 
 /* LEXER */
+t_list                          *parse_ports(char *ports);
 void                            process_base(t_lexer *lexer);
 bool                            is_set_state(t_lexer *lexer);
 bool                            is_source_finished(t_lexer *lexer);
