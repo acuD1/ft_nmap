@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/12 14:22:10 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 09:00:05 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,13 @@ typedef struct                  s_packet
 	uint8_t                     protocol;
     struct tcphdr               tcphdr;
 }                               t_packet;
+
+typedef struct                  s_target
+{
+    struct sockaddr_storage     target;
+    t_list                      *ports;
+}                               t_target;
+
 typedef struct                  s_nmap
 {
     t_list                      *ports;
