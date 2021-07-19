@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 09:02:26 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 09:17:54 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define IP_STR                 "ip"
 # define THREADS_STR            "speedup"
 # define SCAN_STR               "scan"
+# define FILE_STR               "file"
 # define ALLOWED_OPT            NULL
 # define ALLOWED_OPT_ARG        NULL
 # define ALLOWED_OPT_TAB        ((const char *[])   \
@@ -53,6 +54,7 @@
                                     IP_STR,         \
                                     THREADS_STR,    \
                                     SCAN_STR,       \
+                                    FILE_STR,       \
                                     NULL            \
                                 })
 # define ALLOWED_OPT_TAB_ARG    ((const char *[])   \
@@ -61,6 +63,7 @@
                                     IP_STR,         \
                                     THREADS_STR,    \
                                     SCAN_STR,       \
+                                    FILE_STR,       \
                                     NULL            \
                                 })
 /**/
