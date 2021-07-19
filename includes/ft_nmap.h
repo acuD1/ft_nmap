@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 09:17:54 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 12:05:44 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,8 +178,7 @@ uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
 void                            print_requires_arg_opt_long(char *current);
 void                            print_unallowed_opt(t_opts_args *opts_args);
 void                            print_usage(void);
-uint8_t                         parse_ports(char *ports);
-uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
+uint8_t                         resolve_target_ipv4(t_target *target, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);

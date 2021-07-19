@@ -6,13 +6,13 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 13:11:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 16:39:32 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/19 09:48:03 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
-uint8_t     resolve_target_ipv4(t_nmap *nmap, char *arg)
+uint8_t     resolve_target_ipv4(t_target *target, char *arg)
 {
     struct  addrinfo    hints;
     struct  addrinfo    *res    = NULL;
@@ -34,9 +34,9 @@ uint8_t     resolve_target_ipv4(t_nmap *nmap, char *arg)
         return (FAILURE);
     }
 
-    ((struct sockaddr_in *)&nmap->target)->sin_addr.s_addr
+    ((struct sockaddr_in *)&target->target)->sin_addr.s_addr
         = ((struct sockaddr_in*)res->ai_addr)->sin_addr.s_addr;
-    ((struct sockaddr_in *)&nmap->target)->sin_family
+    ((struct sockaddr_in *)&target->target)->sin_family
         = (sa_family_t)res->ai_family;
 
     for (struct addrinfo *tmp = NULL; res; res = tmp)
