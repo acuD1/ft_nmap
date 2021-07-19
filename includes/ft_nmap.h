@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/12 14:22:10 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 16:00:17 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define IP_STR                 "ip"
 # define THREADS_STR            "speedup"
 # define SCAN_STR               "scan"
+# define FILE_STR               "file"
 # define ALLOWED_OPT            NULL
 # define ALLOWED_OPT_ARG        NULL
 # define ALLOWED_OPT_TAB        ((const char *[])   \
@@ -53,6 +54,7 @@
                                     IP_STR,         \
                                     THREADS_STR,    \
                                     SCAN_STR,       \
+                                    FILE_STR,       \
                                     NULL            \
                                 })
 # define ALLOWED_OPT_TAB_ARG    ((const char *[])   \
@@ -61,6 +63,7 @@
                                     IP_STR,         \
                                     THREADS_STR,    \
                                     SCAN_STR,       \
+                                    FILE_STR,       \
                                     NULL            \
                                 })
 /**/
@@ -151,13 +154,19 @@ typedef struct                  s_packet
 	uint8_t                     protocol;
     struct tcphdr               tcphdr;
 }                               t_packet;
+
+typedef struct                  s_target
+{
+    struct sockaddr_storage     target;
+    t_list                      *ports;
+}                               t_target;
+
 typedef struct                  s_nmap
 {
-    t_list                      *ports;
+    t_list                      *target;
     uint16_t                    threads;
     uint8_t                     scan;
     char                        pad[5];
-    struct sockaddr_storage     target;
     struct sockaddr_storage     local;
 }                               t_nmap;
 
@@ -169,15 +178,15 @@ uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
 void                            print_requires_arg_opt_long(char *current);
 void                            print_unallowed_opt(t_opts_args *opts_args);
 void                            print_usage(void);
-uint8_t                         parse_ports(char *ports);
-uint8_t                         resolve_target_ipv4(t_nmap *nmap, char *arg);
+uint8_t                         resolve_target_ipv4(t_target *target, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
-void                            send_packets(t_nmap *nmap);
+int                             send_target(void *context, void* data);
 
 /* LEXER */
+t_list                          *parse_ports(char *ports);
 void                            process_base(t_lexer *lexer);
 bool                            is_set_state(t_lexer *lexer);
 bool                            is_source_finished(t_lexer *lexer);
