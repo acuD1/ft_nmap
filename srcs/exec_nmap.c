@@ -6,18 +6,26 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 12:15:17 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 16:11:40 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
+static void    print_target(void *data)
+{
+    t_target *target;
+
+    target = data;
+    dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
+       inet_ntoa(((struct sockaddr_in *)&target->target)->sin_addr));
+}
+
 void    exec_nmap(t_nmap *nmap)
 {
     dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
         inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
-    dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
-       inet_ntoa(((struct sockaddr_in *)&nmap->target)->sin_addr));
+    ft_lstiter(nmap->target, print_target);
 
     ft_lstiter_ctx(nmap->target, nmap, send_target);
 }
