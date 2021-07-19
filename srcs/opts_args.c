@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 12:53:40 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 13:33:16 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,23 +83,23 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 static int validate_opt(void *context, void *data)
 {
     t_opt_set_db *option;
-    t_opts_conf * config;
+    t_opts_conf  *config;
 
     option = data;
     config = context;
-    for (int i = 0; config->allowed_opt_tab_arg[i] == NULL; i++)
+    for (int i = 0; config->allowed_opt_tab_arg[i] != NULL; i++)
     {
-        if (ft_strequ(option->arg, config->allowed_opt_tab_arg[i]))
+        if (ft_strequ(option->current, config->allowed_opt_tab_arg[i]))
         {
             if (option->arg == NULL)
             {
                 print_requires_arg_opt_long(option->current);
-                return (FALSE);
+                return (FAILURE);
             }
-            return (TRUE);
+            return (SUCCESS);
         }
     }
-    return (FALSE);
+    return (SUCCESS);
 }
 
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
