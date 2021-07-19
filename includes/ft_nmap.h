@@ -184,7 +184,7 @@ uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **arg
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
-void                            send_packets(t_nmap *nmap);
+int                             send_target(void *data, void* context);
 
 /* LEXER */
 t_list                          *parse_ports(char *ports);

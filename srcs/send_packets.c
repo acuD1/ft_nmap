@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/11 17:57:14 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/19 12:15:52 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,10 @@ static void send_tcp_packet(t_nmap *nmap, int sockfd, struct sockaddr_in *src,
     printf("[DEBUG] BYTES_SENT \t\t\t-> |%zd|\n", bytes_sent);
 }
 
-void        send_packets(t_nmap *nmap)
+int send_target(void *data, void* context)
 {
+    t_target *target;
+    t_nmap   *nmap;
     struct sockaddr_in  dest;
 	struct sockaddr_in  src;
     int                 sockfd          =  0;
@@ -104,9 +106,11 @@ void        send_packets(t_nmap *nmap)
     uint16_t            tmp_range[2]    = {440, 443};
     uint16_t            tmp_s_port      = 33000;
 
-    setup_ipv4_sockaddr_in(&src, &nmap->local);
-    setup_ipv4_sockaddr_in(&dest, &nmap->target);
+    target = data;
+    nmap = context;
 
+    setup_ipv4_sockaddr_in(&src, &nmap->local);
+    setup_ipv4_sockaddr_in(&dest, &target->target);
     for (uint16_t d_port = tmp_range[0]; d_port <= tmp_range[1]; d_port++)
     {
         setup_sockfd(nmap, &dest, &sockfd);
@@ -116,4 +120,5 @@ void        send_packets(t_nmap *nmap)
 
         send_tcp_packet(nmap, sockfd, &src, &dest);
     }
+    return (SUCCESS);
 }
