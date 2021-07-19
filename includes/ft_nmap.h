@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 09:00:05 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 09:02:26 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,11 +160,10 @@ typedef struct                  s_target
 
 typedef struct                  s_nmap
 {
-    t_list                      *ports;
+    t_list                      *target;
     uint16_t                    threads;
     uint8_t                     scan;
     char                        pad[5];
-    struct sockaddr_storage     target;
     struct sockaddr_storage     local;
 }                               t_nmap;
 
