@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 12:23:03 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/19 12:47:21 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ static int validate_opt(void *data, void *context)
     config = context;
     for (int i = 0; config->allowed_opt_tab_arg[i] == NULL; i++)
     {
-        if (option->arg == config->allowed_opt_tab_arg[i])
+        if (ft_strequ(option->arg, config->allowed_opt_tab_arg[i]))
         {
             if (option->arg == NULL)
             {
