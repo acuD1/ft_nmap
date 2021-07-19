@@ -202,7 +202,7 @@ ifeq ($(DEBUG), g)
 else ifeq ($(DEBUG), fsanitize)
 	CFLAGS		=	-fsanitize=address
 else ifeq ($(DEBUG), hard)
-	CFLAGS		+=	-Weverything -fsanitize=address,undefined #-Wno-cast-qual -Wno-missing-noreturn -Wno-disabled-macro-expansion -Wno-reserved-id-macro
+	CFLAGS		+=	-g3 -Weverything -fsanitize=address,undefined #-Wno-cast-qual -Wno-missing-noreturn -Wno-disabled-macro-expansion -Wno-reserved-id-macro
 else ifeq ($(DEBUG), dev)
 	CFLAGS		=
 endif
