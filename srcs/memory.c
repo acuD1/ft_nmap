@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:43:16 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 13:50:31 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/23 11:52:16 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,5 @@ void __attribute__ ((noreturn)) exit_routine(t_nmap *nmap, uint8_t status)
 
 void    free_nmap(t_nmap *nmap)
 {
-    (void)nmap;
+    nmap->target = ft_lstdel(&nmap->target, NULL);
 }
