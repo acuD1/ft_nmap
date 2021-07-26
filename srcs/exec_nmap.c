@@ -19,6 +19,7 @@ static void    print_target(void *data)
     target = data;
     dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
        inet_ntoa(((struct sockaddr_in *)&target->target)->sin_addr));
+    ft_lstiter(target->ports, display_token);
 }
 
 void    exec_nmap(t_nmap *nmap)
