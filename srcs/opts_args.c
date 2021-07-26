@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 13:33:16 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/23 11:33:37 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,8 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
         if (get_scan(nmap, &opts_args, tmp) == FAILURE)
             exit_routine(nmap, EXIT_SUCCESS);
     }
+    else
+        nmap->scan = DEFAULT_SCAN; // Temporay fix
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, FILE_STR)) != NULL)
     {
