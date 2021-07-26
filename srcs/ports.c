@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/19 13:39:54 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/26 14:11:27 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,5 @@ t_list *parse_ports(char *ports)
         return (NULL);
     while (is_exit_state(&lexer) == false)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
-    ft_lstiter(lexer.result, display_token);
-    printf("Ports string: %s", ports);
-    ft_lstdel(&lexer.result, NULL);
     return (lexer.result);
 }
