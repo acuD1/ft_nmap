@@ -6,10 +6,14 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/23 11:33:37 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/07/26 16:02:57 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "ft_nmap.h"
 
 static uint8_t set_opts_args_failure(t_opts_args *opts_args)
@@ -38,13 +42,53 @@ static uint8_t get_scan(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     return (SUCCESS);
 }
 
+static uint8_t get_target_from_line(t_nmap *nmap, char *line, t_opts_args *opts)
+{
+    t_target target;
+    t_list   *node;
+    char     **tab;
+
+    ft_bzero(&target, sizeof(t_target));
+    node = NULL;
+    tab = NULL;
+    if ((tab = ft_strsplit(line, ":")) == NULL)
+        return (FAILURE);
+    if (ft_tablen(tab) != 2)
+        return (FAILURE);
+    if ((resolve_target_ipv4(&target, tab[0]) != SUCCESS))
+        return (set_opts_args_failure(opts));
+    if ((target.ports = parse_ports(tab[1])) == NULL)
+        return (set_opts_args_failure(opts));
+    if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
+    {
+        return (set_opts_args_failure(opts));
+    }
+    ft_lstaddback(&nmap->target, node);
+    return (SUCCESS);
+}
+
 static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    if (tmp->arg)
-    {
-        printf("Load targets from file\n");
-        //False Line, carefull
-        nmap->target = opts->opt_set;
+    int fd;
+    char *line;
+
+    fd = 0;
+    line = NULL;
+    if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)))
+        return (FAILURE);
+    if ((tmp = get_opt_set_db(&opts->opt_set, PORTS_STR)))
+        return (FAILURE);
+    if ((tmp = get_opt_set_db(&opts->opt_set, FILE_STR)) == NULL)
+        return (FAILURE);
+    else {
+        if ((fd = open(tmp->arg, O_RDONLY)) == -1)
+            return (FAILURE);
+        while(ft_getdelim(fd, &line, '\n') == 1)
+        {
+            if (get_target_from_line(nmap, line, opts) == FAILURE)
+                return (FAILURE);
+            ft_strdel(&line);
+        }
     }
     return (SUCCESS);
 }
