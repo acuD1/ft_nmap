@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memory.c                                           :+:      :+:    :+:   */
+/*   ft_tablen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
+/*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/23 18:43:16 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/26 14:15:16 by cempassi         ###   ########.fr       */
+/*   Created: 2020/07/23 03:12:36 by cempassi          #+#    #+#             */
+/*   Updated: 2021/07/26 12:46:13 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_nmap.h"
+#include "libft.h"
 
-void __attribute__ ((noreturn)) exit_routine(t_nmap *nmap, uint8_t status)
+int		ft_tablen(char **tab)
 {
-    free_nmap(nmap);
-    exit(status);
-}
+	int		i;
 
-void    free_nmap(t_nmap *nmap)
-{
-    ft_lstdel(&nmap->target, del_target);
+	i = 0;
+	while (tab[i])
+		i++;
+	return (i);
 }

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 16:11:40 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/26 16:01:44 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static void    print_target(void *data)
     target = data;
     dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
        inet_ntoa(((struct sockaddr_in *)&target->target)->sin_addr));
+    ft_lstiter(target->ports, display_token);
 }
 
 void    exec_nmap(t_nmap *nmap)

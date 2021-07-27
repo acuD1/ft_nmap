@@ -139,6 +139,8 @@ SRC += ft_isdigit.c
 SRC += ft_isprint.c
 SRC += ft_tolower.c
 SRC += ft_toupper.c
+SRC += ft_getdelim.c
+SRC += ft_tablen.c
 
 SRC += ft_get_opts_args.c
 

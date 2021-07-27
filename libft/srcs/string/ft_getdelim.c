@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:26 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/23 14:54:44 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/07/26 15:56:59 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int				ft_getdelim(const int fd, char **line, char delim)
 	t_file			*current;
 	int				result;
 
-	if (line == NULL || *line == 0 || fd < 0 || read(fd, buffer, 0) == -1
+	if (fd < 0 || read(fd, buffer, 0) == -1
 		|| !(current = fd_manager(&lst, fd, lst)))
 		return (-1);
 	ft_bzero(buffer, BUFF_SIZE + 1);
