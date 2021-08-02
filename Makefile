@@ -198,7 +198,7 @@ fclean: libc
 	$(ECHO) $(RMSHW) $(NAME)
 	$(CLSUC)
 
-test:
+test: all
 	behave
 
 # Libc rules
