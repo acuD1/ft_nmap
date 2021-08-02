@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:31:17 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/26 12:31:51 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/08/02 10:04:04 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ int main(int argc, char *argv[])
 
     init_nmap(&nmap, argc, argv);
 
-    exec_nmap(&nmap);
+    if ((nmap.options & DRY_OPT) == 0)
+        exec_nmap(&nmap);
 
     free_nmap(&nmap);
 
