@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/26 16:02:57 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/02 07:53:11 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static uint8_t get_target_from_line(t_nmap *nmap, char *line, t_opts_args *opts)
         return (set_opts_args_failure(opts));
     }
     ft_lstaddback(&nmap->target, node);
+    ft_freetab(&tab);
     return (SUCCESS);
 }
 
@@ -89,6 +90,8 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
                 return (FAILURE);
             ft_strdel(&line);
         }
+        if (line)
+            ft_strdel(&line);
     }
     return (SUCCESS);
 }
