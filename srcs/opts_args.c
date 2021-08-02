@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/02 07:53:11 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/02 10:08:49 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,11 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     {
         print_usage();
         exit_routine(nmap, EXIT_SUCCESS);
+    }
+
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, DRY_STR)) != NULL)
+    {
+        nmap->options |= DRY_OPT;
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, THREADS_STR)) != NULL)

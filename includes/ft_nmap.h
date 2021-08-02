@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/26 14:14:42 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/02 10:04:48 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@
 # define THREADS_STR            "speedup"
 # define SCAN_STR               "scan"
 # define FILE_STR               "file"
+# define DRY_STR                "dry-run"
 # define ALLOWED_OPT            NULL
 # define ALLOWED_OPT_ARG        NULL
 # define ALLOWED_OPT_TAB        ((const char *[])   \
@@ -55,6 +56,7 @@
                                     THREADS_STR,    \
                                     SCAN_STR,       \
                                     FILE_STR,       \
+                                    DRY_STR,       \
                                     NULL            \
                                 })
 # define ALLOWED_OPT_TAB_ARG    ((const char *[])   \
@@ -94,6 +96,10 @@
                                     NULL            \
                                 })
 /**/
+
+/* OPTIONS */
+
+# define DRY_OPT 0x01
 
 # define RANGE_START            0
 # define RANGE_END              1
@@ -166,7 +172,8 @@ typedef struct                  s_nmap
     t_list                      *target;
     uint16_t                    threads;
     uint8_t                     scan;
-    char                        pad[5];
+    uint8_t                     options;
+    char                        pad[4];
     struct sockaddr_storage     local;
 }                               t_nmap;
 
