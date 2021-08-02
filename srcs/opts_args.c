@@ -64,6 +64,7 @@ static uint8_t get_target_from_line(t_nmap *nmap, char *line, t_opts_args *opts)
         return (set_opts_args_failure(opts));
     }
     ft_lstaddback(&nmap->target, node);
+    ft_freetab(&tab);
     return (SUCCESS);
 }
 
@@ -89,6 +90,8 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
                 return (FAILURE);
             ft_strdel(&line);
         }
+        if (line)
+            ft_strdel(&line);
     }
     return (SUCCESS);
 }
