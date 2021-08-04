@@ -77,8 +77,11 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     line = NULL;
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)))
         return (FAILURE);
-    if ((tmp = get_opt_set_db(&opts->opt_set, PORTS_STR)))
-        return (FAILURE);
+
+    /* Bonus */
+    // if ((tmp = get_opt_set_db(&opts->opt_set, PORTS_STR)))
+    //     return (FAILURE);
+
     if ((tmp = get_opt_set_db(&opts->opt_set, FILE_STR)) == NULL)
         return (FAILURE);
     else {
@@ -110,14 +113,6 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     }
     else
         return (FAILURE);
-
-    if ((tmp = get_opt_set_db(&opts->opt_set, PORTS_STR)) != NULL)
-    {
-        if ((target.ports = parse_ports(tmp->arg)) == NULL)
-        {
-            return (set_opts_args_failure(opts));
-        }
-    }
 
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
@@ -215,6 +210,16 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     }
     else
         nmap->scan = DEFAULT_SCAN; // Temporay fix
+
+    /* Moved ports, targets->ports will be a bonus */
+    if ((tmp = get_opt_set_db(&opts_args.opt_set, PORTS_STR)) != NULL)
+    {
+        if ((nmap->ports = parse_ports(tmp->arg)) == NULL)
+        {
+            set_opts_args_failure(&opts_args);
+            exit_routine(nmap, EXIT_SUCCESS);
+        }
+    }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, FILE_STR)) != NULL)
     {
