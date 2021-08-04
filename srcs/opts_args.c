@@ -106,17 +106,20 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
     if ((tmp = get_opt_set_db(&opts->opt_set, FILE_STR)) == NULL)
         return (FAILURE);
-    else {
+    else
+    {
         if ((fd = open(tmp->arg, O_RDONLY)) == -1)
             return (FAILURE);
-        while(ft_getdelim(fd, &line, '\n') == 1)
+        while (ft_getdelim(fd, &line, '\n') == 1)
         {
             if (get_target_from_line(nmap, line, opts) == FAILURE)
+            {
+                ft_strdel(&line);
                 return (FAILURE);
+            }
             ft_strdel(&line);
         }
-        if (line)
-            ft_strdel(&line);
+        ft_strdel(&line);
     }
     return (SUCCESS);
 }
