@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 16:00:08 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/04 21:32:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ int send_target(void *context, void* data)
     int                 sockfd          =  0;
 
     /* TMP */
-    uint16_t            tmp_range[2]    = {440, 443};
     uint16_t            tmp_s_port      = 33000;
 
     target = data;
@@ -111,14 +110,26 @@ int send_target(void *context, void* data)
 
     setup_ipv4_sockaddr_in(&src, &nmap->local);
     setup_ipv4_sockaddr_in(&dest, &target->target);
-    for (uint16_t d_port = tmp_range[0]; d_port <= tmp_range[1]; d_port++)
+    setup_sockfd(nmap, &dest, &sockfd);
+
+    if (((t_port *)nmap->ports->data)->type == E_PORT_SINGLE)
     {
-        setup_sockfd(nmap, &dest, &sockfd);
-
-        dest.sin_port = htons(d_port);
-        src.sin_port = htons(tmp_s_port++);
-
+        dest.sin_port = htons(((t_port *)nmap->ports->data)->data.port);
+        src.sin_port = htons(tmp_s_port);
+        dprintf(STDERR_FILENO, "[DEBUG] Packet [%d] ...\n", ((t_port *)nmap->ports->data)->data.port);
         send_tcp_packet(nmap, sockfd, &src, &dest);
+    }
+    else
+    {
+        for (uint16_t d_port = ((t_port *)nmap->ports->data)->data.range[0]; d_port <= ((t_port *)nmap->ports->data)->data.range[1]; d_port++)
+        {
+
+            dest.sin_port = htons(d_port);
+            src.sin_port = htons(tmp_s_port++);
+
+            dprintf(STDERR_FILENO, "[DEBUG] Packet [%d] ...\n", d_port);
+            send_tcp_packet(nmap, sockfd, &src, &dest);
+        }
     }
     return (SUCCESS);
 }
