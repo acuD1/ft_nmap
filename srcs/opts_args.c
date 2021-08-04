@@ -42,29 +42,51 @@ static uint8_t get_scan(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     return (SUCCESS);
 }
 
+/* Bonus */
+// static uint8_t get_target_from_line(t_nmap *nmap, char *line, t_opts_args
+// *opts)
+// {
+//     t_target target;
+//     t_list   *node;
+//     char     **tab;
+
+//     ft_bzero(&target, sizeof(t_target));
+//     node = NULL;
+
+//     tab = NULL;
+//     if ((tab = ft_strsplit(line, ":")) == NULL)
+//         return (FAILURE);
+//     if (ft_tablen(tab) != 2)
+//         return (FAILURE);
+
+//     if ((resolve_target_ipv4(&target, tab[0]) != SUCCESS))
+//         return (set_opts_args_failure(opts));
+//     if ((target.ports = parse_ports(tab[1])) == NULL)
+//         return (set_opts_args_failure(opts));
+
+//     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
+//     {
+//         return (set_opts_args_failure(opts));
+//     }
+//     ft_lstaddback(&nmap->target, node);
+//     ft_freetab(&tab);
+//     return (SUCCESS);
+// }
+
 static uint8_t get_target_from_line(t_nmap *nmap, char *line, t_opts_args *opts)
 {
     t_target target;
-    t_list   *node;
-    char     **tab;
+    t_list * node = NULL;
 
     ft_bzero(&target, sizeof(t_target));
-    node = NULL;
-    tab = NULL;
-    if ((tab = ft_strsplit(line, ":")) == NULL)
-        return (FAILURE);
-    if (ft_tablen(tab) != 2)
-        return (FAILURE);
-    if ((resolve_target_ipv4(&target, tab[0]) != SUCCESS))
-        return (set_opts_args_failure(opts));
-    if ((target.ports = parse_ports(tab[1])) == NULL)
+
+    if ((resolve_target_ipv4(&target, line) != SUCCESS))
         return (set_opts_args_failure(opts));
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
         return (set_opts_args_failure(opts));
     }
     ft_lstaddback(&nmap->target, node);
-    ft_freetab(&tab);
     return (SUCCESS);
 }
 
