@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/08 12:55:34 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/08 17:19:11 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,10 @@ void        exec_nmap(t_nmap *nmap)
     /* Disabled for now */
     // if (nmap->options)
     //     ft_lstiter_ctx(nmap->target, nmap, send_target);
+
+    /*
+    ** THREADS DATA generator function here !
+    */
 
     threads_generator(nmap, nmap_threads);
     threads_gatherer(nmap, nmap_threads);
