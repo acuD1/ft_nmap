@@ -12,17 +12,25 @@
 
 #include "ft_nmap.h"
 
-void    exec_nmap(t_nmap *nmap)
+void        exec_nmap(t_nmap *nmap)
 {
+    pthread_t   *nmap_threads = NULL;
+
     if (getuid() != 0)
     {
         dprintf(STDERR_FILENO, "ft_nmap: socket: Operation not permitted\n");
         exit_routine(nmap, FAILURE);
     }
 
+    if (!(nmap_threads = ft_memalloc(sizeof(pthread_t) * nmap->threads)))
+    {
+        dprintf(STDERR_FILENO, "[FATAL] malloc error !\n");
+        exit_routine(nmap, FAILURE);
+    }
 
     /* Disabled for now */
     // if (nmap->options)
     //     ft_lstiter_ctx(nmap->target, nmap, send_target);
 
+    ft_memdel((void *)&nmap_threads);
 }
