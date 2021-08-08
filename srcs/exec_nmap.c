@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/08 12:53:32 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/08 12:55:34 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void    exec_nmap(t_nmap *nmap)
 {
     if (getuid() != 0)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: Must be root\n");
+        dprintf(STDERR_FILENO, "ft_nmap: socket: Operation not permitted\n");
         exit_routine(nmap, FAILURE);
     }
     dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",

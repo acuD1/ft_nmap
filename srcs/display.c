@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 11:59:11 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/08 12:56:53 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,16 @@ void    print_requires_arg_opt_long(char *current)
     dprintf(STDERR_FILENO, "%s%s%s\n%s\n",
         "ft_nmap: option '--", current, "' requires an argument",
         "See the output of ft_nmap --help for a summary of options.");
+}
+
+void    print_target(void *data)
+{
+    t_target *target;
+
+    target = data;
+    dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
+       inet_ntoa(((struct sockaddr_in *)&target->target)->sin_addr));
+    ft_lstiter(target->ports, display_token);
 }
 
 void    display_token(void *data)

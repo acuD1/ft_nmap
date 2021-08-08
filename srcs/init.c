@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 15:09:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/08/08 12:53:51 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/08 12:57:16 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-static void    print_target(void *data)
-{
-    t_target *target;
-
-    target = data;
-    dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
-       inet_ntoa(((struct sockaddr_in *)&target->target)->sin_addr));
-    ft_lstiter(target->ports, display_token);
-}
 
 static void set_defaults(t_nmap *nmap)
 {
