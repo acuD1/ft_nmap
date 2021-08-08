@@ -19,9 +19,7 @@ void    exec_nmap(t_nmap *nmap)
         dprintf(STDERR_FILENO, "ft_nmap: socket: Operation not permitted\n");
         exit_routine(nmap, FAILURE);
     }
-    dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
-        inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
-    ft_lstiter(nmap->target, print_target);
+
 
     if (nmap->options)
     ft_lstiter_ctx(nmap->target, nmap, send_target);
