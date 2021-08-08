@@ -106,7 +106,7 @@ HDR					+=	ft_nmap.h
 # Objects
 
 OBJ					=	$(patsubst $(S_PATH)%.c, $(O_PATH)%.o, $(SRC))
-LIB					=	$(L_PATH)$(LNAME)
+LIB					=	$(L_PATH)$(LNAME) -lpthread
 vpath %.h $(H_PATH)
 
 # Variables
