@@ -12,6 +12,28 @@
 
 #include "ft_nmap.h"
 
+static void *TEST_THREAD(void *data)
+{
+    size_t  thread_id = (size_t)data;
+
+    dprintf(STDERR_FILENO, "[DEBUG] Thread -%zu- working ...\n", thread_id);
+    pthread_exit(NULL);
+}
+
+static void threads_generator(t_nmap *nmap, pthread_t *nmap_threads)
+{
+    int status = 0;
+
+    for (size_t thread_id = 0; thread_id < nmap->threads; thread_id++)
+    {
+        if ((status = pthread_create(nmap_threads + thread_id, NULL, &TEST_THREAD, (void *)thread_id)) != SUCCESS)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: pthread_create(): %s", strerror(status));
+            ft_memdel((void *)&nmap_threads);
+            exit_routine(nmap, FAILURE);
+        }
+    }
+}
 void        exec_nmap(t_nmap *nmap)
 {
     pthread_t   *nmap_threads = NULL;
@@ -32,5 +54,6 @@ void        exec_nmap(t_nmap *nmap)
     // if (nmap->options)
     //     ft_lstiter_ctx(nmap->target, nmap, send_target);
 
+    threads_generator(nmap, nmap_threads);
     ft_memdel((void *)&nmap_threads);
 }
