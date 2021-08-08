@@ -21,6 +21,8 @@ void    exec_nmap(t_nmap *nmap)
     }
 
 
-    if (nmap->options)
-    ft_lstiter_ctx(nmap->target, nmap, send_target);
+    /* Disabled for now */
+    // if (nmap->options)
+    //     ft_lstiter_ctx(nmap->target, nmap, send_target);
+
 }
