@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/08 12:57:14 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/08 17:16:35 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <ifaddrs.h>
 # include <linux/if_link.h>
 # include <net/if.h>
+# include <pthread.h>
 
 # define errno                  (*__errno_location ())
 
