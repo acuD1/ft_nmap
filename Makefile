@@ -89,6 +89,10 @@ SRC 				+= $(S_PATH)lexer_base.c
 SRC 				+= $(S_PATH)lexer_checks.c
 SRC 				+= $(S_PATH)tools.c
 
+# DEV
+
+SRC					+= $(S_PATH)dev.c
+
 # Headers
 
 HDR					+=	libft.h
