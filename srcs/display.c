@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/08 12:56:53 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/15 14:09:18 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,12 @@ void    print_requires_arg_opt_long(char *current)
 
 void    print_target(void *data)
 {
-    t_target *target;
+    t_target_data *target_data;
 
-    target = data;
+    target_data = data;
     dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
-       inet_ntoa(((struct sockaddr_in *)&target->target)->sin_addr));
-    ft_lstiter(target->ports, display_token);
+       inet_ntoa(((struct sockaddr_in *)&target_data->target)->sin_addr));
+    ft_lstiter(target_data->ports, display_token);
 }
 
 void    display_token(void *data)

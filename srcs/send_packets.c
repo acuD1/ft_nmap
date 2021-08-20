@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/19 16:00:08 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/15 14:10:39 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ static void send_tcp_packet(t_nmap *nmap, int sockfd, struct sockaddr_in *src,
 
 int send_target(void *context, void* data)
 {
-    t_target *target;
+    t_target_data *target_data;
     t_nmap   *nmap;
     struct sockaddr_in  dest;
 	struct sockaddr_in  src;
@@ -106,11 +106,11 @@ int send_target(void *context, void* data)
     uint16_t            tmp_range[2]    = {440, 443};
     uint16_t            tmp_s_port      = 33000;
 
-    target = data;
+    target_data = data;
     nmap = context;
 
     setup_ipv4_sockaddr_in(&src, &nmap->local);
-    setup_ipv4_sockaddr_in(&dest, &target->target);
+    setup_ipv4_sockaddr_in(&dest, &target_data->target);
     for (uint16_t d_port = tmp_range[0]; d_port <= tmp_range[1]; d_port++)
     {
         setup_sockfd(nmap, &dest, &sockfd);

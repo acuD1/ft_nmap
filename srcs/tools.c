@@ -6,21 +6,21 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/09 15:58:34 by arsciand          #+#    #+#             */
-/*   Updated: 2021/07/26 14:15:19 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/08/15 14:06:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
-void del_target(void *data)
+void        del_target_data(void *data)
 {
-    t_target *target;
+    t_target_data *target_data;
 
-    target = data;
-    ft_lstdel(&target->ports, NULL);
+    target_data = data;
+    ft_lstdel(&target_data->ports, NULL);
 }
 
-uint16_t in_cksum(void *buffer, size_t len)
+uint16_t    in_cksum(void *buffer, size_t len)
 {
 	uint16_t *tmp   = (uint16_t *)buffer;
 	uint32_t sum    = 0;
