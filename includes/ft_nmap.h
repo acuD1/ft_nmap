@@ -167,6 +167,13 @@ typedef struct                  s_target_data
     t_list                      *ports;
 }                               t_target_data;
 
+typedef struct                  s_thread_data
+{
+    t_list                      *targets;
+    char                        _padding[6];
+    uint16_t                    thread_id;
+}                               t_thread_data;
+
 typedef struct                  s_nmap
 {
     t_list                      *threads;
