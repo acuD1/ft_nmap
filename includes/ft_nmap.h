@@ -169,11 +169,11 @@ typedef struct                  s_target_data
 
 typedef struct                  s_nmap
 {
+    t_list                      *threads;
     t_list                      *targets;
-    uint16_t                    threads;
     uint8_t                     scan;
     uint8_t                     options;
-    char                        pad[4];
+    char                        pad[6];
     struct sockaddr_storage     local;
 }                               t_nmap;
 
