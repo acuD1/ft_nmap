@@ -210,6 +210,9 @@ bool                            is_exit_state(t_lexer *lexer);
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
 void                            display_token(void *data);
+void                            debug_ports(t_list *ports);
+void                            debug_targets(void *data);
+void                            debug_threads(t_nmap *nmap);
 
 /* DEV */
 
