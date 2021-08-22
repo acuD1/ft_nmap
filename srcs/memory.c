@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:43:16 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/15 14:11:39 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/08/22 18:25:38 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,16 @@ static void                     del_target_data(void *data)
     ft_lstdel(&target_data->ports, NULL);
 }
 
+static void                     del_thread_data(void *data)
+{
+    t_thread_data *thread_data;
+
+    thread_data = data;
+    ft_lstdel(&thread_data->targets, del_target_data);
+}
 
 void                            free_nmap(t_nmap *nmap)
 {
     ft_lstdel(&nmap->targets, del_target_data);
+    ft_lstdel(&nmap->threads, del_thread_data);
 }
