@@ -18,7 +18,16 @@ void __attribute__ ((noreturn)) exit_routine(t_nmap *nmap, uint8_t status)
     exit(status);
 }
 
-void    free_nmap(t_nmap *nmap)
+static void                     del_target_data(void *data)
+{
+    t_target_data *target_data;
+
+    target_data = data;
+    ft_lstdel(&target_data->ports, NULL);
+}
+
+
+void                            free_nmap(t_nmap *nmap)
 {
     ft_lstdel(&nmap->targets, del_target_data);
 }

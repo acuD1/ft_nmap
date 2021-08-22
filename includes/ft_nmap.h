@@ -198,7 +198,6 @@ void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
-void                            del_target_data(void *data);
 void                            print_target(void *data);
 
 /* LEXER */
