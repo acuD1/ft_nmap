@@ -29,6 +29,23 @@ static void threads_generator(t_nmap *nmap, pthread_t *pthreads)
     }
 }
 
+static void threads_gatherer(t_nmap *nmap, pthread_t *pthreads)
+{
+    t_thread_data   *tmp    = NULL;
+    int             status  = 0;
+
+    for (t_list *threads = nmap->threads; threads; threads = threads->next)
+    {
+        tmp = (t_thread_data *)threads->data;
+        if ((status = pthread_join(pthreads[tmp->thread_id], NULL)) != SUCCESS)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: pthread_join(): %s", strerror(status));
+            ft_memdel((void *)&pthreads);
+            exit_routine(nmap, FAILURE);
+        }
+        dprintf(STDERR_FILENO, "[DEBUG] Thread -%hu- terminated !\n", tmp->thread_id);
+    }
+}
 
 void        exec_nmap(t_nmap *nmap)
 {
@@ -55,5 +72,6 @@ void        exec_nmap(t_nmap *nmap)
     */
 
     threads_generator(nmap, pthreads);
+    threads_gatherer(nmap, pthreads);
     ft_memdel((void *)&pthreads);
 }
