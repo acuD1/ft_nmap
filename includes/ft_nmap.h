@@ -220,4 +220,6 @@ void                            debug_threads(t_nmap *nmap);
 
 /* DEV */
 
+void                            *DEV_exec_thread(void *data);
+
 #endif

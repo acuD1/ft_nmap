@@ -12,6 +12,23 @@
 
 #include "ft_nmap.h"
 
+static void threads_generator(t_nmap *nmap, pthread_t *pthreads)
+{
+    t_thread_data   *tmp    = NULL;
+    int             status  = 0;
+
+    for (t_list *threads = nmap->threads; threads; threads = threads->next)
+    {
+        tmp = (t_thread_data *)threads->data;
+        if ((status = pthread_create(pthreads + tmp->thread_id, NULL, &DEV_exec_thread, (void *)tmp)) != SUCCESS)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: pthread_create(): %s", strerror(status));
+            ft_memdel((void *)&pthreads);
+            exit_routine(nmap, FAILURE);
+        }
+    }
+}
+
 
 void        exec_nmap(t_nmap *nmap)
 {
@@ -37,5 +54,6 @@ void        exec_nmap(t_nmap *nmap)
     ** THREADS DATA generator function here !
     */
 
+    threads_generator(nmap, pthreads);
     ft_memdel((void *)&pthreads);
 }
