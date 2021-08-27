@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/15 14:11:26 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/08/22 18:20:36 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,12 @@
 # include <ifaddrs.h>
 # include <linux/if_link.h>
 # include <net/if.h>
+# include <pthread.h>
 
 # define errno                  (*__errno_location ())
+
+# define MAX_SCAN               1024
+# define MAX_THREADS            MAX_SCAN
 
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
