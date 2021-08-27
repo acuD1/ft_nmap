@@ -12,17 +12,30 @@
 
 #include "ft_nmap.h"
 
-void    exec_nmap(t_nmap *nmap)
+
+void        exec_nmap(t_nmap *nmap)
 {
+    pthread_t   *pthreads = NULL;
+
     if (getuid() != 0)
     {
         dprintf(STDERR_FILENO, "ft_nmap: socket: Operation not permitted\n");
         exit_routine(nmap, FAILURE);
     }
-    dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
-        inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
-    ft_lstiter(nmap->targets, print_target);
 
-    if (nmap->options)
-    ft_lstiter_ctx(nmap->targets, nmap, send_target);
+    if (!(pthreads = ft_memalloc(sizeof(pthread_t) * ft_lstlen(nmap->threads))))
+    {
+        dprintf(STDERR_FILENO, "[FATAL] malloc error !\n");
+        exit_routine(nmap, FAILURE);
+    }
+
+    /* Disabled for now */
+    // if (nmap->options)
+    //     ft_lstiter_ctx(nmap->target, nmap, send_target);
+
+    /*
+    ** THREADS DATA generator function here !
+    */
+
+    ft_memdel((void *)&pthreads);
 }
