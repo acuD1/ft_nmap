@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/15 14:08:56 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/08/22 13:45:03 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,10 @@ static uint8_t get_threads(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
                 tmp->arg);
         return (set_opts_args_failure(opts));
     }
-    nmap->threads = (uint16_t)ft_atoi(tmp->arg);
+    (void)nmap;
+    /* Need rework here, t_list *threads will be fiil with ports parser @cempassi */
+    // if (!(nmap->threads = ft_memalloc(sizeof(nmap->threads) * (uint16_t)ft_atoi(tmp->arg) + 1)))
+    //     return (FAILURE);
     return (SUCCESS);
 }
 

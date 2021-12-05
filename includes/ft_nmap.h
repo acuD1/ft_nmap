@@ -167,13 +167,20 @@ typedef struct                  s_target_data
     t_list                      *ports;
 }                               t_target_data;
 
-typedef struct                  s_nmap
+typedef struct                  s_thread_data
 {
     t_list                      *targets;
-    uint16_t                    threads;
+    char                        _padding[6];
+    uint16_t                    thread_id;
+}                               t_thread_data;
+
+typedef struct                  s_nmap
+{
+    t_list                      *threads;
+    t_list                      *targets;
     uint8_t                     scan;
     uint8_t                     options;
-    char                        pad[4];
+    char                        pad[6];
     struct sockaddr_storage     local;
 }                               t_nmap;
 
@@ -191,7 +198,6 @@ void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
-void                            del_target_data(void *data);
 void                            print_target(void *data);
 
 /* LEXER */
@@ -204,6 +210,9 @@ bool                            is_exit_state(t_lexer *lexer);
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
 void                            display_token(void *data);
+void                            debug_ports(t_list *ports);
+void                            debug_targets(void *data);
+void                            debug_threads(t_nmap *nmap);
 
 /* DEV */
 
