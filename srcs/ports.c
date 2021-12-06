@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/26 14:11:27 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/06 17:27:25 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,14 +76,23 @@ static void tokenizer(t_lexer *lexer)
 
 static void process_range(t_lexer *lexer)
 {
-    if(ft_isdigit(lexer->source[0]) == true)
+    if (ft_isdigit(lexer->source[0]) == true)
     {
         vct_add(lexer->vector, lexer->source[0]);
         ++lexer->source;
     }
-    else if(lexer->source[0] == '\0')
+    else if (lexer->source[0] == '\0')
     {
         lexer->state = L_SET_END;
+    }
+    else if (lexer->source[0] == ',')
+    {
+        lexer->state = L_SET_END;
+        ++lexer->source;
+    }
+    else
+    {
+        lexer->state = L_ERROR;
     }
 }
 
@@ -115,5 +124,6 @@ t_list *parse_ports(char *ports)
         return (NULL);
     while (is_exit_state(&lexer) == false)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
+    vct_del(&lexer.vector);
     return (lexer.result);
 }
