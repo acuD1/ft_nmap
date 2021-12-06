@@ -67,7 +67,7 @@ Feature: Arguments
         """
         Then we get usage
         """
-        ft_nmap [--help] [--ports [NOMBRE/PLAGE]] --ip ADRESSE IP [--speedup [NOMBRE]] [--scan [TYPE]]
+        ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] [--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]
         """
 
     Scenario: run with the --help option
@@ -75,5 +75,5 @@ Feature: Arguments
         When we run the program
         Then we get usage
             """
-            ft_nmap [--help] [--ports [NOMBRE/PLAGE]] --ip ADRESSE IP [--speedup [NOMBRE]] [--scan [TYPE]]
+            ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] [--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]
             """
