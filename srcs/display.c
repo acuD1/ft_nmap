@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/22 18:28:26 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/06 16:46:31 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void    print_usage(void)
 {
     dprintf(STDOUT_FILENO, "%s%s",
-        "ft_nmap [--help] [--ports [NOMBRE/PLAGE]]",
+        "ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run]",
         " --ip ADRESSE IP [--speedup [NOMBRE]] [--scan [TYPE]]\n");
 }
 
