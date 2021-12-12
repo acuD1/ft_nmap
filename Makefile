@@ -44,6 +44,7 @@ F_C					=	\033[35;5;108m
 # Programms names
 
 NAME				=	ft_nmap
+NAME_DB				=	ft_nmapdb
 LNAME				=	libft.a
 
 # Build information that can be added the predefines buffer at compilation
@@ -51,15 +52,19 @@ LNAME				=	libft.a
 
 BUILD_BRANCH		=	$$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3)
 
-
 # Dir/Files Path (Do not modify)
 
 S_PATH				=	srcs/
 H_PATH				+=	includes/
 H_PATH				+=	libft/includes/
 B_PATH				=	build/
-O_PATH				=	build/objs/
 L_PATH				=	libft/
+
+# VPATH
+
+vpath %.c srcs
+vpath %.c srcs/ports
+vpath %.h includes
 
 ###############################################################################
 #                               Modifications                                 #
@@ -72,36 +77,30 @@ L_PATH				=	libft/
 PATHS				+=	$(B_PATH)
 PATHS				+=	$(O_PATH)
 
-# Files
-
-SRC					+= $(S_PATH)main.c
-SRC					+= $(S_PATH)memory.c
-SRC					+= $(S_PATH)opts_args.c
-SRC					+= $(S_PATH)display.c
-SRC					+= $(S_PATH)errors.c
-SRC					+= $(S_PATH)resolve.c
-SRC 				+= $(S_PATH)init.c
-SRC 				+= $(S_PATH)set_scan_type.c
-SRC 				+= $(S_PATH)exec_nmap.c
-SRC 				+= $(S_PATH)send_packets.c
-SRC 				+= $(S_PATH)ports.c
-SRC 				+= $(S_PATH)lexer_base.c
-SRC 				+= $(S_PATH)lexer_checks.c
-SRC 				+= $(S_PATH)tools.c
-
-# DEV
-
-SRC					+= $(S_PATH)dev.c
-
 # Headers
 
-HDR					+=	libft.h
 HDR					+=	ft_nmap.h
 
-# std
+# SOURCES
 
-# STD					+=	gnu17
+SRCM				+= main.c
 
+_SRCS				+= memory.c
+_SRCS				+= opts_args.c
+_SRCS				+= display.c
+_SRCS				+= errors.c
+_SRCS				+= resolve.c
+_SRCS 				+= init.c
+_SRCS 				+= set_scan_type.c
+_SRCS 				+= exec_nmap.c
+_SRCS 				+= send_packets.c
+_SRCS 				+= tools.c
+
+PORTS 				+= ports.c
+PORTS 				+= lexer_base.c
+PORTS 				+= lexer_checks.c
+
+SRCS 				= $(_SRCS) $(PORTS)
 
 ###############################################################################
 #                                                                             #
@@ -109,9 +108,9 @@ HDR					+=	ft_nmap.h
 
 # Objects
 
-OBJ					=	$(patsubst $(S_PATH)%.c, $(O_PATH)%.o, $(SRC))
-LIB					=	$(L_PATH)$(LNAME)
-vpath %.h $(H_PATH)
+OBJM					=	$(patsubst %.c, $(B_PATH)%.o, $(SRCM))
+OBJS					=	$(patsubst %.c, $(B_PATH)%.o, $(SRCS))
+LIB						=	$(L_PATH)$(LNAME)
 
 # Variables
 
@@ -126,6 +125,7 @@ else ifeq ($(DEBUG), hard)
 else ifeq ($(DEBUG), dev)
 	CFLAGS			=
 endif
+
 CC					=	clang $(CFLAGS)
 IFLAGS				+=	$(addprefix -I, $(H_PATH))
 CMPLC				=	$(CC) -c $(IFLAGS)
@@ -171,14 +171,18 @@ else
 TEST				=
 endif
 
-$(NAME): $(OBJ) $(TEST)
+$(NAME): $(OBJM) $(OBJS) $(TEST)
 	$(ECHO) $(GCFIL) $(NAME)
-	$(CMPLO) $(NAME) $(OBJ) $(LIB)
+	$(CMPLO) $(NAME) $(OBJS) $(OBJM) $(LIB)
 	$(GCSUC)
 	echo "---\nCFLAGS - =$(B_C) $(CFLAGS)$(RESET_C)\n---"
 	echo "\n$(G_C)[$(BUILD_BRANCH)] $(RESET_C) $@ is ready !"
 
-$(OBJ): $(O_PATH)%.o: $(S_PATH)%.c $(HDR)
+$(OBJS): $(B_PATH)%.o: %.c $(HDR)
+	$(CMPLC) $< -o $@
+	$(ECHO) $(GCFIL) $<
+
+$(OBJM): $(B_PATH)%.o: %.c $(HDR)
 	$(CMPLC) $< -o $@
 	$(ECHO) $(GCFIL) $<
 
