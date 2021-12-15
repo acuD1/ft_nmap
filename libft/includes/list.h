@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:18 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/23 14:26:37 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/15 22:56:17 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ void				ft_lstadd(t_list **alst, t_list *);
 void 				ft_lstfold(t_list *lst, void *acc,\
 							void (*f)(void *acc, void *data));
 void				ft_lstiter(t_list *lst, void (*f)(void *data));
-int					ft_lstiter_ctx(t_list *lst, void *context
-							, int (*f)(void *context, void *data));
+int		            ft_lstiter_ctx(t_list *lst, void *context
+				            , int (*f)(void *data, void* context));
 size_t				ft_lstlen(t_list *lst);
 t_list				*ft_lstmap(t_list *lst, void *context, t_lstmap func
 							, t_del del);
