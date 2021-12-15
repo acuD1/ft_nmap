@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/06 21:46:00 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/15 22:53:23 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@ void    print_usage(void)
     dprintf(STDOUT_FILENO, "%s%s",
         "ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] ",
         "[--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]\n");
+}
+
+void print_source_ip(t_nmap *nmap) {
+    dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
+        inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
 }
 
 void     print_unallowed_opt(t_opts_args *opts_args)
