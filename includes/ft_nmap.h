@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/15 14:11:26 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/15 00:46:06 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@
 # define RANGE_END              1
 # define UINT
 
+/* LEXER */
 typedef enum                    e_lexer_state{
     L_BASE,
     L_LBRACE,
