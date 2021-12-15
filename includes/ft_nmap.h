@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/15 00:46:06 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/15 22:49:12 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,16 +190,19 @@ void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
 void                            getaddrinfo_error_handler(char *arg, int status);
 uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
-void                            print_requires_arg_opt_long(char *current);
-void                            print_unallowed_opt(t_opts_args *opts_args);
-void                            print_usage(void);
 uint8_t                         resolve_target_ipv4(t_target_data *target_data, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
+
+/* Print */
 void                            print_target(void *data);
+void                            print_source_ip(t_nmap *nmap);
+void                            print_requires_arg_opt_long(char *current);
+void                            print_unallowed_opt(t_opts_args *opts_args);
+void                            print_usage(void);
 
 /* LEXER */
 t_list                          *parse_ports(char *ports);
