@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/18 14:36:40 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 16:14:59 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 #include "list.h"
 #include <strings.h>
 
-// - scan_thread
+// - scan_target
 //  - scan_thread
 //    - scan_port
 
-// t_list *generate_threads(t_list *target_ports, uint8_t port_per_thread)
+// static t_list *generate_threads(t_list *target_ports, uint8_t port_per_thread)
 // {
 //     t_list    *threads;
-//     t_thread  thread;
-//     uint8_t   port_nbr = 0;
 //     t_list    *single_port;
 //     t_list    *new_thread;
+//     t_thread  thread;
+//     uint8_t   port_nbr = 0;
 //
 //     threads = NULL;
 //
@@ -47,13 +47,13 @@
 //     }
 //
 //     return (threads);
-//}
+// }
 
 int scan_target(void *data, void *context)
 {
     t_target *target;
-    t_nmap *  nmap;
-    t_list *  threads;
+    t_nmap   *nmap;
+    t_list   *threads;
 
     nmap = context;
     target = data;
@@ -63,7 +63,6 @@ int scan_target(void *data, void *context)
     printf("Scanning target\n");
 
     // Thread repartition must happend here
-    // port_per_thread =
     // target + port_per_thread = list of threads
     return (SUCCESS);
 }
