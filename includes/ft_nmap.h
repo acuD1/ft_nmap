@@ -197,11 +197,24 @@ typedef struct                  s_thread
     struct sockaddr_storage     dst;
 }                               t_thread;
 
-typedef struct                  s_scan
+/*
+** A target is composed of:
+**      - destination ip
+**      - list of ports
+** Each target must be scanned separately
+** Multi target scan can only occur when reading targets from file
+** Port parser is in charge of validating that the list of ports is valid
+** (Less than 1024)
+*/
+typedef struct                  s_target
 {
-    uint8_t port;
-
-} t_scan;
+    t_list                      *ports;         // list of t_port(with ranges)
+    uint16_t                    port_nbr;          // Number of ports to scan
+    uint16_t                    port_per_thread;
+    uint16_t                    port_leftover;
+    uint8_t                     _padding[2];
+    struct sockaddr_storage     dst;
+}                               t_target;
 
 typedef struct                  s_nmap
 {
