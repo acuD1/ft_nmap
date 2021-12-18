@@ -6,11 +6,12 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 15:18:41 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 17:23:37 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+#include <stdio.h>
 
 void exec_nmap(t_nmap *nmap)
 {
@@ -24,8 +25,13 @@ void exec_nmap(t_nmap *nmap)
     print_source_ip(nmap);
 
     /* Portscan */
-    //if (nmap->options)
+    // if (nmap->options)
     /* The return has to be controlled here  */
-    ft_lstiter_ctx(nmap->targets, nmap, scan_target);
-
+    for (t_list *target = nmap->targets; target; target = target->next)
+    {
+        if(scan_target(target->data, nmap) == FAILURE)
+        {
+            dprintf(STDERR_FILENO, "[ERROR] on scan target\n");
+        }
+    }
 }

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 16:13:23 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 18:00:16 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,26 @@ typedef struct                  s_packet
     struct tcphdr               tcphdr;
 }                               t_packet;
 
+typedef struct                  s_scan
+{
+    uint8_t port;
+
+} t_scan;
+
+/*
+** A thread will iterate over its list of ports, and scan each.
+** Threads are generated per targets.
+** There cannot be more than 250 threads per target
+** The list of ports is a list of int.
+*/
+typedef struct                  s_thread
+{
+    t_list                      *ports;         // list of uint8_t(unique ports)
+    pthread_t                   id;
+    struct sockaddr_storage     src;
+    struct sockaddr_storage     dst;
+}                               t_thread;
+
 /*
 ** A target is composed of:
 **      - destination ip
@@ -179,29 +199,8 @@ typedef struct                  s_target
     uint16_t                    port_per_thread;
     uint16_t                    port_leftover;
     uint8_t                     _padding[2];
-    struct sockaddr_storage     dest;
-}                               t_target;
-
-/*
-** A thread will iterate over its list of ports, and scan each.
-** Threads are generated per targets.
-** There cannot be more than 250 threads per target
-** The list of ports is a list of int.
-*/
-typedef struct                  s_thread
-{
-    t_list                      *ports;         // list of uint8_t(unique ports)
-    char                        _padding[6];
-    pthread_t                   id;
-    struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
-}                               t_thread;
-
-typedef struct                  s_scan
-{
-    uint8_t port;
-
-} t_scan;
+}                               t_target;
 
 typedef struct                  s_nmap
 {
@@ -224,14 +223,17 @@ void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
-int scan_target(void *data, void *context);
+int                             scan_target(void *data, void *context);
+void                            delete_thread(void *data);
 
 /* Print */
 void                            print_target(void *data);
+void                            print_token(void *data);
 void                            print_source_ip(t_nmap *nmap);
 void                            print_requires_arg_opt_long(char *current);
 void                            print_unallowed_opt(t_opts_args *opts_args);
 void                            print_usage(void);
+void                            print_thread(void *data);
 
 /* LEXER */
 t_list                          *parse_ports(char *ports);
@@ -242,7 +244,6 @@ bool                            is_exit_state(t_lexer *lexer);
 
 /* DEBUG */
 void                            debug_scan_type(uint8_t scan);
-void                            display_token(void *data);
 void                            debug_ports(t_list *ports);
 void                            debug_targets(void *data);
 void                            debug_threads(t_nmap *nmap);
