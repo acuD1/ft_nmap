@@ -6,17 +6,20 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/15 22:52:26 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:16:51 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_NMAP_H
 # define FT_NMAP_H
 
+#include <pthread.h>
 # pragma clang diagnostic ignored "-Wreserved-id-macro"
 # define _GNU_SOURCE
 
 # include "libft.h"
+
+
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
@@ -178,21 +181,34 @@ typedef struct                  s_target
     t_list                      *ports;         // list of t_port(with ranges)
 }                               t_target;
 
-typedef struct                  s_thread_data
+/*
+** A thread will iterate over its list of ports, and scan each.
+** Threads are generated per targets.
+** There cannot be more than 250 threads per target
+** The list of ports is a list of int.
+*/
+typedef struct                  s_thread
 {
-    t_list                      *targets;
+    t_list                      *ports;         // list of uint8_t(unique ports)
     char                        _padding[6];
-    uint16_t                    thread_id;
-}                               t_thread_data;
+    pthread_t                   id;
+    struct sockaddr_storage     src;
+    struct sockaddr_storage     dst;
+}                               t_thread;
+
+typedef struct                  s_scan
+{
+    uint8_t port;
+
+} t_scan;
 
 typedef struct                  s_nmap
 {
-    t_list                      *threads;
     t_list                      *targets;
     uint8_t                     scan;
     uint8_t                     options;
     char                        pad[6];
-    struct sockaddr_storage     local;
+    struct sockaddr_storage     src;
 }                               t_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
@@ -200,7 +216,7 @@ void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
 void                            getaddrinfo_error_handler(char *arg, int status);
 uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
-uint8_t                         resolve_target_ipv4(t_target_data *target_data, char *arg);
+uint8_t                         resolve_target_ipv4(t_target *target_data, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
