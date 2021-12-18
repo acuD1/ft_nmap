@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 14:11:00 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 15:18:41 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void exec_nmap(t_nmap *nmap)
     print_source_ip(nmap);
 
     /* Portscan */
-    if (nmap->options)
-        /* The return has to be controlled here  */
-        ft_lstiter_ctx(nmap->targets, nmap, scan_target);
+    //if (nmap->options)
+    /* The return has to be controlled here  */
+    ft_lstiter_ctx(nmap->targets, nmap, scan_target);
 
 }
