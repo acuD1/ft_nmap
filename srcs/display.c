@@ -6,11 +6,12 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 14:13:10 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 18:01:01 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+#include "list.h"
 
 void print_usage(void)
 {
@@ -48,12 +49,41 @@ void print_target(void *data)
     t_target *target;
 
     target = data;
-    dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
-       inet_ntoa(((struct sockaddr_in *)&target->dest)->sin_addr));
-    ft_lstiter(target->ports, display_token);
+
+    dprintf(STDOUT_FILENO, "[DEBUG] --------- PRINTING TARGET ---------\t\t\t\n");
+    dprintf(STDOUT_FILENO, "[DEBUG] TARGET DEST\t\t\t-> |%s|\n",
+       inet_ntoa(((struct sockaddr_in *)&target->dst)->sin_addr));
+    dprintf(STDOUT_FILENO, "[DEBUG] TARGET PORT NBR\t\t\t-> |%u|\n",
+       target->port_nbr);
+    dprintf(STDOUT_FILENO, "[DEBUG] TARGET PORT PER THREAD\t\t-> |%u|\n",
+       target->port_per_thread);
+    dprintf(STDOUT_FILENO, "[DEBUG] TARGET PORT LEFTOVER\t\t-> |%u|\n",
+       target->port_leftover);
+    ft_lstiter(target->ports, print_token);
 }
 
-void display_token(void *data)
+static void print_port(void *data)
+{
+    u_int16_t *port;
+
+    port = data;
+    dprintf(STDOUT_FILENO, "[DEBUG] PORT %u\t\t\t\n", *port);
+
+
+}
+
+void print_thread(void *data)
+{
+    t_thread *thread;
+
+    thread = data;
+    dprintf(STDOUT_FILENO, "[DEBUG] --------- PRINTING THREAD ---------\t\t\t\n");
+    dprintf(STDOUT_FILENO, "[DEBUG] --------- PRINTING PORT ---------\t\t\t\n");
+    ft_lstiter(thread->ports, print_port);
+
+}
+
+void print_token(void *data)
 {
     t_port *port;
 
