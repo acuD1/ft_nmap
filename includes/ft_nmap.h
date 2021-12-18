@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 14:34:33 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 16:13:23 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,8 +175,10 @@ typedef struct                  s_packet
 typedef struct                  s_target
 {
     t_list                      *ports;         // list of t_port(with ranges)
-    uint8_t                     p_nbr;          // Number of ports to scan
-    uint8_t                     _padding[7];
+    uint16_t                    port_nbr;          // Number of ports to scan
+    uint16_t                    port_per_thread;
+    uint16_t                    port_leftover;
+    uint8_t                     _padding[2];
     struct sockaddr_storage     dest;
 }                               t_target;
 
@@ -206,7 +208,8 @@ typedef struct                  s_nmap
     t_list                      *targets;
     uint8_t                     scan;
     uint8_t                     options;
-    char                        pad[6];
+    uint16_t                    threads; //Nombre de thread (par target)
+    char                        pad[4];
     struct sockaddr_storage     src;
 }                               t_nmap;
 
