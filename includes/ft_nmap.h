@@ -6,18 +6,18 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 14:30:20 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:34:33 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_NMAP_H
 # define FT_NMAP_H
 
-#include <pthread.h>
 # pragma clang diagnostic ignored "-Wreserved-id-macro"
 # define _GNU_SOURCE
 
 # include "libft.h"
+# include <pthread.h>
 
 # include <arpa/inet.h>
 # include <netdb.h>
