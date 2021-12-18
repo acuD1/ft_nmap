@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/15 22:57:27 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:22:09 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,22 +47,22 @@ static uint8_t get_scan(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
 static uint8_t get_target_data_from_line(t_nmap *nmap, char *line, t_opts_args *opts)
 {
-    t_target_data target_data;
+    t_target target;
     t_list   *node;
     char     **tab;
 
-    ft_bzero(&target_data, sizeof(t_target_data));
+    ft_bzero(&target, sizeof(t_target));
     node = NULL;
     tab = NULL;
     if ((tab = ft_strsplit(line, ":")) == NULL)
         return (FAILURE);
     if (ft_tablen(tab) != 2)
         return (FAILURE);
-    if ((resolve_target_ipv4(&target_data, tab[0]) != SUCCESS))
+    if ((resolve_target_ipv4(&target, tab[0]) != SUCCESS))
         return (set_opts_args_failure(opts));
-    if ((target_data.ports = parse_ports(tab[1])) == NULL)
+    if ((target.ports = parse_ports(tab[1])) == NULL)
         return (set_opts_args_failure(opts));
-    if ((node = ft_lstnew(&target_data, sizeof(t_target_data))) == NULL)
+    if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
         return (set_opts_args_failure(opts));
     }
@@ -101,14 +101,14 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
 static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    t_target_data target_data;
+    t_target target;
     t_list * node;
 
-    ft_bzero(&target_data, sizeof(t_target_data));
+    ft_bzero(&target, sizeof(t_target));
     node = NULL;
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)) != NULL)
     {
-        if ((resolve_target_ipv4(&target_data, tmp->arg) != SUCCESS))
+        if ((resolve_target_ipv4(&target, tmp->arg) != SUCCESS))
             return (set_opts_args_failure(opts));
     }
     else
@@ -116,13 +116,13 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
     if ((tmp = get_opt_set_db(&opts->opt_set, PORTS_STR)) != NULL)
     {
-        if ((target_data.ports = parse_ports(tmp->arg)) == NULL)
+        if ((target.ports = parse_ports(tmp->arg)) == NULL)
         {
             return (set_opts_args_failure(opts));
         }
     }
 
-    if ((node = ft_lstnew(&target_data, sizeof(t_target_data))) == NULL)
+    if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
         return (set_opts_args_failure(opts));
     }
