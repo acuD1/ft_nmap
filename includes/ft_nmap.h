@@ -196,6 +196,7 @@ void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
+int scan_target(void *data, void *context);
 
 /* Print */
 void                            print_target(void *data);

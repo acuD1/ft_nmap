@@ -26,5 +26,7 @@ void exec_nmap(t_nmap *nmap)
 
     /* Portscan */
     if (nmap->options)
-        ft_lstiter_ctx(nmap->targets, nmap, send_target);
+        /* The return has to be controlled here  */
+        ft_lstiter_ctx(nmap->targets, nmap, scan_target);
+
 }
