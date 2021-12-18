@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/15 22:53:44 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:13:10 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void print_usage(void)
 void print_source_ip(t_nmap *nmap)
 {
     dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
-            inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
+            inet_ntoa(((struct sockaddr_in *)&nmap->src)->sin_addr));
 }
 
 void print_unallowed_opt(t_opts_args *opts_args)

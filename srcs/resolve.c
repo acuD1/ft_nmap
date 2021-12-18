@@ -64,7 +64,7 @@ uint8_t     resolve_local_ipv4(t_nmap *nmap)
             && !(ifa->ifa_flags & (IFF_LOOPBACK))
             && (ifa->ifa_flags & (IFF_RUNNING)))
         {
-            ((struct sockaddr_in *)&nmap->local)->sin_addr
+            ((struct sockaddr_in *)&nmap->src)->sin_addr
                 = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
         }
     }
