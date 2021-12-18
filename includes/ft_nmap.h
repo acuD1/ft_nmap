@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 14:16:51 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:30:20 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 
 # include "libft.h"
 
-
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
@@ -28,7 +27,6 @@
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <errno.h>
-# include <stdbool.h>
 # include <ifaddrs.h>
 # include <linux/if_link.h>
 # include <net/if.h>
@@ -176,9 +174,10 @@ typedef struct                  s_packet
 */
 typedef struct                  s_target
 {
-    struct sockaddr_storage     dest;
-    uint8_t                     p_nbr;          // Number of ports to scan
     t_list                      *ports;         // list of t_port(with ranges)
+    uint8_t                     p_nbr;          // Number of ports to scan
+    uint8_t                     _padding[7];
+    struct sockaddr_storage     dest;
 }                               t_target;
 
 /*
