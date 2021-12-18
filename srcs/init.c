@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 15:09:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/18 14:11:09 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 16:03:40 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 static void set_defaults(t_nmap *nmap)
 {
     ft_bzero(nmap, sizeof(t_nmap));
+    nmap->threads = DEFAULT_THREADS;
 }
 
 void     init_nmap(t_nmap *nmap, int argc, char **argv)
