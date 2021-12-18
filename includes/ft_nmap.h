@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/15 22:52:26 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:34:33 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # define _GNU_SOURCE
 
 # include "libft.h"
+# include <pthread.h>
+
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
@@ -25,7 +27,6 @@
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <errno.h>
-# include <stdbool.h>
 # include <ifaddrs.h>
 # include <linux/if_link.h>
 # include <net/if.h>
@@ -162,27 +163,51 @@ typedef struct                  s_packet
     struct tcphdr               tcphdr;
 }                               t_packet;
 
-typedef struct                  s_target_data
+/*
+** A target is composed of:
+**      - destination ip
+**      - list of ports
+** Each target must be scanned separately
+** Multi target scan can only occur when reading targets from file
+** Port parser is in charge of validating that the list of ports is valid
+** (Less than 1024)
+*/
+typedef struct                  s_target
 {
-    struct sockaddr_storage     target;
-    t_list                      *ports;
-}                               t_target_data;
+    t_list                      *ports;         // list of t_port(with ranges)
+    uint8_t                     p_nbr;          // Number of ports to scan
+    uint8_t                     _padding[7];
+    struct sockaddr_storage     dest;
+}                               t_target;
 
-typedef struct                  s_thread_data
+/*
+** A thread will iterate over its list of ports, and scan each.
+** Threads are generated per targets.
+** There cannot be more than 250 threads per target
+** The list of ports is a list of int.
+*/
+typedef struct                  s_thread
 {
-    t_list                      *targets;
+    t_list                      *ports;         // list of uint8_t(unique ports)
     char                        _padding[6];
-    uint16_t                    thread_id;
-}                               t_thread_data;
+    pthread_t                   id;
+    struct sockaddr_storage     src;
+    struct sockaddr_storage     dst;
+}                               t_thread;
+
+typedef struct                  s_scan
+{
+    uint8_t port;
+
+} t_scan;
 
 typedef struct                  s_nmap
 {
-    t_list                      *threads;
     t_list                      *targets;
     uint8_t                     scan;
     uint8_t                     options;
     char                        pad[6];
-    struct sockaddr_storage     local;
+    struct sockaddr_storage     src;
 }                               t_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
@@ -190,12 +215,13 @@ void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
 void                            getaddrinfo_error_handler(char *arg, int status);
 uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
-uint8_t                         resolve_target_ipv4(t_target_data *target_data, char *arg);
+uint8_t                         resolve_target_ipv4(t_target *target_data, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
+int scan_target(void *data, void *context);
 
 /* Print */
 void                            print_target(void *data);

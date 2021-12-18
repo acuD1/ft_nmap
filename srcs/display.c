@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/15 22:53:44 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 14:13:10 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void print_usage(void)
 void print_source_ip(t_nmap *nmap)
 {
     dprintf(STDOUT_FILENO, "[DEBUG] SOURCE IP\t\t\t-> |%s|\n",
-            inet_ntoa(((struct sockaddr_in *)&nmap->local)->sin_addr));
+            inet_ntoa(((struct sockaddr_in *)&nmap->src)->sin_addr));
 }
 
 void print_unallowed_opt(t_opts_args *opts_args)
@@ -45,12 +45,12 @@ void print_requires_arg_opt_long(char *current)
 
 void print_target(void *data)
 {
-    t_target_data *target_data;
+    t_target *target;
 
-    target_data = data;
+    target = data;
     dprintf(STDOUT_FILENO, "[DEBUG] TARGET IP\t\t\t-> |%s|\n",
-            inet_ntoa(((struct sockaddr_in *)&target_data->target)->sin_addr));
-    ft_lstiter(target_data->ports, display_token);
+       inet_ntoa(((struct sockaddr_in *)&target->dest)->sin_addr));
+    ft_lstiter(target->ports, display_token);
 }
 
 void display_token(void *data)
@@ -90,36 +90,5 @@ void debug_ports(t_list *ports)
             dprintf(STDERR_FILENO, "[DEBUG]\t\t\tE_PORT_RANGE\t-> |%d|-|%d|\n",
                     tmp_port->data.range[0], tmp_port->data.range[1]);
         tmp_ports = tmp_ports->next;
-    }
-}
-
-void debug_targets(void *data)
-{
-    t_thread_data *thread_data = (t_thread_data *)data;
-    t_target_data *target_data = NULL;
-    t_list *       tmp = thread_data->targets;
-
-    while (tmp)
-    {
-        target_data = (t_target_data *)thread_data->targets->data;
-        dprintf(
-            STDERR_FILENO, "[DEBUG]\t\tTarget\t\t\t-> |%s|\n",
-            inet_ntoa(((struct sockaddr_in *)&target_data->target)->sin_addr));
-        debug_ports(target_data->ports);
-        tmp = tmp->next;
-    }
-}
-
-void debug_threads(t_nmap *nmap)
-{
-    t_list *tmp = nmap->threads;
-
-    dprintf(STDERR_FILENO, "[DEBUG] ==== THREADS ====\n");
-    while (tmp)
-    {
-        dprintf(STDERR_FILENO, "[DEBUG]\tThread\t\t\t\t-> --%hu--\n",
-                ((t_thread_data *)tmp->data)->thread_id);
-        debug_targets(tmp->data);
-        tmp = tmp->next;
     }
 }

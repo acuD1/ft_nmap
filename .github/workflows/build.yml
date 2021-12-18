@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: setup
+      run: sudo apt-get install -y libpcap-dev
     - name: make
       run: make DEBUG=hard
     - name: env
