@@ -129,7 +129,7 @@ endif
 CC					=	clang $(CFLAGS)
 IFLAGS				+=	$(addprefix -I, $(H_PATH))
 CMPLC				=	$(CC) -c $(IFLAGS)
-CMPLO				=	$(CC) -o
+CMPLO				=	$(CC) -o 
 BUILD				=	$(PATHS)
 AR_RC				=	ar rc
 RANLI				=	ranlib
@@ -173,17 +173,17 @@ endif
 
 $(NAME): $(OBJM) $(OBJS) $(TEST)
 	$(ECHO) $(GCFIL) $(NAME)
-	$(CMPLO) $(NAME) $(OBJS) $(OBJM) $(LIB)
+	$(CMPLO) $(NAME) $(OBJS) $(OBJM) $(LIB) -lpcap
 	$(GCSUC)
 	echo "---\nCFLAGS - =$(B_C) $(CFLAGS)$(RESET_C)\n---"
 	echo "\n$(G_C)[$(BUILD_BRANCH)] $(RESET_C) $@ is ready !"
 
 $(OBJS): $(B_PATH)%.o: %.c $(HDR)
-	$(CMPLC) $< -o $@
+	$(CMPLC) $< -o $@ 
 	$(ECHO) $(GCFIL) $<
 
 $(OBJM): $(B_PATH)%.o: %.c $(HDR)
-	$(CMPLC) $< -o $@
+	$(CMPLC) $< -o $@ 
 	$(ECHO) $(GCFIL) $<
 
 $(PATHS):
