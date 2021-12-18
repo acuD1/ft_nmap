@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:29:50 by arsciand          #+#    #+#             */
-/*   Updated: 2021/08/15 14:10:39 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/15 22:56:50 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ static void send_tcp_packet(t_nmap *nmap, int sockfd, struct sockaddr_in *src,
     printf("[DEBUG] BYTES_SENT \t\t\t-> |%zd|\n", bytes_sent);
 }
 
-int send_target(void *context, void* data)
+int send_target(void* data, void *context)
 {
     t_target_data *target_data;
     t_nmap   *nmap;
