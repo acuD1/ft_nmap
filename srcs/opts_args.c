@@ -6,15 +6,16 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 14:22:09 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 16:06:01 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include "ft_nmap.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 static uint8_t set_opts_args_failure(t_opts_args *opts_args)
 {
@@ -31,10 +32,8 @@ static uint8_t get_threads(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
                 tmp->arg);
         return (set_opts_args_failure(opts));
     }
-    (void)nmap;
-    /* Need rework here, t_list *threads will be fiil with ports parser @cempassi */
-    // if (!(nmap->threads = ft_memalloc(sizeof(nmap->threads) * (uint16_t)ft_atoi(tmp->arg) + 1)))
-    //     return (FAILURE);
+    // FIXME: Protection thread max = 255
+    nmap->threads = (uint8_t)ft_atoi(tmp->arg);
     return (SUCCESS);
 }
 
@@ -45,11 +44,37 @@ static uint8_t get_scan(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     return (SUCCESS);
 }
 
-static uint8_t get_target_data_from_line(t_nmap *nmap, char *line, t_opts_args *opts)
+static void sum_ports(void *data, void *acc)
+{
+    t_port *  port;
+    uint16_t *port_number;
+
+    port = data;
+    port_number = acc;
+    if (port->type == E_PORT_SINGLE)
+        *port_number += 1;
+    else
+        *port_number += port->data.range[1] - port->data.range[0] + 1;
+}
+
+static uint8_t count_ports(t_nmap *nmap, t_target *target)
+{
+    ft_lstfold(target->ports, &(target->port_nbr), sum_ports);
+    if (target->port_nbr > 1024)
+        return (FAILURE);
+    target->port_per_thread = target->port_nbr / nmap->threads;
+    target->port_leftover = target->port_nbr % nmap->threads;
+    printf("port_number: %hu | port_per_thread: %hu | port_leftover: %hu\n",
+           target->port_nbr, target->port_per_thread, target->port_leftover);
+    return (SUCCESS);
+}
+
+static uint8_t get_target_data_from_line(t_nmap *nmap, char *line,
+                                         t_opts_args *opts)
 {
     t_target target;
-    t_list   *node;
-    char     **tab;
+    t_list * node;
+    char **  tab;
 
     ft_bzero(&target, sizeof(t_target));
     node = NULL;
@@ -62,6 +87,8 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line, t_opts_args *
         return (set_opts_args_failure(opts));
     if ((target.ports = parse_ports(tab[1])) == NULL)
         return (set_opts_args_failure(opts));
+    if (count_ports(nmap, &target) == FAILURE)
+        return (set_opts_args_failure(opts));
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
         return (set_opts_args_failure(opts));
@@ -73,7 +100,7 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line, t_opts_args *
 
 static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    int fd;
+    int   fd;
     char *line;
 
     fd = 0;
@@ -84,10 +111,11 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
         return (FAILURE);
     if ((tmp = get_opt_set_db(&opts->opt_set, FILE_STR)) == NULL)
         return (FAILURE);
-    else {
+    else
+    {
         if ((fd = open(tmp->arg, O_RDONLY)) == -1)
             return (FAILURE);
-        while(ft_getdelim(fd, &line, '\n') == 1)
+        while (ft_getdelim(fd, &line, '\n') == 1)
         {
             if (get_target_data_from_line(nmap, line, opts) == FAILURE)
                 return (FAILURE);
@@ -121,6 +149,11 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
             return (set_opts_args_failure(opts));
         }
     }
+    // FIXME: Default ports scan must run with the range 1-1024.
+    if (count_ports(nmap, &target) == FAILURE)
+    {
+        return (set_opts_args_failure(opts));
+    }
 
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
@@ -133,7 +166,7 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 static int validate_opt(void *data, void *context)
 {
     t_opt_set_db *option;
-    t_opts_conf  *config;
+    t_opts_conf * config;
 
     option = data;
     config = context;
