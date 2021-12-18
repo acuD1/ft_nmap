@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 16:06:01 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/18 18:04:42 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,12 @@ static void sum_ports(void *data, void *acc)
     if (port->type == E_PORT_SINGLE)
         *port_number += 1;
     else
-        *port_number += port->data.range[1] - port->data.range[0] + 1;
+    {
+        if (port->data.range[1] > port->data.range[0])
+            *port_number += port->data.range[1] - port->data.range[0] + 1;
+        else
+            *port_number += port->data.range[0] - port->data.range[1] + 1;
+    }
 }
 
 static uint8_t count_ports(t_nmap *nmap, t_target *target)
@@ -64,8 +69,6 @@ static uint8_t count_ports(t_nmap *nmap, t_target *target)
         return (FAILURE);
     target->port_per_thread = target->port_nbr / nmap->threads;
     target->port_leftover = target->port_nbr % nmap->threads;
-    printf("port_number: %hu | port_per_thread: %hu | port_leftover: %hu\n",
-           target->port_nbr, target->port_per_thread, target->port_leftover);
     return (SUCCESS);
 }
 
