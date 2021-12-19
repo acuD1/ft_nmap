@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:29:09 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 17:59:17 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/19 14:35:24 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
 
         if (argv[i][0] == '-' && !argv[i][1])
         {
-            if (!(ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
+            if ((ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
                 return (FAILURE);
             continue;
         }
@@ -205,7 +205,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
             i++;
             while (argv[i])
             {
-                if (!(ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
+                if ((ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
                     return (FAILURE);
                 i++;
 
@@ -238,7 +238,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
                 buffer[k] = '\0';
                 buffer_opt[0] = argv[i][1];
                 buffer_opt[1] = '\0';
-                if (!(ft_lstaddback(&opts_args->opt_set,
+                if ((ft_lstaddback(&opts_args->opt_set,
                         ft_lstnew(
                             fetch_set_opt(&opt_set_db, buffer_opt, buffer, (int)i),
                                 sizeof(t_opt_set_db)))))
@@ -269,7 +269,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
                     {
                         buffer[0] = argv[i][j];
                         buffer[1] = '\0';
-                        if (!(ft_lstaddback(&opts_args->opt_set,
+                        if ((ft_lstaddback(&opts_args->opt_set,
                             ft_lstnew(
                                 fetch_set_opt(&opt_set_db, buffer, argv[i + 1] ? argv[i + 1] : NULL, (int)i),
                                     sizeof(t_opt_set_db)))))
@@ -277,7 +277,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
                     }
                     else
                     {
-                        if (argv[i + 1] && !(ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i + 1], (int)i + 1), sizeof(t_args_db)))))
+                        if (argv[i + 1] && (ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i + 1], (int)i + 1), sizeof(t_args_db)))))
                             return (FAILURE);
                     }
                     i++;
@@ -304,7 +304,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
                             if (ft_strequ(opts_conf->allowed_opt_tab_arg[w], buffer))
                                 allowed_opt_tab_arg_found = TRUE;
 
-                    if (!(ft_lstaddback(&opts_args->opt_set,
+                    if ((ft_lstaddback(&opts_args->opt_set,
                         ft_lstnew(
                             fetch_set_opt(&opt_set_db, buffer,
                                 (argv[i + 1] && argv[i + 1][0] != '-'
@@ -328,7 +328,7 @@ uint8_t             ft_get_opts_args(t_opts_args *opts_args, t_opts_conf *opts_c
             }
         }
         else
-            if (!(ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
+            if ((ft_lstaddback(&opts_args->args, ft_lstnew(fetch_args(&args_db, argv[i], (int)i), sizeof(t_args_db)))))
                 return (FAILURE);
     }
     return (SUCCESS);

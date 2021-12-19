@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:21 by cempassi          #+#    #+#             */
-/*   Updated: 2020/07/23 03:12:21 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/19 14:01:13 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ int		ft_lstaddback(t_list **alst, t_list *new)
 		while (holder->next != NULL)
 			holder = holder->next;
 		holder->next = new;
-		return (1);
+		return (0);
 	}
 	*alst = new;
-	return (1);
+	return (0);
 }

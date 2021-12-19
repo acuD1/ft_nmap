@@ -34,7 +34,8 @@ static void reset_thread(t_thread *thread)
 
 static uint8_t create_thread(t_list **threads, t_thread *thread_template)
 {
-    if (!ft_lstaddback(threads, ft_lstnew(thread_template, sizeof(t_thread))))
+    if (ft_lstaddback(threads, ft_lstnew(thread_template, sizeof(t_thread)))
+        != SUCCESS)
     {
         printf("[ERROR] Thread Creation FAILURE\n");
         return (FAILURE);
@@ -45,7 +46,7 @@ static uint8_t create_thread(t_list **threads, t_thread *thread_template)
 
 static uint8_t add_port(t_list **ports, uint16_t port)
 {
-    if (!ft_lstaddback(ports, ft_lstnew(&port, sizeof(uint16_t))))
+    if (ft_lstaddback(ports, ft_lstnew(&port, sizeof(uint16_t))) != SUCCESS)
     {
         printf("[ERROR] single port FAILURE\n");
         return (FAILURE);
