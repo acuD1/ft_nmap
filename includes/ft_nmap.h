@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 18:00:16 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/19 17:08:41 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 
 # include "libft.h"
 # include <pthread.h>
-
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
@@ -106,6 +105,8 @@
 # define RANGE_END              1
 # define UINT
 
+extern pthread_mutex_t g_lock;
+
 /* LEXER */
 typedef enum                    e_lexer_state{
     L_BASE,
@@ -178,10 +179,11 @@ typedef struct                  s_scan
 typedef struct                  s_thread
 {
     t_list                      *ports;         // list of uint8_t(unique ports)
-    pthread_t                   id;
     struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
 }                               t_thread;
+
+/*    liste pthread_t                   id; */
 
 /*
 ** A target is composed of:
