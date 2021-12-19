@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 18:01:01 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/19 14:27:02 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,6 @@ static void print_port(void *data)
 
     port = data;
     dprintf(STDOUT_FILENO, "[DEBUG] PORT %u\t\t\t\n", *port);
-
-
 }
 
 void print_thread(void *data)
@@ -80,7 +78,6 @@ void print_thread(void *data)
     dprintf(STDOUT_FILENO, "[DEBUG] --------- PRINTING THREAD ---------\t\t\t\n");
     dprintf(STDOUT_FILENO, "[DEBUG] --------- PRINTING PORT ---------\t\t\t\n");
     ft_lstiter(thread->ports, print_port);
-
 }
 
 void print_token(void *data)

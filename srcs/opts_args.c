@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 18:04:42 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/19 17:00:07 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,19 @@ static void sum_ports(void *data, void *acc)
 static uint8_t count_ports(t_nmap *nmap, t_target *target)
 {
     ft_lstfold(target->ports, &(target->port_nbr), sum_ports);
+
     if (target->port_nbr > 1024)
         return (FAILURE);
-    target->port_per_thread = target->port_nbr / nmap->threads;
-    target->port_leftover = target->port_nbr % nmap->threads;
+    if (target->port_nbr <= nmap->threads)
+    {
+        target->port_per_thread = 1;
+        target->port_leftover = 0;
+    }
+    else
+    {
+        target->port_per_thread = target->port_nbr / nmap->threads;
+        target->port_leftover = target->port_nbr % nmap->threads;
+    }
     return (SUCCESS);
 }
 
