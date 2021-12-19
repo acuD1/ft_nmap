@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   portscan.c                                         :+:      :+:    :+:   */
+/*   scan_target.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/19 17:35:31 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/19 19:30:47 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static void init_thread(t_nmap *nmap, t_target *target, t_thread *thread)
     thread->ports = NULL;
     thread->src = nmap->src;
     thread->dst = target->dst;
+    thread->scan =nmap->scan;
 }
 
 static void reset_thread(t_thread *thread)
@@ -179,19 +180,6 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
         }
     }
     return (threads);
-}
-
-static void *scan_thread(void *data)
-{
-    t_thread *thread;
-
-    thread = data;
-    pthread_mutex_lock(&g_lock);
-    printf("[DEBUG IN THREAD] THREAD ID: %lu\n", pthread_self());
-    print_thread(data);
-    printf("--------------------- END OF THREAD --------------------- \n");
-    pthread_mutex_unlock(&g_lock);
-    pthread_exit(SUCCESS);
 }
 
 int scan_target(void *data, void *context)

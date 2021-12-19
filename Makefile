@@ -95,7 +95,8 @@ _SRCS 				+= set_scan_type.c
 _SRCS 				+= exec_nmap.c
 _SRCS 				+= send_packets.c
 _SRCS 				+= tools.c
-_SRCS 				+= portscan.c
+_SRCS 				+= scan_target.c
+_SRCS 				+= scan_thread.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c
