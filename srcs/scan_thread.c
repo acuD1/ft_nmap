@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/23 16:08:08 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/23 17:25:26 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,10 @@ static void init_udp_packet(t_thread *thread, t_udp_packet *template)
 static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
 {
     /* TCP Header */
-    pthread_mutex_lock(&g_nmap->lock);
-    template->tcpheader.th_sport  = htons(g_nmap->src_port++);
-    template->tcpheader.th_seq    = htonl(g_nmap->seq++);
-    pthread_mutex_unlock(&g_nmap->lock);
+    pthread_mutex_lock(&(g_nmap.lock));
+    template->tcpheader.th_sport  = htons(g_nmap.src_port++);
+    template->tcpheader.th_seq    = htonl(g_nmap.seq++);
+    pthread_mutex_unlock(&(g_nmap.lock));
     template->tcpheader.th_dport  = htons(port);
     template->tcpheader.th_off    = sizeof(t_tcpheader) / 4;
     setup_th_flags(template, scan);
@@ -100,9 +100,9 @@ static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
 static void update_udp(t_udp_packet *template, uint16_t port)
 {
     /* UDP Header */
-    pthread_mutex_lock(&g_nmap->lock);
-    template->udpheader.source       = htons(g_nmap->src_port++);
-    pthread_mutex_unlock(&g_nmap->lock);
+    pthread_mutex_lock(&(g_nmap.lock));
+    template->udpheader.source       = htons(g_nmap.src_port++);
+    pthread_mutex_unlock(&(g_nmap.lock));
     template->udpheader.dest         = htons(port);
     template->udpheader.len          = htons(8);
     template->udpheader.check        = in_cksum(template, sizeof(t_udp_packet));
@@ -201,14 +201,14 @@ void *scan_thread(void *data)
     dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n", pthread_self());
 
 	/* get network number and mask associated with capture device */
-    if (pcap_lookupnet(g_nmap->device, &net, &mask, errbuf) == -1)
+    if (pcap_lookupnet(g_nmap.device, &net, &mask, errbuf) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf, g_nmap->device);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf, g_nmap.device);
         pthread_exit(NULL);
     }
 
 	/* open capture device */
-    if (!(sniffer = pcap_open_live(g_nmap->device, TCP_MAXWIN, FALSE, 1000, errbuf)))
+    if (!(sniffer = pcap_open_live(g_nmap.device, TCP_MAXWIN, FALSE, 1000, errbuf)))
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_open_live(): %s\n", errbuf);
         pthread_exit(NULL);

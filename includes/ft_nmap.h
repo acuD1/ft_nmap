@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/23 16:17:14 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/23 17:21:19 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,6 +227,7 @@ typedef struct                  s_scan
 typedef struct                  s_thread
 {
     t_list                      *ports;         // list of uint8_t(unique ports)
+    t_list                      *results;
     int                         sockets[6];
     uint8_t                     scan;
     char                        _padding[7];
@@ -265,7 +266,7 @@ typedef struct                  s_nmap
     struct sockaddr_storage     src;
 }                               t_nmap;
 
-extern t_nmap_global            *g_nmap;
+extern t_nmap_global            g_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);

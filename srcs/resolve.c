@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 13:11:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/23 12:57:13 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/23 17:22:15 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ uint8_t     resolve_local_ipv4(t_nmap *nmap)
         {
             ((struct sockaddr_in *)&nmap->src)->sin_addr
                 = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
-            if (!(g_nmap->device = ft_strdup(ifa->ifa_name)))
+            if (!(g_nmap.device = ft_strdup(ifa->ifa_name)))
                 return (FAILURE);
         }
     }
