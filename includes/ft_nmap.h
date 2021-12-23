@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/19 17:08:41 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/23 16:17:14 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@
 
 # include "libft.h"
 # include <pthread.h>
+# include <pcap.h>
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
 # include <netinet/tcp.h>
+# include <netinet/udp.h>
 # include <netinet/ip.h>
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -35,6 +37,8 @@
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
 # define DEFAULT_SCAN           0x0040
+# define DEFAULT_SRC_PORT       33000
+# define DEFAULT_SEQ            42000
 
 /* OPTIONS */
 # define POSITION(x)            x
@@ -71,20 +75,30 @@
 /**/
 
 /* SCAN TYPES */
-# define WRONG_FORMAT           0x0001
-# define WRONG_TYPE             0x0002
+# define WRONG_FORMAT           0x01
+# define WRONG_TYPE             0x02
+
+
 # define SCAN_SYN               0x0001
 # define SCAN_SYN_STR           "SYN"
+
 # define SCAN_NULL              0x0002
 # define SCAN_NULL_STR          "NULL"
+
 # define SCAN_ACK               0x0004
 # define SCAN_ACK_STR           "ACK"
+
 # define SCAN_FIN               0x0008
 # define SCAN_FIN_STR           "FIN"
+
 # define SCAN_XMAS              0x0010
 # define SCAN_XMAS_STR          "XMAS"
+
 # define SCAN_UDP               0x0020
 # define SCAN_UDP_STR           "UDP"
+
+#define IP_HEADER_LEN 20
+
 # define ALLOWED_SCAN_TYPE      ((const char *[])   \
                                 {                   \
                                     SCAN_SYN_STR,   \
@@ -104,6 +118,8 @@
 # define RANGE_START            0
 # define RANGE_END              1
 # define UINT
+# define TCP_PACKET_SIZE            sizeof(struct iphdr) + sizeof(struct tcphdr)
+
 typedef struct                  s_nmap_global
 {
     char                        *device;
@@ -262,7 +278,9 @@ void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
+void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
+uint8_t                         scan_ports(t_thread *thread);
 void                            delete_thread(void *data);
 
 /* Print */
