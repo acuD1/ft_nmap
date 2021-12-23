@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/23 17:25:26 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/23 18:08:12 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,29 +65,33 @@ static void setup_th_flags(t_tcp_packet *template, t_scan_type scan)
 //   -sO: IP protocol scan
 //   -b <FTP relay host>: FTP bounce scan
 
-static void init_tcp_packet(t_thread *thread, t_tcp_packet *template)
+static void init_tcp_packet(t_thread *thread, t_tcp_packet *template, t_scan_type scan)
 {
     /* Pseudo Header */
     template->saddr            = ((struct sockaddr_in *)&(thread->src))->sin_addr.s_addr;
     template->daddr            = ((struct sockaddr_in *)&(thread->dst))->sin_addr.s_addr;
     template->protocol         = IPPROTO_TCP;
     template->tot_len          = htons(sizeof(t_tcpheader));
+    pthread_mutex_lock(&(g_nmap.lock));
+    template->tcpheader.th_sport  = htons(g_nmap.src_port + (uint16_t)scan);
+    pthread_mutex_unlock(&(g_nmap.lock));
 }
 
-static void init_udp_packet(t_thread *thread, t_udp_packet *template)
+static void init_udp_packet(t_thread *thread, t_udp_packet *template, t_scan_type scan)
 {
     /* Pseudo Header */
     template->saddr            = ((struct sockaddr_in *)&(thread->src))->sin_addr.s_addr;
     template->daddr            = ((struct sockaddr_in *)&(thread->dst))->sin_addr.s_addr;
     template->protocol         = IPPROTO_UDP;
     template->tot_len          = htons(sizeof(t_udpheader));
+    pthread_mutex_lock(&(g_nmap.lock));
+    template->udpheader.source       = htons(g_nmap.src_port + (uint16_t)scan);
+    pthread_mutex_unlock(&(g_nmap.lock));
 }
 
 static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
 {
     /* TCP Header */
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->tcpheader.th_sport  = htons(g_nmap.src_port++);
     template->tcpheader.th_seq    = htonl(g_nmap.seq++);
     pthread_mutex_unlock(&(g_nmap.lock));
     template->tcpheader.th_dport  = htons(port);
@@ -100,9 +104,7 @@ static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
 static void update_udp(t_udp_packet *template, uint16_t port)
 {
     /* UDP Header */
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->udpheader.source       = htons(g_nmap.src_port++);
-    pthread_mutex_unlock(&(g_nmap.lock));
+
     template->udpheader.dest         = htons(port);
     template->udpheader.len          = htons(8);
     template->udpheader.check        = in_cksum(template, sizeof(t_udp_packet));
@@ -114,7 +116,7 @@ static uint8_t send_tcp(t_thread *thread, t_scan_type scan)
     ssize_t         bytes_sent  = 0;
 
     ft_bzero(&template, sizeof(template));
-    init_tcp_packet(thread, &template);
+    init_tcp_packet(thread, &template, scan);
     if (setup_sockfd((struct sockaddr_in *)&(thread->dst), thread->sockets + scan, IPPROTO_TCP) != SUCCESS)
         return (FAILURE);
     for(t_list *tmp = thread->ports; tmp; tmp = tmp->next)
@@ -140,7 +142,7 @@ static uint8_t send_udp(t_thread *thread, t_scan_type scan)
     ssize_t         bytes_sent  = 0;
 
     ft_bzero(&template, sizeof(template));
-    init_udp_packet(thread, &template);
+    init_udp_packet(thread, &template, scan);
     if (setup_sockfd((struct sockaddr_in *)&(thread->dst), thread->sockets + scan, IPPROTO_UDP) != SUCCESS)
         return (FAILURE);
     for(t_list *tmp = thread->ports; tmp; tmp = tmp->next)

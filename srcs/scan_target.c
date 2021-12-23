@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/23 17:45:37 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/23 18:02:44 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,8 @@ int scan_target(void *data, void *context)
     threads_id = NULL;
     print_target(target);
 
-    g_nmap.seq = 0;
+    g_nmap.seq      = 0;
+    g_nmap.src_port = DEFAULT_SRC_PORT;
     // 1: Ports repartition between treads
     init_thread(nmap, target, &thread_data_template); // Set base values
     if ((threads = generate_threads(target, &thread_data_template)) == NULL)
