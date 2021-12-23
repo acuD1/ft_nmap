@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/19 17:08:41 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/23 17:21:19 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@
 
 # include "libft.h"
 # include <pthread.h>
+# include <pcap.h>
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <stdbool.h>
 # include <netinet/tcp.h>
+# include <netinet/udp.h>
 # include <netinet/ip.h>
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -35,6 +37,8 @@
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
 # define DEFAULT_SCAN           0x0040
+# define DEFAULT_SRC_PORT       33000
+# define DEFAULT_SEQ            42000
 
 /* OPTIONS */
 # define POSITION(x)            x
@@ -71,20 +75,30 @@
 /**/
 
 /* SCAN TYPES */
-# define WRONG_FORMAT           0x0001
-# define WRONG_TYPE             0x0002
+# define WRONG_FORMAT           0x01
+# define WRONG_TYPE             0x02
+
+
 # define SCAN_SYN               0x0001
 # define SCAN_SYN_STR           "SYN"
+
 # define SCAN_NULL              0x0002
 # define SCAN_NULL_STR          "NULL"
+
 # define SCAN_ACK               0x0004
 # define SCAN_ACK_STR           "ACK"
+
 # define SCAN_FIN               0x0008
 # define SCAN_FIN_STR           "FIN"
+
 # define SCAN_XMAS              0x0010
 # define SCAN_XMAS_STR          "XMAS"
+
 # define SCAN_UDP               0x0020
 # define SCAN_UDP_STR           "UDP"
+
+#define IP_HEADER_LEN 20
+
 # define ALLOWED_SCAN_TYPE      ((const char *[])   \
                                 {                   \
                                     SCAN_SYN_STR,   \
@@ -104,8 +118,27 @@
 # define RANGE_START            0
 # define RANGE_END              1
 # define UINT
+# define TCP_PACKET_SIZE            sizeof(struct iphdr) + sizeof(struct tcphdr)
 
-extern pthread_mutex_t g_lock;
+typedef struct                  s_nmap_global
+{
+    char                        *device;
+    uint32_t                    seq;
+    uint16_t                    src_port;
+    char                        _padding[2];
+    pthread_mutex_t             lock;
+}                               t_nmap_global;
+
+typedef enum e_scan_type
+{
+    S_SYN,
+    S_NULL,
+    S_ACK,
+    S_FIN,
+    S_XMAS,
+    S_UDP,
+}           t_scan_type;
+
 
 /* LEXER */
 typedef enum                    e_lexer_state{
@@ -154,21 +187,36 @@ typedef struct                  s_lexer
     uint8_t                     _padding[4];
 }                               t_lexer;
 
-typedef struct                  s_packet
+
+// typedef struct iphdr       t_ipheader;
+typedef struct udphdr           t_udpheader;
+typedef struct tcphdr           t_tcpheader;
+
+typedef struct                  s_udp_packet
 {
     uint32_t                    saddr;
-	uint32_t                    daddr;
-	uint16_t                    tcp_len;
-	uint8_t                     tos;
-	uint8_t                     protocol;
-    struct tcphdr               tcphdr;
-}                               t_packet;
+    uint32_t                    daddr;
+    uint16_t                    tot_len;
+    uint8_t                     tos;
+    uint8_t                     protocol;
+    t_udpheader                 udpheader;
+}                               t_udp_packet;
+
+typedef struct                  s_tcp_packet
+{
+    uint32_t                    saddr;
+    uint32_t                    daddr;
+    uint16_t                    tot_len;
+    uint8_t                     tos;
+    uint8_t                     protocol;
+    t_tcpheader                 tcpheader;
+}                               t_tcp_packet;
+
 
 typedef struct                  s_scan
 {
     uint8_t port;
-
-} t_scan;
+}                               t_scan;
 
 /*
 ** A thread will iterate over its list of ports, and scan each.
@@ -179,6 +227,10 @@ typedef struct                  s_scan
 typedef struct                  s_thread
 {
     t_list                      *ports;         // list of uint8_t(unique ports)
+    t_list                      *results;
+    int                         sockets[6];
+    uint8_t                     scan;
+    char                        _padding[7];
     struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
 }                               t_thread;
@@ -214,6 +266,8 @@ typedef struct                  s_nmap
     struct sockaddr_storage     src;
 }                               t_nmap;
 
+extern t_nmap_global            g_nmap;
+
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
@@ -225,7 +279,9 @@ void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_nmap *nmap);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
+void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
+uint8_t                         scan_ports(t_thread *thread);
 void                            delete_thread(void *data);
 
 /* Print */
@@ -249,7 +305,6 @@ void                            debug_scan_type(uint8_t scan);
 void                            debug_ports(t_list *ports);
 void                            debug_targets(void *data);
 void                            debug_threads(t_nmap *nmap);
-
-/* DEV */
+const char                      *debug_scan(t_scan_type scan);
 
 #endif

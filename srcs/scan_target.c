@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   portscan.c                                         :+:      :+:    :+:   */
+/*   scan_target.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/19 17:35:31 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/23 18:02:44 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ static void init_thread(t_nmap *nmap, t_target *target, t_thread *thread)
     thread->ports = NULL;
     thread->src = nmap->src;
     thread->dst = target->dst;
+    thread->scan =nmap->scan;
 }
 
 static void reset_thread(t_thread *thread)
@@ -181,19 +182,6 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
     return (threads);
 }
 
-static void *scan_thread(void *data)
-{
-    t_thread *thread;
-
-    thread = data;
-    pthread_mutex_lock(&g_lock);
-    printf("[DEBUG IN THREAD] THREAD ID: %lu\n", pthread_self());
-    print_thread(data);
-    printf("--------------------- END OF THREAD --------------------- \n");
-    pthread_mutex_unlock(&g_lock);
-    pthread_exit(SUCCESS);
-}
-
 int scan_target(void *data, void *context)
 {
     t_target *target;
@@ -209,6 +197,8 @@ int scan_target(void *data, void *context)
     threads_id = NULL;
     print_target(target);
 
+    g_nmap.seq      = 0;
+    g_nmap.src_port = DEFAULT_SRC_PORT;
     // 1: Ports repartition between treads
     init_thread(nmap, target, &thread_data_template); // Set base values
     if ((threads = generate_threads(target, &thread_data_template)) == NULL)
