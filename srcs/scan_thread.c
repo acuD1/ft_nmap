@@ -111,10 +111,10 @@ void *scan_thread(void *data)
     char               errbuf[PCAP_ERRBUF_SIZE];
     struct bpf_program compiled_filter;
     //int                status = 0;
-    char               *filter_str;
 
     /* find a capture device if not specified on command-line */
-    printf("[DEBUG IN THREAD] THREAD ID: %lu\n", pthread_self()); // REMOVE!!!!!!!!!!!
+    dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n", pthread_self());
+
 	/* get network number and mask associated with capture device */
     if (pcap_lookupnet(device, &net, &mask, errbuf) == -1)
     {
@@ -153,17 +153,11 @@ void *scan_thread(void *data)
 
     /* Recieve packets */
 
-    pthread_mutex_lock(&g_lock);
-
-    print_thread(data);
-
-    pthread_mutex_unlock(&g_lock);
-
     /* Clean allocated ressources */
     if (compiled_filter.bf_insns)
         free(compiled_filter.bf_insns);
     pcap_close(sniffer);
     ft_strdel(&filter_str);
-    printf("--------------------- END OF THREAD --------------------- \n");
+    dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] END THREAD\n", pthread_self());
     pthread_exit(NULL);
 }
