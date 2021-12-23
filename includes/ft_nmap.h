@@ -104,6 +104,14 @@
 # define RANGE_START            0
 # define RANGE_END              1
 # define UINT
+typedef struct                  s_nmap_global
+{
+    char                        *device;
+    uint32_t                    seq;
+    uint16_t                    src_port;
+    char                        _padding[2];
+    pthread_mutex_t             lock;
+}                               t_nmap_global;
 
 extern pthread_mutex_t g_lock;
 
@@ -213,6 +221,8 @@ typedef struct                  s_nmap
     char                        pad[4];
     struct sockaddr_storage     src;
 }                               t_nmap;
+
+extern t_nmap_global            *g_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);
