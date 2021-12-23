@@ -103,27 +103,27 @@ uint8_t scan_ports(t_thread *thread)
 
 void *scan_thread(void *data)
 {
-    t_thread *         thread = data;
-    char *             device = "ens2"; /* capture device name, must */
-    pcap_t *           sniffer = NULL;
-    bpf_u_int32        mask = 0;
-    bpf_u_int32        net = 0;
-    char               errbuf[PCAP_ERRBUF_SIZE];
-    struct bpf_program compiled_filter;
+    t_thread            *thread     = data;
+    pcap_t              *sniffer    = NULL;
+    char                *filter_str = NULL;
+    bpf_u_int32         mask        = 0;
+    bpf_u_int32         net         = 0;
+    struct bpf_program  compiled_filter;
+    char                errbuf[PCAP_ERRBUF_SIZE];
     //int                status = 0;
 
     /* find a capture device if not specified on command-line */
     dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n", pthread_self());
 
 	/* get network number and mask associated with capture device */
-    if (pcap_lookupnet(device, &net, &mask, errbuf) == -1)
+    if (pcap_lookupnet(g_nmap->device, &net, &mask, errbuf) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf, device);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf, g_nmap->device);
         pthread_exit(NULL);
     }
 
 	/* open capture device */
-    if (!(sniffer = pcap_open_live(device, TCP_MAXWIN, FALSE, 1000, errbuf)))
+    if (!(sniffer = pcap_open_live(g_nmap->device, TCP_MAXWIN, FALSE, 1000, errbuf)))
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_open_live(): %s\n", errbuf);
         pthread_exit(NULL);
