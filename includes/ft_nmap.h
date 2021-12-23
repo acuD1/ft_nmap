@@ -162,21 +162,36 @@ typedef struct                  s_lexer
     uint8_t                     _padding[4];
 }                               t_lexer;
 
-typedef struct                  s_packet
+
+// typedef struct iphdr       t_ipheader;
+typedef struct udphdr           t_udpheader;
+typedef struct tcphdr           t_tcpheader;
+
+typedef struct                  s_udp_packet
 {
     uint32_t                    saddr;
-	uint32_t                    daddr;
-	uint16_t                    tcp_len;
-	uint8_t                     tos;
-	uint8_t                     protocol;
-    struct tcphdr               tcphdr;
-}                               t_packet;
+    uint32_t                    daddr;
+    uint16_t                    tot_len;
+    uint8_t                     tos;
+    uint8_t                     protocol;
+    t_udpheader                 udpheader;
+}                               t_udp_packet;
+
+typedef struct                  s_tcp_packet
+{
+    uint32_t                    saddr;
+    uint32_t                    daddr;
+    uint16_t                    tot_len;
+    uint8_t                     tos;
+    uint8_t                     protocol;
+    t_tcpheader                 tcpheader;
+}                               t_tcp_packet;
+
 
 typedef struct                  s_scan
 {
     uint8_t port;
-
-} t_scan;
+}                               t_scan;
 
 /*
 ** A thread will iterate over its list of ports, and scan each.
