@@ -259,7 +259,6 @@ void                            debug_scan_type(uint8_t scan);
 void                            debug_ports(t_list *ports);
 void                            debug_targets(void *data);
 void                            debug_threads(t_nmap *nmap);
-
-/* DEV */
+const char                      *debug_scan(t_scan_type scan);
 
 #endif

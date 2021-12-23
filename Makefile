@@ -93,10 +93,11 @@ _SRCS				+= resolve.c
 _SRCS 				+= init.c
 _SRCS 				+= set_scan_type.c
 _SRCS 				+= exec_nmap.c
-_SRCS 				+= send_packets.c
+# _SRCS 				+= send_packets.c
 _SRCS 				+= tools.c
 _SRCS 				+= scan_target.c
 _SRCS 				+= scan_thread.c
+_SRCS 				+= debug.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c
@@ -131,7 +132,7 @@ endif
 CC					=	clang $(CFLAGS)
 IFLAGS				+=	$(addprefix -I, $(H_PATH))
 CMPLC				=	$(CC) -c $(IFLAGS)
-CMPLO				=	$(CC) -o 
+CMPLO				=	$(CC) -o
 BUILD				=	$(PATHS)
 AR_RC				=	ar rc
 RANLI				=	ranlib
@@ -181,11 +182,11 @@ $(NAME): $(OBJM) $(OBJS) $(TEST)
 	echo "\n$(G_C)[$(BUILD_BRANCH)] $(RESET_C) $@ is ready !"
 
 $(OBJS): $(B_PATH)%.o: %.c $(HDR)
-	$(CMPLC) $< -o $@ 
+	$(CMPLC) $< -o $@
 	$(ECHO) $(GCFIL) $<
 
 $(OBJM): $(B_PATH)%.o: %.c $(HDR)
-	$(CMPLC) $< -o $@ 
+	$(CMPLC) $< -o $@
 	$(ECHO) $(GCFIL) $<
 
 $(PATHS):
