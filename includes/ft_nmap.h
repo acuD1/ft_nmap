@@ -113,7 +113,16 @@ typedef struct                  s_nmap_global
     pthread_mutex_t             lock;
 }                               t_nmap_global;
 
-extern pthread_mutex_t g_lock;
+typedef enum e_scan_type
+{
+    S_SYN,
+    S_NULL,
+    S_ACK,
+    S_FIN,
+    S_XMAS,
+    S_UDP,
+}           t_scan_type;
+
 
 /* LEXER */
 typedef enum                    e_lexer_state{
@@ -202,6 +211,9 @@ typedef struct                  s_scan
 typedef struct                  s_thread
 {
     t_list                      *ports;         // list of uint8_t(unique ports)
+    int                         sockets[6];
+    uint8_t                     scan;
+    char                        _padding[7];
     struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
 }                               t_thread;

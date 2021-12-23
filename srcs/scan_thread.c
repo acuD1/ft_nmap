@@ -74,30 +74,27 @@ static uint8_t send_tcp(t_thread *thread, t_scan_type scan)
 
 uint8_t scan_ports(t_thread *thread)
 {
+    if (thread->scan & DEFAULT_SCAN)
+    {
+        for (int i = 0; i < 5; i++)
+            if (send_tcp(thread, (t_scan_type)i) == FAILURE)
+                return (FAILURE);
+        if ((send_udp(thread, S_UDP) != SUCCESS))
+            return (FAILURE);
+        return (SUCCESS);
+    }
     if (thread->scan & SCAN_SYN)
-    {
-        send_tcp(thread, S_ACK);
-    }
+        send_tcp(thread, S_SYN);
     if (thread->scan & SCAN_NULL)
-    {
         send_tcp(thread, S_NULL);
-    }
     if (thread->scan & SCAN_ACK)
-    {
         send_tcp(thread, S_ACK);
-    }
     if (thread->scan & SCAN_FIN)
-    {
         send_tcp(thread, S_FIN );
-    }
     if (thread->scan & SCAN_XMAS)
-    {
-        send_tcp(thread, S_XMAS );
-    }
-    else
-    {
-    }
-
+        send_tcp(thread, S_XMAS);
+    if (thread->scan & SCAN_UDP)
+        send_udp(thread, S_UDP);
     return (SUCCESS);
 }
 
