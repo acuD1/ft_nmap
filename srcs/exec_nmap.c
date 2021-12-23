@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/18 17:23:37 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/23 17:40:50 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void exec_nmap(t_nmap *nmap)
     /* The return has to be controlled here  */
     for (t_list *target = nmap->targets; target; target = target->next)
     {
-        if(scan_target(target->data, nmap) == FAILURE)
+        if (scan_target(target->data, nmap) == FAILURE)
         {
             dprintf(STDERR_FILENO, "[ERROR] on scan target\n");
         }
