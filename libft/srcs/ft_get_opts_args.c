@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/19 17:29:09 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/19 14:35:24 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/23 13:19:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ t_args_db             *get_arg(t_list **alist_args, int argc)
     return (NULL);
 }
 
-static uint8_t       find_opt_set_db(void *current, void *to_find)
+static int       find_opt_set_db(void *current, void *to_find)
 {
     t_opt_set_db    *tmp_current = current;
     char            *tmp_to_find = to_find;
