@@ -228,6 +228,7 @@ typedef struct                  s_thread
 {
     t_list                      *ports;         // list of uint8_t(unique ports)
     t_list                      *results;
+    t_vector                    filter;
     int                         sockets[6];
     uint8_t                     scan;
     char                        _padding[7];

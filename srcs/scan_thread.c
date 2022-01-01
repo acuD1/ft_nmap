@@ -14,12 +14,6 @@
 #include "memory.h"
 #include "str.h"
 
-static char *generate_filter(t_thread *thread)
-{
-    (void)thread;
-    return ft_strdup("(tcp port 53 or 443) and (src 8.8.8.8 or 1.1.1.1)");
-}
-
 static uint8_t setup_sockfd(struct sockaddr_in *dst, int *sockfd, uint8_t protocol)
 {
     if ((*sockfd = socket(dst->sin_family, SOCK_RAW, protocol)) == -1)
@@ -192,7 +186,6 @@ void *scan_thread(void *data)
 {
     t_thread            *thread     = data;
     pcap_t              *sniffer    = NULL;
-    char                *filter_str = NULL;
     bpf_u_int32         mask        = 0;
     bpf_u_int32         net         = 0;
     struct bpf_program  compiled_filter;
@@ -201,6 +194,8 @@ void *scan_thread(void *data)
 
     /* find a capture device if not specified on command-line */
     dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n", pthread_self());
+
+    dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] FILTER |%s|\n", pthread_self(), thread->filter.buffer);
 
 	/* get network number and mask associated with capture device */
     if (pcap_lookupnet(g_nmap.device, &net, &mask, errbuf) == -1)
@@ -216,29 +211,23 @@ void *scan_thread(void *data)
         pthread_exit(NULL);
     }
 
-    /* Generate filter string at this point */
-    if((filter_str = generate_filter(thread)) == NULL)
-        pthread_exit(NULL);
-
 	/* compile the filter expression */
-    if (pcap_compile(sniffer, &compiled_filter, filter_str, TRUE, mask) == -1)
+    if (pcap_compile(sniffer, &compiled_filter, thread->filter.buffer, TRUE, mask) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_compile(): %s: %s\n", pcap_geterr(sniffer), filter_str);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_compile(): %s: %s\n", pcap_geterr(sniffer), thread->filter.buffer);
         pthread_exit(NULL);
     }
 
 	/* apply the compiled filter */
     if (pcap_setfilter(sniffer, &compiled_filter) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_setfilter(): %s: %s\n", pcap_geterr(sniffer), filter_str);
-        ft_strdel(&filter_str);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_setfilter(): %s: %s\n", pcap_geterr(sniffer), thread->filter.buffer);
         pthread_exit(NULL);
     }
 
     /* Send packets */
     if (scan_ports(thread) != SUCCESS)
     {
-        ft_strdel(&filter_str);
         if (compiled_filter.bf_insns)
             free(compiled_filter.bf_insns);
         pcap_close(sniffer);
@@ -252,7 +241,6 @@ void *scan_thread(void *data)
     if (compiled_filter.bf_insns)
         free(compiled_filter.bf_insns);
     pcap_close(sniffer);
-    ft_strdel(&filter_str);
     dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] END THREAD\n", pthread_self());
     pthread_exit(NULL);
 }
