@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/01 12:51:27 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/01 13:12:08 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ static uint8_t     reset_thread(t_thread *thread)
 {
     thread->ports           = NULL;
 	thread->filter.size     = DEFAULT_LEN_FILTER;
-	thread->filter.scale    = DEFAULT_VECTOR_SCALE;
-    if (!(thread->filter.buffer   = ft_strnew(DEFAULT_VECTOR_SCALE)))
+	thread->filter.scale    = DEFAULT_LEN_SCALE;
+    if (!(thread->filter.buffer   = ft_strnew(DEFAULT_LEN_FILTER)))
         return (FAILURE);
     return (SUCCESS);
 }
