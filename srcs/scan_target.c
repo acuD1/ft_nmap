@@ -6,19 +6,21 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/23 18:02:44 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/01 12:51:27 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 #include "list.h"
+#include "str.h"
+#include "vector.h"
 #include <pthread.h>
 #include <stdio.h>
 #include <strings.h>
 
 // - scan_target
-//  - scan_thread
-//    - scan_port
+//     - scan_thread
+//         - scan_port
 
 static uint8_t  init_thread(t_nmap *nmap, t_target *target, t_thread *thread)
 {
@@ -58,17 +60,18 @@ static uint8_t  create_thread(t_list **threads, t_thread *thread_template)
     return (SUCCESS);
 }
 
-static uint8_t add_port(t_list **ports, uint16_t port)
+static uint8_t  add_port(t_list **ports, uint16_t port)
 {
     if (ft_lstaddback(ports, ft_lstnew(&port, sizeof(uint16_t))) != SUCCESS)
     {
-        printf("[ERROR] single port FAILURE\n");
+        dprintf(STDERR_FILENO, "ft_nmap: add_port(): Malloc error\n");
         return (FAILURE);
     }
     return (SUCCESS);
 }
 
-static void set_range(t_port *target, uint16_t *min_port, uint16_t *max_port)
+static void     set_range(t_port *target, uint16_t *min_port,
+                            uint16_t *max_port)
 {
 
     if (target->data.range[1] > target->data.range[0])
@@ -97,12 +100,11 @@ static uint8_t  add_single_port_handler(t_thread *thread, uint16_t port)
 static uint8_t  dispatch_leftovers(t_list *ports, t_list *threads,
                                   uint16_t min_port)
 {
-    t_list * current_port = ports;
-    uint16_t holder;
-    uint16_t max_port = 0;
-    t_list   *tmp;
+    t_list   *current_port  = ports;
+    t_list   *tmp           = threads;
+    uint16_t max_port       = 0;
+    uint16_t holder         = 0;
 
-    tmp = threads;
     while(tmp && ports)
     {
         t_port *target_port = ports->data;
@@ -138,13 +140,12 @@ static uint8_t  dispatch_leftovers(t_list *ports, t_list *threads,
 
 static t_list *generate_threads(t_target *target, t_thread *thread_template)
 {
-    t_list * threads;
-    uint16_t port_nbr = 0;
-    uint16_t dispatched_ports = 0;
-    uint16_t min_port;
-    uint16_t max_port;
-
-    threads = NULL;
+    t_list      *threads            = NULL;
+    uint16_t    port_nbr            = 0;
+    uint16_t    dispatched_ports    = 0;
+    uint16_t    min_port            = 0;
+    uint16_t    max_port            = 0;
+    uint16_t    start_port          = 0;
 
     for (t_list *current = target->ports; current; current = current->next)
     {
@@ -226,21 +227,17 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
     return (threads);
 }
 
-int scan_target(void *data, void *context)
+int     scan_target(void *data, void *context)
 {
-    t_target *target;
-    t_nmap *  nmap;
-    t_list *  threads;
-    t_list *  threads_id;
+    t_nmap      *nmap       = context;
+    t_target    *target     = data;
+    t_list      *threads    = NULL;
+    t_list      *threads_id = NULL;
+    t_thread     thread_data_template;
 
-    t_thread thread_data_template;
-
-    nmap = context;
-    target = data;
-    threads = NULL;
-    threads_id = NULL;
     print_target(target);
 
+    // Reset global
     g_nmap.seq      = 0;
     g_nmap.src_port = DEFAULT_SRC_PORT;
 
@@ -261,8 +258,8 @@ int scan_target(void *data, void *context)
     for (t_list *tmp = threads; tmp; tmp = tmp->next)
     {
         // Thread identifier
-        pthread_t tid = 0;
-        int       result;
+        pthread_t   tid = 0;
+        int         result;
 
         result = pthread_create(&tid, NULL, scan_thread, tmp->data);
         if (result != SUCCESS
@@ -276,12 +273,12 @@ int scan_target(void *data, void *context)
         }
     }
 
-    // 4: Cleanup and exit
 
+    // 3: Join on each launched thread
     for (t_list *tmp = threads_id; tmp; tmp = tmp->next)
     {
-        pthread_t *tid;
-        int        result;
+        pthread_t   *tid = tmp->data;
+        int         result;
 
         result = pthread_join(*tid, NULL);
         if (result != SUCCESS)

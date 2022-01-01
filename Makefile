@@ -177,7 +177,7 @@ endif
 
 $(NAME): $(OBJM) $(OBJS) $(TEST)
 	$(ECHO) $(GCFIL) $(NAME)
-	$(CMPLO) $(NAME) $(OBJS) $(OBJM) $(LIB) -lpcap
+	$(CMPLO) $(NAME) $(OBJS) $(OBJM) $(LIB) -lpcap -lpthread
 	$(GCSUC)
 	echo "---\nCFLAGS - =$(B_C) $(CFLAGS)$(RESET_C)\n---"
 	echo "\n$(G_C)[$(BUILD_BRANCH)] $(RESET_C) $@ is ready !"

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/23 18:08:12 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/01 12:47:07 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ static uint8_t send_tcp(t_thread *thread, t_scan_type scan)
         return (FAILURE);
     for(t_list *tmp = thread->ports; tmp; tmp = tmp->next)
     {
-        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Sending packet to %s:%d |%s|\n",
+        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Sending packet to %s:%d\t|%s|\n",
                 pthread_self(), inet_ntoa(((struct sockaddr_in *)&(thread->dst))->sin_addr),
                 *(uint16_t *)tmp->data, debug_scan(scan));
 
@@ -141,7 +141,7 @@ static uint8_t send_udp(t_thread *thread, t_scan_type scan)
         return (FAILURE);
     for(t_list *tmp = thread->ports; tmp; tmp = tmp->next)
     {
-        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Sending packet to %s:%d |%s|\n",
+        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Sending packet to %s:%d\t|%s|\n",
                 pthread_self(), inet_ntoa(((struct sockaddr_in *)&(thread->dst))->sin_addr),
                 *(uint16_t *)tmp->data, debug_scan(scan));
 
@@ -190,7 +190,6 @@ void *scan_thread(void *data)
     bpf_u_int32         net         = 0;
     struct bpf_program  compiled_filter;
     char                errbuf[PCAP_ERRBUF_SIZE];
-    //int                status = 0;
 
     /* find a capture device if not specified on command-line */
     dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n", pthread_self());
