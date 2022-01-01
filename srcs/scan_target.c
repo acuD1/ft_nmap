@@ -43,15 +43,18 @@ static uint8_t     reset_thread(t_thread *thread)
     return (SUCCESS);
 }
 
-static uint8_t create_thread(t_list **threads, t_thread *thread_template)
+static uint8_t  create_thread(t_list **threads, t_thread *thread_template)
 {
-    if (ft_lstaddback(threads, ft_lstnew(thread_template, sizeof(t_thread)))
-        != SUCCESS)
+    if (ft_lstaddback(threads,
+            ft_lstnew(thread_template, sizeof(t_thread))) != SUCCESS)
     {
-        printf("[ERROR] Thread Creation FAILURE\n");
+        dprintf(STDERR_FILENO, "ft_nmap: create_thread(): Malloc error\n");
         return (FAILURE);
     }
-    reset_thread(thread_template);
+    if (reset_thread(thread_template) == FAILURE)
+        return (FAILURE);
+    if (generate_filter_protocol(thread_template) == FAILURE)
+        return (FAILURE);
     return (SUCCESS);
 }
 
@@ -80,7 +83,18 @@ static void set_range(t_port *target, uint16_t *min_port, uint16_t *max_port)
     }
 }
 
-static uint8_t dispatch_leftovers(t_list *ports, t_list *threads,
+static uint8_t  add_single_port_handler(t_thread *thread, uint16_t port)
+{
+    if (generator_filter_or(thread) == FAILURE)
+        return (FAILURE);
+    if (generate_filter_port_single(thread, port) == FAILURE)
+        return (FAILURE);
+    if (add_port(&thread->ports, port) == FAILURE)
+        return (FAILURE);
+    return (SUCCESS);
+}
+
+static uint8_t  dispatch_leftovers(t_list *ports, t_list *threads,
                                   uint16_t min_port)
 {
     t_list * current_port = ports;
@@ -95,7 +109,8 @@ static uint8_t dispatch_leftovers(t_list *ports, t_list *threads,
         if (target_port->type == E_PORT_SINGLE)
         {
             t_thread *thread = tmp->data;
-            if (add_port(&thread->ports, target_port->data.port) == FAILURE)
+            if (add_single_port_handler(thread,
+                    target_port->data.port) == FAILURE)
                 return (FAILURE);
         }
         else
@@ -107,7 +122,7 @@ static uint8_t dispatch_leftovers(t_list *ports, t_list *threads,
             while (min_port <= max_port && tmp)
             {
                 t_thread *thread = tmp->data;
-                if (add_port(&thread->ports, min_port) == FAILURE)
+                if (add_single_port_handler(thread, min_port) == FAILURE)
                     return (FAILURE);
                 tmp = tmp->next;
                 min_port++;
@@ -145,8 +160,11 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
             {
                 port_nbr++;
                 dispatched_ports++;
-                if (add_port(&thread_template->ports, target_port->data.port)
-                    == FAILURE)
+                if (add_port(&thread_template->ports,
+                        target_port->data.port) == FAILURE)
+                    return (NULL);
+                if (generate_filter_port_single(thread_template,
+                        target_port->data.port) == FAILURE)
                     return (NULL);
                 if (port_nbr == target->port_per_thread)
                 {
@@ -162,6 +180,7 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
             else
             {
                 set_range(target_port, &min_port, &max_port);
+                start_port = min_port;
                 while (min_port <= max_port)
                 {
                     port_nbr++;
@@ -170,6 +189,19 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
                         return (NULL);
                     if (port_nbr == target->port_per_thread)
                     {
+                        if (start_port != min_port)
+                        {
+                            if (generate_filter_port_range(thread_template,
+                                    start_port, min_port) == FAILURE)
+                                return (NULL);
+                        }
+                        else
+                        {
+                            if (generate_filter_port_single(thread_template,
+                                    min_port) == FAILURE)
+                                return (NULL);
+                        }
+                        start_port = min_port + 1;
                         if (create_thread(&threads, thread_template) == SUCCESS)
                             port_nbr = 0;
                         else
@@ -187,6 +219,8 @@ static t_list *generate_threads(t_target *target, t_thread *thread_template)
                     }
                 }
             }
+            if (port_nbr != 0)
+                generator_filter_or(thread_template);
         }
     }
     return (threads);
@@ -209,10 +243,19 @@ int scan_target(void *data, void *context)
 
     g_nmap.seq      = 0;
     g_nmap.src_port = DEFAULT_SRC_PORT;
+
+    // Set base values
+    init_thread(nmap, target, &thread_data_template);
+
+    if (generate_filter_protocol(&thread_data_template) == FAILURE)
+        return (FAILURE);
+
     // 1: Ports repartition between treads
-    init_thread(nmap, target, &thread_data_template); // Set base values
     if ((threads = generate_threads(target, &thread_data_template)) == NULL)
         return (FAILURE);
+
+    if (generate_filter_src(threads) == FAILURE)
+         return (FAILURE);
 
     // 2: Launch threads and collect their identifiers in a list of pthread_t
     for (t_list *tmp = threads; tmp; tmp = tmp->next)
