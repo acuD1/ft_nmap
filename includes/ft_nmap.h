@@ -284,6 +284,15 @@ void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
 uint8_t                         scan_ports(t_thread *thread);
 void                            delete_thread(void *data);
+uint8_t                         generate_filter_protocol(t_thread *thread);
+uint8_t                         generate_filter_port_single(t_thread *thread,
+                                                            uint16_t port);
+uint8_t                         generate_filter_port_range(t_thread *thread,
+                                                            uint16_t start,
+                                                            uint16_t end);
+uint8_t                         generate_filter_src(t_list *threads);
+uint8_t                         generator_filter_or(t_thread *thread);
+
 
 /* Print */
 void                            print_target(void *data);

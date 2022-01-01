@@ -98,6 +98,7 @@ _SRCS 				+= tools.c
 _SRCS 				+= scan_target.c
 _SRCS 				+= scan_thread.c
 _SRCS 				+= debug.c
+_SRCS 				+= generate_filter.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c
