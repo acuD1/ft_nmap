@@ -20,17 +20,27 @@
 //  - scan_thread
 //    - scan_port
 
-static void init_thread(t_nmap *nmap, t_target *target, t_thread *thread)
+static uint8_t  init_thread(t_nmap *nmap, t_target *target, t_thread *thread)
 {
-    thread->ports = NULL;
-    thread->src = nmap->src;
-    thread->dst = target->dst;
-    thread->scan =nmap->scan;
+    thread->ports           = NULL;
+    thread->src             = nmap->src;
+    thread->dst             = target->dst;
+    thread->scan            = nmap->scan;
+	thread->filter.size     = DEFAULT_LEN_FILTER;
+	thread->filter.scale    = DEFAULT_LEN_SCALE;
+    if (!(thread->filter.buffer   = ft_strnew(DEFAULT_LEN_FILTER)))
+        return (FAILURE);
+    return (SUCCESS);
 }
 
-static void reset_thread(t_thread *thread)
+static uint8_t     reset_thread(t_thread *thread)
 {
-    thread->ports = NULL;
+    thread->ports           = NULL;
+	thread->filter.size     = DEFAULT_LEN_FILTER;
+	thread->filter.scale    = DEFAULT_VECTOR_SCALE;
+    if (!(thread->filter.buffer   = ft_strnew(DEFAULT_VECTOR_SCALE)))
+        return (FAILURE);
+    return (SUCCESS);
 }
 
 static uint8_t create_thread(t_list **threads, t_thread *thread_template)
@@ -216,12 +226,12 @@ int scan_target(void *data, void *context)
             || ft_lstaddback(&threads_id, ft_lstnew(&tid, sizeof(pthread_t)))
                 != SUCCESS)
         {
+            ft_strdel(&thread_data_template.filter.buffer);
             ft_lstdel(&threads, delete_thread);
             ft_lstdel(&threads_id, NULL);
             return (FAILURE);
         }
     }
-    // 3: Join on each launched thread
 
     // 4: Cleanup and exit
 
@@ -230,14 +240,17 @@ int scan_target(void *data, void *context)
         pthread_t *tid;
         int        result;
 
-        tid = tmp->data;
         result = pthread_join(*tid, NULL);
         if (result != SUCCESS)
         {
+            ft_strdel(&thread_data_template.filter.buffer);
             ft_lstdel(&threads, delete_thread);
             ft_lstdel(&threads_id, NULL);
         }
     }
+
+    // 4: Cleanup and exit
+    ft_strdel(&thread_data_template.filter.buffer);
     ft_lstdel(&threads, delete_thread);
     ft_lstdel(&threads_id, NULL);
     return (SUCCESS);

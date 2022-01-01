@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:43:16 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/19 14:12:57 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/31 18:32:17 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void delete_thread(void *data)
     t_thread *thread;
 
     thread = data;
+    ft_strdel(&thread->filter.buffer);
     ft_lstdel(&thread->ports, NULL);
 }
 

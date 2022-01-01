@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/23 17:21:19 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/01 12:33:14 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 # define DEFAULT_SCAN           0x0040
 # define DEFAULT_SRC_PORT       33000
 # define DEFAULT_SEQ            42000
+# define DEFAULT_LEN_FILTER     54
+# define DEFAULT_LEN_SCALE      27
 
 /* OPTIONS */
 # define POSITION(x)            x
