@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:38 by cempassi          #+#    #+#             */
-/*   Updated: 2020/07/23 03:40:02 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/12/31 19:03:13 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int8_t		vct_reset(t_vector *vector)
 		return (0);
 	if (!(new = ft_strnew(DEFAULT_VECTOR_SIZE)))
 		return (-1);
-	ft_strdel(&(vector->buffer));
+	//ft_strdel(&(vector->buffer));
 	vector->buffer = new;
 	vector->size = DEFAULT_VECTOR_SIZE;
 	vector->scale = DEFAULT_VECTOR_SCALE;

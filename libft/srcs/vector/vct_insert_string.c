@@ -6,11 +6,12 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:37 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/25 21:22:59 by arsciand         ###   ########.fr       */
+/*   Updated: 2021/12/31 17:46:29 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "vector.h"
 
 /*
 **	Inserts the string `str` into the specified vector,
@@ -22,20 +23,11 @@
 int8_t	vct_insert_string(t_vector *vector,
 					char *str, uint64_t index)
 {
-	uint64_t	len;
-	uint64_t	idx;
-
-	if (index > vct_len(vector))
-		return (-1);
-	if ((vct_len(vector) + ft_strlen(str) + 1) >= vector->size)
-		vct_resize(vector, (vct_len(vector) + ft_strlen(str) + 2));
-	idx = 0;
-	len = ft_strlen(str);
-	shift_nright(vector, index, (uint32_t)len);
-	while (idx < len)
-	{
-		vector->buffer[index + idx] = str[idx];
-		idx++;
-	}
+    (void)index;
+    for (size_t i = 0 ; str[i]; i++)
+    {
+        if (vct_add(vector, str[i]) != SUCCESS)
+            return (-1);
+    }
 	return (0);
 }
