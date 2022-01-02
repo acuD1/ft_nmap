@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/01 12:47:07 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/02 14:32:11 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ static void init_udp_packet(t_thread *thread, t_udp_packet *template, t_scan_typ
 static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
 {
     /* TCP Header */
+    pthread_mutex_lock(&(g_nmap.lock));
     template->tcpheader.th_seq    = htonl(g_nmap.seq++);
     pthread_mutex_unlock(&(g_nmap.lock));
     template->tcpheader.th_dport  = htons(port);
