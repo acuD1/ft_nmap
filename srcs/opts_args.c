@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/19 17:00:07 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 15:22:46 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,32 +234,28 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     }
 
     if (ft_lstiter_ctx(opts_args.opt_set, &opts_conf, validate_opt) == FAILURE)
-    {
-        set_opts_args_failure(&opts_args);
-        exit_routine(nmap, EXIT_SUCCESS);
-    }
+        return (set_opts_args_failure(&opts_args));
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, HELP_STR)) != NULL)
     {
         print_usage();
+        free_opts_args(&opts_args);
         exit_routine(nmap, EXIT_SUCCESS);
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, DRY_STR)) != NULL)
-    {
         nmap->options |= DRY_OPT;
-    }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, THREADS_STR)) != NULL)
     {
         if (get_threads(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, SCAN_STR)) != NULL)
     {
         if (get_scan(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
     else
         nmap->scan = DEFAULT_SCAN; // Temporay fix
@@ -267,13 +263,14 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     if ((tmp = get_opt_set_db(&opts_args.opt_set, FILE_STR)) != NULL)
     {
         if (get_ip_file(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
     else
     {
         if (get_ip_cli(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
+
 
     // debug_scan_type(nmap->scan);    /* DEBUG */
     // debug_opts_args(&opts_args);    /* DEBUG */
