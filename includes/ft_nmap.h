@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/23 17:21:19 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/01 12:33:14 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@
 # define DEFAULT_SCAN           0x0040
 # define DEFAULT_SRC_PORT       33000
 # define DEFAULT_SEQ            42000
+# define DEFAULT_LEN_FILTER     54
+# define DEFAULT_LEN_SCALE      27
 
 /* OPTIONS */
 # define POSITION(x)            x
@@ -228,6 +230,7 @@ typedef struct                  s_thread
 {
     t_list                      *ports;         // list of uint8_t(unique ports)
     t_list                      *results;
+    t_vector                    filter;
     int                         sockets[6];
     uint8_t                     scan;
     char                        _padding[7];
@@ -283,6 +286,15 @@ void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
 uint8_t                         scan_ports(t_thread *thread);
 void                            delete_thread(void *data);
+uint8_t                         generate_filter_protocol(t_thread *thread);
+uint8_t                         generate_filter_port_single(t_thread *thread,
+                                                            uint16_t port);
+uint8_t                         generate_filter_port_range(t_thread *thread,
+                                                            uint16_t start,
+                                                            uint16_t end);
+uint8_t                         generate_filter_src(t_list *threads);
+uint8_t                         generator_filter_or(t_thread *thread);
+
 
 /* Print */
 void                            print_target(void *data);
