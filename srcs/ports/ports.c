@@ -6,16 +6,19 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/06 17:27:25 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 18:38:41 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+#include "list.h"
+#include "memory.h"
 #include <limits.h>
 #include <stdio.h>
 
 static uint8_t init_lexer(t_lexer *lexer, char *ports)
 {
+    ft_bzero(lexer, sizeof(t_lexer));
     lexer->result = NULL;
     lexer->state = L_BASE;
     if ((lexer->vector = vct_new(DEFAULT_VECTOR_SIZE)) == NULL)
@@ -116,14 +119,74 @@ static void out_lexer(t_lexer *lexer)
     lexer->state = L_FINISH;
 }
 
-t_list *parse_ports(char *ports)
+static int find_port(void *data, void *to_find)
+{
+    t_port *port = to_find;
+    t_port *current = data;
+    if (data == to_find)
+        return (0);
+    else if (port->type == E_PORT_SINGLE && current->type == E_PORT_SINGLE)
+    {
+        if (port->data.port == current->data.port)
+            return (1);
+    }
+    else if (port->type == E_PORT_SINGLE && current->type == E_PORT_RANGE)
+    {
+        uint16_t port_nbr = port->data.port;
+        uint16_t range_start = current->data.range[RANGE_START];
+        uint16_t range_end = current->data.range[RANGE_END];
+        if (port_nbr >= range_start && port_nbr <= range_end)
+            return (1);
+    }
+    else if (port->type == E_PORT_RANGE && current->type == E_PORT_RANGE)
+    {
+        uint16_t port_start = port->data.range[RANGE_START];
+        uint16_t port_end = port->data.range[RANGE_END];
+        uint16_t current_start = current->data.range[RANGE_START];
+        uint16_t current_end = current->data.range[RANGE_END];
+
+        if (port_start >= current_start && port_end <= current_end)
+            return (1);
+        if (port_start < current_start && port_end >= current_start && port_end <= current_end)
+        {
+            current->data.range[RANGE_START] = port_start;
+            return (1);
+        }
+        if (port_end > current_end && port_start >= current_start && port_start <= current_end)
+        {
+            current->data.range[RANGE_END] = port_end;
+            return (1);
+        }
+        if (port_start <= current_start && port_end >= current_end)
+        {
+            current->data.range[RANGE_START] = port_start;
+            current->data.range[RANGE_END] = port_end;
+            return (1);
+        }
+    }
+    return (0);
+}
+
+static int check_port(void *data, void *lst)
+{
+    return (ft_lstfind(lst, data, find_port) ? 1 : 0);
+}
+
+uint8_t parse_ports(t_target *target, char *ports)
 {
     t_lexer lexer;
 
     if (init_lexer(&lexer, ports) == FAILURE)
-        return (NULL);
+        return (FAILURE);
     while (is_exit_state(&lexer) == false)
         lexer.state == L_OUT ? out_lexer(&lexer) : process_lexer(&lexer);
     vct_del(&lexer.vector);
-    return (lexer.result);
+    if (lexer.state != L_FINISH)
+    {
+        ft_lstdel(&lexer.result, NULL);
+        return (FAILURE);
+    }
+    ft_lst_remove_self(&lexer.result, check_port);
+    target->ports = lexer.result;
+    return (SUCCESS);
 }
