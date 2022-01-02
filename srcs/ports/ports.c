@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/02 18:22:35 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 18:38:41 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,5 @@ uint8_t parse_ports(t_target *target, char *ports)
     }
     ft_lst_remove_self(&lexer.result, check_port);
     target->ports = lexer.result;
-    target->port_nbr = lexer.port_nbr;
     return (SUCCESS);
 }

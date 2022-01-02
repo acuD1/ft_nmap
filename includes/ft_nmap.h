@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/02 15:45:21 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 18:41:34 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,8 +186,7 @@ typedef struct                  s_lexer
     t_list                      *result;
     t_vector                    *vector;
     t_lexer_state               state;
-    uint16_t                    port_nbr;
-    uint8_t                     _padding[2];
+    uint8_t                     _padding[4];
 }                               t_lexer;
 
 
