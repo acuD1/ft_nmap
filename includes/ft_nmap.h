@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/01 12:33:14 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/02 15:45:21 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,8 @@ typedef struct                  s_lexer
     t_list                      *result;
     t_vector                    *vector;
     t_lexer_state               state;
-    uint8_t                     _padding[4];
+    uint16_t                    port_nbr;
+    uint8_t                     _padding[2];
 }                               t_lexer;
 
 
@@ -306,7 +307,7 @@ void                            print_usage(void);
 void                            print_thread(void *data);
 
 /* LEXER */
-t_list                          *parse_ports(char *ports);
+uint8_t                         parse_ports(t_target *target, char *ports);
 void                            process_base(t_lexer *lexer);
 bool                            is_set_state(t_lexer *lexer);
 bool                            is_source_finished(t_lexer *lexer);

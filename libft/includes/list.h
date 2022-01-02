@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:18 by cempassi          #+#    #+#             */
-/*   Updated: 2021/12/18 15:31:06 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 17:09:00 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,4 +71,5 @@ void				ft_stckinit(t_stack *stack);
 void				*ft_stcktop(t_stack *stack);
 void				ft_stckdestroy(t_stack *stack, void (*f)(void *));
 char				**ft_lsttotab(t_list *lst, char *(*f)(void *));
+void                ft_lst_remove_self(t_list **lst, t_cmp cmp);
 #endif
