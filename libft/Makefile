@@ -71,6 +71,7 @@ SRC += ft_lstmerge.c
 SRC += ft_lstmove_if.c
 SRC += ft_lstnew.c
 SRC += ft_lstremove_if.c
+SRC += ft_lst_remove_self.c
 SRC += ft_lstrev.c
 SRC += ft_lstsplit_if.c
 SRC += ft_lsttotab.c
