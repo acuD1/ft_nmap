@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/02 15:24:15 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 15:32:14 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,15 +95,28 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line,
     if ((tab = ft_strsplit(line, ":")) == NULL)
         return (FAILURE);
     if (ft_tablen(tab) != 2)
+    {
+        ft_freetab(&tab);
         return (FAILURE);
+    }
     if ((resolve_target_ipv4(&target, tab[0]) != SUCCESS))
+    {
+        ft_freetab(&tab);
         return (set_opts_args_failure(opts));
+    }
     if ((target.ports = parse_ports(tab[1])) == NULL)
+    {
+        ft_freetab(&tab);
         return (set_opts_args_failure(opts));
+    }
     if (count_ports(nmap, &target) == FAILURE)
+    {
+        ft_freetab(&tab);
         return (set_opts_args_failure(opts));
+    }
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
+        ft_freetab(&tab);
         return (set_opts_args_failure(opts));
     }
     ft_lstaddback(&nmap->targets, node);
@@ -131,7 +144,10 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
         while (ft_getdelim(fd, &line, '\n') == 1)
         {
             if (get_target_data_from_line(nmap, line, opts) == FAILURE)
+            {
+                ft_strdel(&line);
                 return (FAILURE);
+            }
             ft_strdel(&line);
         }
         ft_getdelim(-1, NULL, '\0');
@@ -236,32 +252,28 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     }
 
     if (ft_lstiter_ctx(opts_args.opt_set, &opts_conf, validate_opt) == FAILURE)
-    {
-        set_opts_args_failure(&opts_args);
-        exit_routine(nmap, EXIT_SUCCESS);
-    }
+        return (set_opts_args_failure(&opts_args));
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, HELP_STR)) != NULL)
     {
         print_usage();
+        free_opts_args(&opts_args);
         exit_routine(nmap, EXIT_SUCCESS);
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, DRY_STR)) != NULL)
-    {
         nmap->options |= DRY_OPT;
-    }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, THREADS_STR)) != NULL)
     {
         if (get_threads(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, SCAN_STR)) != NULL)
     {
         if (get_scan(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
     else
         nmap->scan = DEFAULT_SCAN; // Temporay fix
@@ -269,12 +281,12 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     if ((tmp = get_opt_set_db(&opts_args.opt_set, FILE_STR)) != NULL)
     {
         if (get_ip_file(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
     else
     {
         if (get_ip_cli(nmap, &opts_args, tmp) == FAILURE)
-            exit_routine(nmap, EXIT_SUCCESS);
+            return (set_opts_args_failure(&opts_args));
     }
 
     // debug_scan_type(nmap->scan);    /* DEBUG */
