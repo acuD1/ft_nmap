@@ -6,11 +6,12 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/19 17:00:07 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 15:24:15 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+#include "str.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -133,6 +134,7 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
                 return (FAILURE);
             ft_strdel(&line);
         }
+        ft_getdelim(-1, NULL, '\0');
         if (line)
             ft_strdel(&line);
     }

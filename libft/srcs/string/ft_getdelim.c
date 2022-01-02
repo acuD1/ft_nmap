@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:26 by cempassi          #+#    #+#             */
-/*   Updated: 2021/07/26 15:56:59 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/02 14:44:20 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,24 @@ static int		strmgmt(t_file *current, char **line, char *sub, char delim)
 	return (**line ? 1 : 0);
 }
 
+static void delete_file(void *data)
+{
+    t_file *file =  data;
+
+    ft_strdel(&file->str);
+}
+
 int				ft_getdelim(const int fd, char **line, char delim)
 {
-	char			buffer[BUFF_SIZE + 1];
 	static t_list	*lst = NULL;
+	char			buffer[BUFF_SIZE + 1];
 	t_file			*current;
 	int				result;
 
+    if (line == NULL && fd == -1) {
+        ft_lstdel(&lst, delete_file);
+        return (0);
+    }
 	if (fd < 0 || read(fd, buffer, 0) == -1
 		|| !(current = fd_manager(&lst, fd, lst)))
 		return (-1);
