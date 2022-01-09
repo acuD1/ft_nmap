@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 10:57:52 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 11:48:44 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,13 +131,10 @@
 # define S_UDP_ICMP_RESPONSE    6
 # define MAX_SCAN               7
 
-typedef struct                  s_nmap_global
-{
-    uint32_t                    seq;
-    uint16_t                    src_port;
-    char                        _padding[2];
-    pthread_mutex_t             lock;
-}                               t_nmap_global;
+// typedef struct                  s_nmap_global
+// {
+//     pthread_mutex_t             lock;
+// }                               t_nmap_global;
 
 typedef enum                    e_scan_type
 {
@@ -303,7 +300,7 @@ typedef struct                  s_nmap
     char                        pad[4];
 }                               t_nmap;
 
-extern t_nmap_global            g_nmap;
+// extern t_nmap_global            g_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:42:16 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 09:32:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 11:48:04 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,7 @@ static void init_udp_packet(t_thread *thread, t_udp_packet *template,
         = ((struct sockaddr_in *)&(thread->dst))->sin_addr.s_addr;
     template->protocol          = IPPROTO_UDP;
     template->tot_len           = htons(sizeof(t_udpheader));
-
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->udpheader.source  = htons(g_nmap.src_port + (uint16_t)scan);
-    pthread_mutex_unlock(&(g_nmap.lock));
+    template->udpheader.source  = htons(DEFAULT_SRC_PORT + (uint16_t)scan);
 }
 
 static void update_udp(t_udp_packet *template, uint16_t port,

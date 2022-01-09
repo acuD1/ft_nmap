@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:42:59 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 11:29:41 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 11:48:20 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,25 +46,19 @@ static void init_tcp_packet(t_thread *thread, t_tcp_packet *template,
         = ((struct sockaddr_in *)&(thread->src))->sin_addr.s_addr;
     template->daddr
         = ((struct sockaddr_in *)&(thread->dst))->sin_addr.s_addr;
-    template->protocol         = IPPROTO_TCP;
-    template->tot_len          = htons(sizeof(t_tcpheader));
-
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->tcpheader.th_sport  = htons(g_nmap.src_port + (uint16_t)scan);
-    pthread_mutex_unlock(&(g_nmap.lock));
+    template->protocol              = IPPROTO_TCP;
+    template->tot_len               = htons(sizeof(t_tcpheader));
+    template->tcpheader.th_sport    = htons(DEFAULT_SRC_PORT + (uint16_t)scan);
 }
 
 static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
 {
     /* TCP Header */
 
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->tcpheader.th_seq    = htonl(g_nmap.seq);
-    pthread_mutex_unlock(&(g_nmap.lock));
+    template->tcpheader.th_seq    = htonl(0);
     template->tcpheader.th_dport  = htons(port);
     template->tcpheader.th_off    = sizeof(t_tcpheader) / 4;
     setup_th_flags(template, scan);
-
     template->tcpheader.th_win    = htons(1024);
     template->tcpheader.th_sum    = in_cksum(template, sizeof(t_tcp_packet));
 }

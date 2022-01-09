@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 09:02:55 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 11:52:17 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void    exec_nmap(t_nmap *nmap)
         if (scan_target(target->data, nmap) == FAILURE)
         {
             dprintf(STDERR_FILENO, "ft_nmap: scan_target(): An error has occured\n");
+            exit_routine(nmap, EXIT_FAILURE);
         }
     }
 }
