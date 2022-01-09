@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 14:21:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:33:28 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,6 +263,8 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
 
     while (time < window && fds)
     {
+        if (g_nmap.is_canceld)
+                close_thread(sniffer, compiled_filter);
         if (poll(pfds, MAX_SCAN, window) > 0)
         {
             for (size_t i = 0; i < MAX_SCAN; i++)

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 17:29:20 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:34:15 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define FT_NMAP_H
 
 # pragma clang diagnostic ignored "-Wreserved-id-macro"
+# pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
 # define _GNU_SOURCE
 
 // #define DEBUG 1
@@ -137,6 +138,8 @@
 typedef struct                  s_nmap_global
 {
     pthread_mutex_t             lock;
+    uint8_t                     is_canceld;
+    char                        _padding[7];
 }                               t_nmap_global;
 
 typedef enum                    e_scan_type
@@ -346,6 +349,7 @@ uint8_t                         generate_threads(t_list **threads,
 const char                      *services_tcp(uint16_t port);
 const char                      *services_udp(uint16_t port);
 bool                            is_tcp_scan(uint8_t scan);
+void                            signal_handler(int signo);
 
 
 /* Print */
