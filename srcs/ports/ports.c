@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/02 18:38:41 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:07:30 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,11 @@ static void set_port(t_lexer *lexer)
     else if (lexer->state == L_SET_END)
         port = &lexer->tmp_port.data.range[RANGE_END];
     check = (uint32_t)ft_atoi(lexer->vector->buffer);
-    if (check > USHRT_MAX)
+    if (check > USHRT_MAX || ft_strlen(lexer->vector->buffer) > 5)
     {
         lexer->state = L_ERROR;
-        dprintf(STDERR_FILENO, "Port trop grand");
+        dprintf(STDERR_FILENO, "ft_nmap: port number too big, maximum is %i\n",
+                USHRT_MAX);
     }
     else
     {
