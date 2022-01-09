@@ -97,12 +97,14 @@ _SRCS 				+= exec_nmap.c
 _SRCS 				+= send_tcp.c
 _SRCS 				+= send_udp.c
 _SRCS 				+= scan_ports.c
+_SRCS 				+= setup_sockfd.c
 _SRCS 				+= tools.c
 _SRCS 				+= scan_target.c
 _SRCS 				+= scan_thread.c
 _SRCS 				+= debug.c
 _SRCS 				+= generate_filter.c
 _SRCS 				+= udp_payload.c
+_SRCS 				+= generate_threads.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c

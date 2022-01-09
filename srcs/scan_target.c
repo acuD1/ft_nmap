@@ -241,18 +241,12 @@ int     scan_target(void *data, void *context)
     g_nmap.seq      = 0;
     g_nmap.src_port = DEFAULT_SRC_PORT;
 
-    // Set base values
-    init_thread(nmap, target, &thread_data_template);
-
-    if (generate_filter_protocol(&thread_data_template) == FAILURE)
-        return (FAILURE);
-
     // 1: Ports repartition between treads
-    if ((threads = generate_threads(target, &thread_data_template)) == NULL)
+    if (generate_threads(&threads, target, nmap->scan) != SUCCESS)
+    {
+        ft_lstdel(&threads, delete_thread);
         return (FAILURE);
-
-    if (generate_filter_src(threads) == FAILURE)
-         return (FAILURE);
+    }
 
     // 2: Launch threads and collect their identifiers in a list of pthread_t
     for (t_list *tmp = threads; tmp; tmp = tmp->next)

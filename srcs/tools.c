@@ -32,6 +32,21 @@ uint16_t    in_cksum(void *buffer, size_t len)
 	return ((uint16_t)~sum);
 }
 
+bool   is_tcp_scan(uint8_t scan)
+{
+    if (scan & SCAN_SYN)
+        return (true);
+    if (scan & SCAN_ACK)
+        return (true);
+    if (scan & SCAN_FIN)
+        return (true);
+    if (scan & SCAN_XMAS)
+        return (true);
+    if (scan & SCAN_NULL)
+        return (true);
+    return (false);
+}
+
 uint8_t is_loopback(struct sockaddr_in *addr)
 {
     uint8_t first_byte = (uint8_t)(addr->sin_addr.s_addr);

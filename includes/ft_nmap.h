@@ -122,8 +122,7 @@
 
 # define RANGE_START            0
 # define RANGE_END              1
-# define UINT
-# define TCP_PACKET_SIZE            sizeof(struct iphdr) + sizeof(struct tcphdr)
+# define S_UDP_ICMP_RESPONSE    6
 
 typedef struct                  s_nmap_global
 {
@@ -134,7 +133,7 @@ typedef struct                  s_nmap_global
     pthread_mutex_t             lock;
 }                               t_nmap_global;
 
-typedef enum e_scan_type
+typedef enum                    e_scan_type
 {
     S_SYN,
     S_NULL,
@@ -142,6 +141,8 @@ typedef enum e_scan_type
     S_FIN,
     S_XMAS,
     S_UDP,
+}                               t_scan_type;
+
 typedef struct                  s_udp_payload
 {
     char                        *payload;
@@ -149,6 +150,14 @@ typedef struct                  s_udp_payload
     char                        _padding[6];
 }                               t_udp_payload;
 
+typedef enum                    e_port_status
+{
+    E_OPEN,
+    E_CLOSED,
+    E_FILTERED,
+    E_OPEN_FILTERED,
+    E_UNFILTERED,
+}                               t_port_status;
 
 
 /* LEXER */
@@ -229,6 +238,15 @@ typedef struct                  s_scan
     uint8_t port;
 }                               t_scan;
 
+typedef struct                  s_result
+{
+    t_port_status               status[6];
+    uint16_t                    port;
+    uint8_t                     scan;
+    char                        _padding[5];
+    struct sockaddr_storage     dst;
+}                               t_result;
+
 /*
 ** A thread will iterate over its list of ports, and scan each.
 ** Threads are generated per targets.
@@ -237,12 +255,12 @@ typedef struct                  s_scan
 */
 typedef struct                  s_thread
 {
-    t_list                      *ports;         // list of uint8_t(unique ports)
     t_list                      *results;
+    char                        *device;
     t_vector                    filter;
-    int                         sockets[6];
+    int                         sockets[7];
     uint8_t                     scan;
-    char                        _padding[7];
+    char                        _padding[3];
     struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
 }                               t_thread;
@@ -296,7 +314,8 @@ void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
 uint8_t                         scan_ports(t_thread *thread);
 void                            delete_thread(void *data);
-uint8_t                         generate_filter_protocol(t_thread *thread);
+uint8_t                         generate_filter_tcp_udp(t_thread *thread);
+uint8_t                         generate_filter_icmp(t_thread *thread);
 uint8_t                         generate_filter_port_single(t_thread *thread,
                                                             uint16_t port);
 uint8_t                         generate_filter_port_range(t_thread *thread,
@@ -304,12 +323,16 @@ uint8_t                         generate_filter_port_range(t_thread *thread,
                                                             uint16_t end);
 uint8_t                         generate_filter_src(t_list *threads);
 uint8_t                         generator_filter_or(t_thread *thread);
+uint8_t                         setup_sockfd(t_thread *thread, uint8_t scan);
 uint8_t                         send_udp(t_thread *thread, t_scan_type scan);
 uint8_t                         send_tcp(t_thread *thread, t_scan_type scan);
 uint8_t                         scan_ports(t_thread *thread);
 uint8_t                         is_loopback(struct sockaddr_in *addr);
 void                            udp_payload(t_udp_payload *udp_payload,
                                             uint16_t port);
+uint8_t                         generate_threads(t_list **threads,
+                                                 t_target *target,
+                                                 uint8_t scan);
 
 
 /* Print */
@@ -330,6 +353,8 @@ void                            debug_scan_type(uint8_t scan);
 void                            debug_ports(t_list *ports);
 void                            debug_targets(void *data);
 void                            debug_threads(t_nmap *nmap);
+bool                            is_tcp_scan(uint8_t scan);
+
 # ifdef DEBUG
 const char                      *debug_scan(t_scan_type scan);
 void                            debug_target(void *data);
