@@ -125,7 +125,7 @@ LIB						=	$(L_PATH)$(LNAME)
 # Variables
 
 DEBUG				=
-CFLAGS				=	-Wall -Wextra -Werror #-std=$(STD)
+CFLAGS				=	-Wall -Wextra -Werror
 ifeq ($(DEBUG), g)
 	CFLAGS			+=	-g
 else ifeq ($(DEBUG), fsanitize)

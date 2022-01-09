@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/02 18:41:34 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/09 10:57:52 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,25 @@
 # include <netinet/tcp.h>
 # include <netinet/udp.h>
 # include <netinet/ip.h>
+# include <netinet/ip_icmp.h>
+# include <net/ethernet.h>
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <errno.h>
 # include <ifaddrs.h>
 # include <linux/if_link.h>
 # include <net/if.h>
+# include <poll.h>
+# include <signal.h>
+# include <time.h>
 
 # define errno                  (*__errno_location ())
 
 /* DEFAULTS */
 # define DEFAULT_THREADS        1
-# define DEFAULT_SCAN           0x0040
 # define DEFAULT_SRC_PORT       33000
 # define DEFAULT_SEQ            42000
-# define DEFAULT_LEN_FILTER     54
+# define DEFAULT_LEN_FILTER     56
 # define DEFAULT_LEN_SCALE      27
 
 /* OPTIONS */
@@ -122,11 +126,13 @@
 
 # define RANGE_START            0
 # define RANGE_END              1
+# define MAX_MTU                1500
+# define TCP_PACKET_SIZE        sizeof(struct iphdr) + sizeof(struct tcphdr)
 # define S_UDP_ICMP_RESPONSE    6
+# define MAX_SCAN               7
 
 typedef struct                  s_nmap_global
 {
-    char                        *device;
     uint32_t                    seq;
     uint16_t                    src_port;
     char                        _padding[2];
