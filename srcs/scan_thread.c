@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 13:46:22 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 14:21:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -355,9 +355,9 @@ static uint8_t wait_udp_handler(void)
         return (FAILURE);
     }
 
-    start = ((double)udp_ready.tv_sec - (double)udp_ready.tv_sec) * 1000.0;
-    start += ((double)udp_ready.tv_usec - (double)udp_ready.tv_usec) / 1000.0;
-    start = end;
+    start = (double)udp_ready.tv_sec * 1000.0;
+    start += (double)udp_ready.tv_usec / 1000.0;
+    end = start;
 
     while (end - start < 1.0)
     {
@@ -367,8 +367,8 @@ static uint8_t wait_udp_handler(void)
                     strerror(errno));
             return (FAILURE);
         }
-        end = ((double)udp_ready.tv_sec - (double)start) * 1000.0;
-        end += ((double)udp_ready.tv_usec - (double)start) / 1000.0;
+        end = (double)udp_ready.tv_sec * 1000.0;
+        end += (double)udp_ready.tv_usec / 1000.0;
     }
 
     return (SUCCESS);
