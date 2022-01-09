@@ -1,0 +1,10 @@
+# RESET ALL TCP CONNECTIONS
+51.158.77.206
+# DROP ALL CONNECTIONS
+163.172.148.57
+# NO IPTABLES
+51.158.110.94
+# OPEN UDP PORT (123)
+45.33.32.156
+### Wireshark filter
+ip.addr == 51.158.77.206 || ip.addr == 8.8.8.8 || ip.addr == 163.172.148.57 || ip.addr == 51.158.110.94
