@@ -252,10 +252,12 @@ typedef struct                  s_thread
 typedef struct                  s_target
 {
     t_list                      *ports;         // list of t_port(with ranges)
+    char                        *device;
     uint16_t                    port_nbr;          // Number of ports to scan
     uint16_t                    port_per_thread;
     uint16_t                    port_leftover;
     uint8_t                     _padding[2];
+    struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
 }                               t_target;
 
@@ -266,7 +268,6 @@ typedef struct                  s_nmap
     uint8_t                     options;
     uint16_t                    threads; //Nombre de thread (par target)
     char                        pad[4];
-    struct sockaddr_storage     src;
 }                               t_nmap;
 
 extern t_nmap_global            g_nmap;
@@ -294,6 +295,7 @@ uint8_t                         generate_filter_port_range(t_thread *thread,
                                                             uint16_t end);
 uint8_t                         generate_filter_src(t_list *threads);
 uint8_t                         generator_filter_or(t_thread *thread);
+uint8_t                         is_loopback(struct sockaddr_in *addr);
 
 
 /* Print */

@@ -32,3 +32,10 @@ uint16_t    in_cksum(void *buffer, size_t len)
 	return ((uint16_t)~sum);
 }
 
+uint8_t is_loopback(struct sockaddr_in *addr)
+{
+    uint8_t first_byte = (uint8_t)(addr->sin_addr.s_addr);
+    if (first_byte == (uint8_t)0x7f || addr->sin_addr.s_addr == 0)
+        return (SUCCESS);
+    return (FAILURE);
+}

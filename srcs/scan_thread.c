@@ -197,15 +197,17 @@ void *scan_thread(void *data)
 
     dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] FILTER |%s|\n", pthread_self(), thread->filter.buffer);
 
-	/* get network number and mask associated with capture device */
-    if (pcap_lookupnet(g_nmap.device, &net, &mask, errbuf) == -1)
+    /* get network number and mask associated with capture device */
+    if (pcap_lookupnet(thread->device, &net, &mask, errbuf) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf, g_nmap.device);
-        pthread_exit(NULL);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf,
+                thread->device);
+        close_thread(sniffer, &compiled_filter);
     }
 
 	/* open capture device */
-    if (!(sniffer = pcap_open_live(g_nmap.device, TCP_MAXWIN, FALSE, 1000, errbuf)))
+    if (!(sniffer = pcap_open_live(thread->device, TCP_MAXWIN, FALSE, -1,
+                                   errbuf)))
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_open_live(): %s\n", errbuf);
         pthread_exit(NULL);

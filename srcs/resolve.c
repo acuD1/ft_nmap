@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 13:11:04 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/23 17:22:15 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/07 13:41:47 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,47 @@ uint8_t     resolve_target_ipv4(t_target *target, char *arg)
     return (SUCCESS);
 }
 
-uint8_t     resolve_local_ipv4(t_nmap *nmap)
+uint8_t     resolve_local_ipv4(t_target *target)
 {
     struct ifaddrs  *ifap   = NULL;
 
     if (getifaddrs(&ifap) == -1)
     {
-        printf("[DEBUG] getifaddrs(): ERROR: %s , errno %d\n", strerror(errno), errno);
-        exit_routine(nmap, FAILURE);
+        dprintf(STDERR_FILENO, "ft_nmap: getifaddrs(): %s\n", strerror(errno));
+        return (FAILURE);
     }
 
-    for (struct ifaddrs *ifa = ifap; ifa; ifa = ifa->ifa_next)
+
+    if (is_loopback((struct sockaddr_in *)&target->dst) == SUCCESS)
     {
-        if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET
-            && !(ifa->ifa_flags & (IFF_LOOPBACK))
-            && (ifa->ifa_flags & (IFF_RUNNING)))
+        for (struct ifaddrs *ifa = ifap; ifa; ifa = ifa->ifa_next)
         {
-            ((struct sockaddr_in *)&nmap->src)->sin_addr
-                = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
-            if (!(g_nmap.device = ft_strdup(ifa->ifa_name)))
-                return (FAILURE);
+            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET
+                && (ifa->ifa_flags & (IFF_LOOPBACK))
+                && (ifa->ifa_flags & (IFF_RUNNING)))
+            {
+                ((struct sockaddr_in *)&target->src)->sin_addr
+                    = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+                if (!(target->device= ft_strdup(ifa->ifa_name)))
+                    return (FAILURE);
+            }
         }
     }
-
+    else
+    {
+        for (struct ifaddrs *ifa = ifap; ifa; ifa = ifa->ifa_next)
+        {
+            if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET
+                && !(ifa->ifa_flags & (IFF_LOOPBACK))
+                && (ifa->ifa_flags & (IFF_RUNNING)))
+            {
+                ((struct sockaddr_in *)&target->src)->sin_addr
+                    = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+                if (!(target->device = ft_strdup(ifa->ifa_name)))
+                    return (FAILURE);
+            }
+        }
+    }
     freeifaddrs(ifap);
     return (SUCCESS);
 }
