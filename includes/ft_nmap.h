@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 11:48:44 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 14:03:30 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,10 @@
 # define S_UDP_ICMP_RESPONSE    6
 # define MAX_SCAN               7
 
-// typedef struct                  s_nmap_global
-// {
-//     pthread_mutex_t             lock;
-// }                               t_nmap_global;
+typedef struct                  s_nmap_global
+{
+    pthread_mutex_t             lock;
+}                               t_nmap_global;
 
 typedef enum                    e_scan_type
 {
@@ -300,22 +300,25 @@ typedef struct                  s_nmap
     char                        pad[4];
 }                               t_nmap;
 
-// extern t_nmap_global            g_nmap;
+extern t_nmap_global            g_nmap;
 
 void                            init_nmap(t_nmap *nmap, int ac, char **av);
 void                            exit_routine(t_nmap *nmap, uint8_t status);
 void                            free_nmap(t_nmap *nmap);
-void                            getaddrinfo_error_handler(char *arg, int status);
+void                            getaddrinfo_error_handler(char *arg,
+                                                          int status);
 uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
-uint8_t                         resolve_target_ipv4(t_target *target_data, char *arg);
-uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
+uint8_t                         resolve_target_ipv4(t_target *target_data,
+                                                    char *arg);
+uint8_t                         set_opts_args(t_nmap *nmap, int argc,
+                                              char **argv);
 void                            exec_nmap(t_nmap *nmap);
 uint8_t                         resolve_local_ipv4(t_target *target);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
 void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
-uint8_t                         scan_ports(t_thread *thread);
+uint8_t                         scan_ports_tcp(t_thread *thread);
 void                            delete_thread(void *data);
 uint8_t                         generate_filter_tcp_udp(t_thread *thread);
 uint8_t                         generate_filter_icmp(t_thread *thread);
@@ -327,7 +330,8 @@ uint8_t                         generate_filter_port_range(t_thread *thread,
 uint8_t                         generate_filter_src(t_list *threads);
 uint8_t                         generator_filter_or(t_thread *thread);
 uint8_t                         setup_sockfd(t_thread *thread, uint8_t scan);
-uint8_t                         send_udp(t_thread *thread, t_scan_type scan);
+uint8_t                         send_udp(t_thread *thread, uint16_t port,
+                                         t_scan_type scan);
 uint8_t                         send_tcp(t_thread *thread, t_scan_type scan);
 uint8_t                         scan_ports(t_thread *thread);
 uint8_t                         is_loopback(struct sockaddr_in *addr);

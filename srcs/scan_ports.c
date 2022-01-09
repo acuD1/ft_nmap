@@ -6,13 +6,13 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:40:30 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 09:37:31 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 13:03:00 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
 
-uint8_t scan_ports(t_thread *thread)
+uint8_t scan_ports_tcp(t_thread *thread)
 {
     if (thread->scan & SCAN_SYN)
     {
@@ -37,11 +37,6 @@ uint8_t scan_ports(t_thread *thread)
     if (thread->scan & SCAN_NULL)
     {
         if (send_tcp(thread, S_NULL) != SUCCESS)
-            return (FAILURE);
-    }
-    if (thread->scan & SCAN_UDP)
-    {
-        if (send_udp(thread, S_UDP) != SUCCESS)
             return (FAILURE);
     }
     return (SUCCESS);
