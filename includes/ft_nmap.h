@@ -340,6 +340,8 @@ void                            udp_payload(t_udp_payload *udp_payload,
 uint8_t                         generate_threads(t_list **threads,
                                                  t_target *target,
                                                  uint8_t scan);
+const char                      *services_tcp(uint16_t port);
+const char                      *services_udp(uint16_t port);
 
 
 /* Print */

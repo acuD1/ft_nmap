@@ -105,6 +105,8 @@ _SRCS 				+= debug.c
 _SRCS 				+= generate_filter.c
 _SRCS 				+= udp_payload.c
 _SRCS 				+= generate_threads.c
+_SRCS 				+= services_tcp.c
+_SRCS 				+= services_udp.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c
