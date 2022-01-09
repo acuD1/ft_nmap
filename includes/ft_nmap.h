@@ -279,7 +279,7 @@ uint8_t                         set_scan_type(uint8_t *scan, const char *arg);
 uint8_t                         resolve_target_ipv4(t_target *target_data, char *arg);
 uint8_t                         set_opts_args(t_nmap *nmap, int argc, char **argv);
 void                            exec_nmap(t_nmap *nmap);
-uint8_t                         resolve_local_ipv4(t_nmap *nmap);
+uint8_t                         resolve_local_ipv4(t_target *target);
 uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
 void                            *scan_thread(void *data);

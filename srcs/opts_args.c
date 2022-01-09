@@ -101,6 +101,11 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
         ft_freetab(&tab);
         return (FAILURE);
     }
+    if ((resolve_local_ipv4(&target) != SUCCESS))
+    {
+        ft_freetab(&tab);
+        return (FAILURE);
+    }
     if (parse_ports(&target, tab[1]) == FAILURE)
     {
         ft_freetab(&tab);
@@ -166,6 +171,8 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)) != NULL)
     {
         if ((resolve_target_ipv4(&target, tmp->arg) != SUCCESS))
+            return (FAILURE);
+        if ((resolve_local_ipv4(&target) != SUCCESS))
             return (FAILURE);
     }
     else

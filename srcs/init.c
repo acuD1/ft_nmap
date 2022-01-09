@@ -39,6 +39,4 @@ void        init_nmap(t_nmap *nmap, int argc, char **argv)
 
     if (set_opts_args(nmap, argc, argv) != SUCCESS)
         exit_routine(nmap, FAILURE);
-    if (resolve_local_ipv4(nmap) != SUCCESS)
-        exit_routine(nmap, FAILURE);
 }
