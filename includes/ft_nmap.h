@@ -16,6 +16,8 @@
 # pragma clang diagnostic ignored "-Wreserved-id-macro"
 # define _GNU_SOURCE
 
+// #define DEBUG 1
+
 # include "libft.h"
 # include <pthread.h>
 # include <pcap.h>
@@ -300,13 +302,10 @@ uint8_t                         is_loopback(struct sockaddr_in *addr);
 
 
 /* Print */
-void                            print_target(void *data);
-void                            print_token(void *data);
-void                            print_source_ip(t_nmap *nmap);
 void                            print_requires_arg_opt_long(char *current);
 void                            print_unallowed_opt(t_opts_args *opts_args);
 void                            print_usage(void);
-void                            print_thread(void *data);
+void                            display_results(void *data);
 
 /* LEXER */
 uint8_t                         parse_ports(t_target *target, char *ports);
@@ -320,6 +319,12 @@ void                            debug_scan_type(uint8_t scan);
 void                            debug_ports(t_list *ports);
 void                            debug_targets(void *data);
 void                            debug_threads(t_nmap *nmap);
+# ifdef DEBUG
 const char                      *debug_scan(t_scan_type scan);
+void                            debug_target(void *data);
+void                            debug_source_ip(t_target *target);
+void                            debug_bytes(int bytes, void *msg);
+void                            debug_port_status_handler(t_result *result);
+# endif
 
 #endif

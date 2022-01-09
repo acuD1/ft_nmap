@@ -311,8 +311,6 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
             return (set_opts_args_failure(&opts_args));
     }
 
-    // debug_scan_type(nmap->scan);    /* DEBUG */
-    // debug_opts_args(&opts_args);    /* DEBUG */
     free_opts_args(&opts_args);
     return (SUCCESS);
 }

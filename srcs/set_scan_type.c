@@ -6,24 +6,11 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 18:32:00 by arsciand          #+#    #+#             */
-/*   Updated: 2021/06/25 19:56:23 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/08 08:17:18 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
-
-void            debug_scan_type(uint8_t scan)
-{
-    dprintf(STDOUT_FILENO,
-        "\n>> SCAN_TYPE DEBUG\n\n%s%s\n%s%s\n%s%s\n%s%s\n%s%s\n%s%s\n\n",
-        "SYN    -> ", scan & SCAN_SYN ? "OK" : "NO",
-        "NULL   -> ", scan & SCAN_NULL ? "OK" : "NO",
-        "ACK    -> ", scan & SCAN_ACK ? "OK" : "NO",
-        "FIN    -> ", scan & SCAN_FIN ? "OK" : "NO",
-        "XMAS   -> ", scan & SCAN_XMAS ? "OK" : "NO",
-        "UDP    -> ", scan & SCAN_UDP ? "OK" : "NO"
-        );
-}
 
 static uint8_t  get_scan_type_failure(char **tab, char *scan, uint8_t type)
 {
