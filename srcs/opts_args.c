@@ -191,16 +191,26 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     {
         if (parse_ports(&target, tmp->arg) == FAILURE)
         {
+            ft_strdel(&target.device);
             return (FAILURE);
         }
     }
+    else
+    {
+        t_port_data data = {.range = {1, 1024}};
+        target.ports = ft_lstnew(&(t_port){.type = E_PORT_RANGE, .data = data},
+                                 sizeof(t_port));
+        dprintf(STDERR_FILENO, "ft_nmap: no ports specified\n");
+    }
     if (count_ports(nmap, &target) == FAILURE)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         return (FAILURE);
     }
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         return (FAILURE);
     }
