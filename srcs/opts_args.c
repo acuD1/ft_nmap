@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/02 18:19:04 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/08 16:26:30 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,17 +117,20 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
     }
     if (parse_ports(&target, tab[1]) == FAILURE)
     {
+        ft_strdel(&target.device);
         ft_freetab(&tab);
         return (FAILURE);
     }
     if (count_ports(nmap, &target) == FAILURE)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         ft_freetab(&tab);
         return (FAILURE);
     }
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         ft_freetab(&tab);
         return (FAILURE);
@@ -242,9 +245,9 @@ static int validate_opt(void *data, void *context)
 
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
 {
-    t_opts_args   opts_args;
-    t_opts_conf   opts_conf;
-    t_opt_set_db *tmp = NULL;
+    t_opts_args     opts_args;
+    t_opts_conf     opts_conf;
+    t_opt_set_db    *tmp = NULL;
 
     ft_bzero(&opts_args, sizeof(t_opts_conf));
     ft_bzero(&opts_conf, sizeof(t_opts_conf));
