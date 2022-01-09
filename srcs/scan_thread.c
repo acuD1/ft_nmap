@@ -402,7 +402,7 @@ void            *scan_thread(void *data)
     }
 
     /* Send packets */
-    if (scan_ports(thread) != SUCCESS)
+    if (scan_ports_tcp(thread) != SUCCESS)
     {
         dprintf(STDERR_FILENO, "ft_nmap: scan_ports(): Scan port error\n");
         close_thread(sniffer, &compiled_filter);

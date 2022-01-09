@@ -315,7 +315,7 @@ uint16_t                        in_cksum(void *buffer, size_t len);
 int                             send_target(void *context, void* data);
 void                            *scan_thread(void *data);
 int                             scan_target(void *data, void *context);
-uint8_t                         scan_ports(t_thread *thread);
+uint8_t                         scan_ports_tcp(t_thread *thread);
 void                            delete_thread(void *data);
 uint8_t                         generate_filter_tcp_udp(t_thread *thread);
 uint8_t                         generate_filter_icmp(t_thread *thread);
