@@ -26,6 +26,8 @@ static uint8_t set_opts_args_failure(t_opts_args *opts_args)
 
 static uint8_t get_threads(t_nmap *nmap, t_opt_set_db *tmp)
 {
+    int32_t threads;
+
     if (ft_isnumeric(tmp->arg) != TRUE)
     {
         dprintf(STDERR_FILENO,
@@ -33,15 +35,22 @@ static uint8_t get_threads(t_nmap *nmap, t_opt_set_db *tmp)
                 tmp->arg);
         return (FAILURE);
     }
-    // FIXME: Protection thread max = 255
-    nmap->threads = (uint8_t)ft_atoi(tmp->arg);
+    threads = ft_atoi(tmp->arg);
+    if (threads < 1 || threads > 250)
+    {
+        dprintf(STDERR_FILENO,
+                "ft_nmap: unsupported value '%d' for option '--speedup'\n",
+                threads);
+        return (FAILURE);
+    }
+    nmap->threads = (uint8_t)threads;
     return (SUCCESS);
 }
 
 static void sum_ports(void *data, void *acc)
 {
-    t_port *  port;
-    uint16_t *port_number;
+    t_port      *port;
+    uint16_t    *port_number;
 
     port = data;
     port_number = acc;
@@ -63,7 +72,7 @@ static uint8_t count_ports(t_nmap *nmap, t_target *target)
     if (target->port_nbr > 1024)
     {
         dprintf(STDERR_FILENO,
-                "ft_nmap: maximum ports to scan is 1024, tried %u",
+                "ft_nmap: maximum ports to scan is 1024, tried %u\n",
                 target->port_nbr);
         return (FAILURE);
     }
