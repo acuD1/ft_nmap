@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 13:11:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/07 13:41:47 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 16:50:56 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ uint8_t     resolve_local_ipv4(t_target *target)
                     = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
                 if (!(target->device= ft_strdup(ifa->ifa_name)))
                     return (FAILURE);
+                break;
             }
         }
     }
@@ -86,6 +87,7 @@ uint8_t     resolve_local_ipv4(t_target *target)
                     = ((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
                 if (!(target->device = ft_strdup(ifa->ifa_name)))
                     return (FAILURE);
+                break;
             }
         }
     }
