@@ -19,6 +19,7 @@
 // #define DEBUG 1
 
 # include "libft.h"
+# include "udp_payload.h"
 # include <pthread.h>
 # include <pcap.h>
 # include <arpa/inet.h>
@@ -141,7 +142,13 @@ typedef enum e_scan_type
     S_FIN,
     S_XMAS,
     S_UDP,
-}           t_scan_type;
+typedef struct                  s_udp_payload
+{
+    char                        *payload;
+    uint16_t                    payload_len;
+    char                        _padding[6];
+}                               t_udp_payload;
+
 
 
 /* LEXER */
@@ -299,6 +306,8 @@ uint8_t                         generate_filter_src(t_list *threads);
 uint8_t                         generator_filter_or(t_thread *thread);
 uint8_t                         scan_ports(t_thread *thread);
 uint8_t                         is_loopback(struct sockaddr_in *addr);
+void                            udp_payload(t_udp_payload *udp_payload,
+                                            uint16_t port);
 
 
 /* Print */

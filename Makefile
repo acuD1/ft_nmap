@@ -80,6 +80,7 @@ PATHS				+=	$(O_PATH)
 # Headers
 
 HDR					+=	ft_nmap.h
+HDR					+=	udp_payload.h
 
 # SOURCES
 
@@ -99,6 +100,7 @@ _SRCS 				+= scan_target.c
 _SRCS 				+= scan_thread.c
 _SRCS 				+= debug.c
 _SRCS 				+= generate_filter.c
+_SRCS 				+= udp_payload.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c
