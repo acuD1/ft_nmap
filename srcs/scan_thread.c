@@ -337,7 +337,39 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
         time = ((double)t2.tv_sec - (double)t1.tv_sec) * 1000.0;
         time += ((double)t2.tv_usec - (double)t1.tv_usec) / 1000.0;
     }
+}
 
+static uint8_t wait_udp_handler(void)
+{
+    double           start, end = 0.0;
+    struct timeval   udp_ready;
+
+    ft_memset(&udp_ready, 0, sizeof(struct timeval));
+
+    if (gettimeofday(&udp_ready, NULL) < 0)
+    {
+        dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
+                strerror(errno));
+        return (FAILURE);
+    }
+
+    start = ((double)udp_ready.tv_sec - (double)udp_ready.tv_sec) * 1000.0;
+    start += ((double)udp_ready.tv_usec - (double)udp_ready.tv_usec) / 1000.0;
+    start = end;
+
+    while (end - start < 1.0)
+    {
+        if (gettimeofday(&udp_ready, NULL) < 0)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
+                    strerror(errno));
+            return (FAILURE);
+        }
+        end = ((double)udp_ready.tv_sec - (double)start) * 1000.0;
+        end += ((double)udp_ready.tv_usec - (double)start) / 1000.0;
+    }
+
+    return (SUCCESS);
 }
 
 void            *scan_thread(void *data)
@@ -409,6 +441,29 @@ void            *scan_thread(void *data)
     }
 
     pcap_dispatch_handler(thread, sniffer, &compiled_filter);
+
+    if (thread->scan & SCAN_UDP)
+    {
+        for (t_list *tmp = thread->results; tmp; tmp = tmp->next)
+        {
+            t_result        *result = (t_result *)tmp->data;
+
+            pthread_mutex_lock(&(g_nmap.lock));
+
+            if (send_udp(thread, result->port, S_UDP) != SUCCESS)
+            {
+                pthread_mutex_unlock(&(g_nmap.lock));
+                break ;
+            }
+
+            pcap_dispatch_handler(thread, sniffer, &compiled_filter);
+
+            if (wait_udp_handler() == FAILURE)
+                close_thread(sniffer, &compiled_filter);
+
+            pthread_mutex_unlock(&(g_nmap.lock));
+        }
+    }
 
     #ifdef DEBUG
         dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] END THREAD\n",
