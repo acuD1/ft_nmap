@@ -295,6 +295,7 @@ uint8_t                         generate_filter_port_range(t_thread *thread,
                                                             uint16_t end);
 uint8_t                         generate_filter_src(t_list *threads);
 uint8_t                         generator_filter_or(t_thread *thread);
+uint8_t                         scan_ports(t_thread *thread);
 uint8_t                         is_loopback(struct sockaddr_in *addr);
 
 

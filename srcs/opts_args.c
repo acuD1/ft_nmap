@@ -291,7 +291,14 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
             return (set_opts_args_failure(&opts_args));
     }
     else
-        nmap->scan = DEFAULT_SCAN; // Temporay fix
+    {
+        nmap->scan |= SCAN_ACK;
+        nmap->scan |= SCAN_FIN;
+        nmap->scan |= SCAN_XMAS;
+        nmap->scan |= SCAN_NULL;
+        nmap->scan |= SCAN_SYN;
+        nmap->scan |= SCAN_UDP;
+    }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, FILE_STR)) != NULL)
     {
