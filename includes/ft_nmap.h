@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 14:03:30 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 17:29:20 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@
 # define errno                  (*__errno_location ())
 
 /* DEFAULTS */
+
+# define BORDER                 "----------------------------------------------\
+----------------------------------"
 # define DEFAULT_THREADS        1
 # define DEFAULT_SRC_PORT       33000
 # define DEFAULT_SEQ            42000

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 11:49:01 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 17:29:57 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,11 @@ int             scan_target(void *data, void *context)
         ft_mergesort(&results, sort_target);
 
         /* Display results */
+
+        dprintf(STDOUT_FILENO, "%s\n", BORDER);
+        dprintf(STDOUT_FILENO, "%-*s| %-8s| %-16s| %-10s\n", 16,
+                "ADDRESS", "PORT", "SERVICE", "RESULT");
+        dprintf(STDOUT_FILENO, "%s\n", BORDER);
         ft_lstiter(results, display_results);
     }
 

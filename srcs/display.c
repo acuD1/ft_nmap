@@ -6,11 +6,12 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 10:02:51 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 17:39:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
+#include "str.h"
 
 void        print_usage(void)
 {
@@ -56,30 +57,70 @@ static const char   *port_status(t_port_status port_status)
 
 void                display_results(void *data)
 {
-    t_result *result = (t_result *)data;
+    t_result    *result     = (t_result *)data;
+    uint8_t     first       = 0;
+    uint8_t address_len     = 16;
+    uint8_t spacing         = address_len + 30;
+    char        *address
+                    = inet_ntoa(((struct sockaddr_in *)&result->dst)->sin_addr);
 
-    dprintf(STDOUT_FILENO, "%s:%d\n",
-            inet_ntoa(((struct sockaddr_in *)&result->dst)->sin_addr),
-            result->port);
+    dprintf(STDOUT_FILENO, "%-*s  %-8d  %-16s  ", address_len, address,
+            result->port, services_tcp(result->port)
+                            ? services_tcp(result->port)
+                            : services_udp(result->port));
 
     if (result->scan & SCAN_SYN)
-        dprintf(STDOUT_FILENO, "\t\t\t- SYN  -> %s\n",
+    {
+        if (first == 0)
+            first = 1;
+        else
+            dprintf(STDOUT_FILENO, "%20s", "");
+        dprintf(STDOUT_FILENO, "SYN  -> %s\n",
                 port_status(result->status[S_SYN]));
+    }
     if (result->scan & SCAN_ACK)
-        dprintf(STDOUT_FILENO, "\t\t\t- ACK  -> %s\n",
+    {
+        if (first == 0)
+            first = 1;
+        else
+            dprintf(STDOUT_FILENO, "%*s", spacing,  "");
+        dprintf(STDOUT_FILENO, "ACK  -> %s\n",
                 port_status(result->status[S_ACK]));
+    }
     if (result->scan & SCAN_FIN)
-        dprintf(STDOUT_FILENO, "\t\t\t- FIN  -> %s\n",
+    {
+        if (first == 0)
+            first = 1;
+        else
+            dprintf(STDOUT_FILENO, "%*s", spacing,  "");
+        dprintf(STDOUT_FILENO, "FIN  -> %s\n",
                 port_status(result->status[S_FIN]));
+    }
     if (result->scan & SCAN_XMAS)
-        dprintf(STDOUT_FILENO, "\t\t\t- XMAS -> %s\n",
+    {
+        if (first == 0)
+            first = 1;
+        else
+            dprintf(STDOUT_FILENO, "%*s", spacing,  "");
+        dprintf(STDOUT_FILENO, "XMAS -> %s\n",
                 port_status(result->status[S_XMAS]));
+    }
     if (result->scan & SCAN_NULL)
-        dprintf(STDOUT_FILENO, "\t\t\t- NULL -> %s\n",
+    {
+        if (first == 0)
+            first = 1;
+        else
+            dprintf(STDOUT_FILENO, "%*s", spacing,  "");
+        dprintf(STDOUT_FILENO, "NULL -> %s\n",
                 port_status(result->status[S_NULL]));
+    }
     if (result->scan & SCAN_UDP)
-        dprintf(STDOUT_FILENO, "\t\t\t- UDP  -> %s\n",
+    {
+        if (first == 0)
+            first = 1;
+        else
+            dprintf(STDOUT_FILENO, "%*s", spacing,  "");
+        dprintf(STDOUT_FILENO, "UDP  -> %s\n",
                 port_status(result->status[S_UDP]));
+    }
 }
-
-
