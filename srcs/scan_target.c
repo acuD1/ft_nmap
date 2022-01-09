@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/01 13:12:08 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 09:14:13 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,220 +22,66 @@
 //     - scan_thread
 //         - scan_port
 
-static uint8_t  init_thread(t_nmap *nmap, t_target *target, t_thread *thread)
+static int      sort_target(void *context, void *data)
 {
-    thread->ports           = NULL;
-    thread->src             = nmap->src;
-    thread->dst             = target->dst;
-    thread->scan            = nmap->scan;
-	thread->filter.size     = DEFAULT_LEN_FILTER;
-	thread->filter.scale    = DEFAULT_LEN_SCALE;
-    if (!(thread->filter.buffer   = ft_strnew(DEFAULT_LEN_FILTER)))
-        return (FAILURE);
-    return (SUCCESS);
-}
-
-static uint8_t     reset_thread(t_thread *thread)
-{
-    thread->ports           = NULL;
-	thread->filter.size     = DEFAULT_LEN_FILTER;
-	thread->filter.scale    = DEFAULT_LEN_SCALE;
-    if (!(thread->filter.buffer   = ft_strnew(DEFAULT_LEN_FILTER)))
-        return (FAILURE);
-    return (SUCCESS);
-}
-
-static uint8_t  create_thread(t_list **threads, t_thread *thread_template)
-{
-    if (ft_lstaddback(threads,
-            ft_lstnew(thread_template, sizeof(t_thread))) != SUCCESS)
-    {
-        dprintf(STDERR_FILENO, "ft_nmap: create_thread(): Malloc error\n");
-        return (FAILURE);
-    }
-    if (reset_thread(thread_template) == FAILURE)
-        return (FAILURE);
-    if (generate_filter_protocol(thread_template) == FAILURE)
-        return (FAILURE);
-    return (SUCCESS);
-}
-
-static uint8_t  add_port(t_list **ports, uint16_t port)
-{
-    if (ft_lstaddback(ports, ft_lstnew(&port, sizeof(uint16_t))) != SUCCESS)
-    {
-        dprintf(STDERR_FILENO, "ft_nmap: add_port(): Malloc error\n");
-        return (FAILURE);
-    }
-    return (SUCCESS);
-}
-
-static void     set_range(t_port *target, uint16_t *min_port,
-                            uint16_t *max_port)
-{
-
-    if (target->data.range[1] > target->data.range[0])
-    {
-        *min_port = target->data.range[0];
-        *max_port = target->data.range[1];
-    }
+    t_result *left = (t_result *)context;
+    t_result *right = (t_result *)data;
+    if (left->port < right->port)
+        return (-1);
+    else if (left->port > right->port)
+        return (1);
     else
+        return (0);
+}
+
+static uint8_t  close_fds(t_thread *thread)
+{
+    if (thread->scan & SCAN_SYN)
     {
-        *min_port = target->data.range[1];
-        *max_port = target->data.range[0];
+        if (close(thread->sockets[S_SYN]) == -1)
+            return (FAILURE);
     }
-}
-
-static uint8_t  add_single_port_handler(t_thread *thread, uint16_t port)
-{
-    if (generator_filter_or(thread) == FAILURE)
-        return (FAILURE);
-    if (generate_filter_port_single(thread, port) == FAILURE)
-        return (FAILURE);
-    if (add_port(&thread->ports, port) == FAILURE)
-        return (FAILURE);
-    return (SUCCESS);
-}
-
-static uint8_t  dispatch_leftovers(t_list *ports, t_list *threads,
-                                  uint16_t min_port)
-{
-    t_list   *current_port  = ports;
-    t_list   *tmp           = threads;
-    uint16_t max_port       = 0;
-    uint16_t holder         = 0;
-
-    while(tmp && ports)
+    if (thread->scan & SCAN_ACK)
     {
-        t_port *target_port = ports->data;
-        if (target_port->type == E_PORT_SINGLE)
-        {
-            t_thread *thread = tmp->data;
-            if (add_single_port_handler(thread,
-                    target_port->data.port) == FAILURE)
-                return (FAILURE);
-        }
-        else
-        {
-            holder = min_port;
-            set_range(target_port, &min_port, &max_port);
-            if (current_port == ports)
-                min_port = holder;
-            while (min_port <= max_port && tmp)
-            {
-                t_thread *thread = tmp->data;
-                if (add_single_port_handler(thread, min_port) == FAILURE)
-                    return (FAILURE);
-                tmp = tmp->next;
-                min_port++;
-            }
-            ports = ports->next;
-            continue;
-        }
-        tmp = tmp->next;
-        ports = ports->next;
+        if (close(thread->sockets[S_ACK]) == -1)
+            return (FAILURE);
+    }
+    if (thread->scan & SCAN_FIN)
+    {
+        if (close(thread->sockets[S_FIN]) == -1)
+            return (FAILURE);
+    }
+    if (thread->scan & SCAN_XMAS)
+    {
+        if (close(thread->sockets[S_XMAS]) == -1)
+            return (FAILURE);
+    }
+    if (thread->scan & SCAN_NULL)
+    {
+        if (close(thread->sockets[S_NULL]) == -1)
+            return (FAILURE);
+    }
+    if (thread->scan & SCAN_UDP)
+    {
+        if (close(thread->sockets[S_UDP]) == -1)
+            return (FAILURE);
+        if (close(thread->sockets[S_UDP_ICMP_RESPONSE]) == -1)
+            return (FAILURE);
     }
     return (SUCCESS);
 }
 
-static t_list *generate_threads(t_target *target, t_thread *thread_template)
-{
-    t_list      *threads            = NULL;
-    uint16_t    port_nbr            = 0;
-    uint16_t    dispatched_ports    = 0;
-    uint16_t    min_port            = 0;
-    uint16_t    max_port            = 0;
-    uint16_t    start_port          = 0;
-
-    for (t_list *current = target->ports; current; current = current->next)
-    {
-        if (dispatched_ports >= target->port_nbr - target->port_leftover)
-        {
-            if (dispatch_leftovers(current, threads, 0) == FAILURE)
-                return (NULL);
-        }
-        else
-        {
-            t_port *target_port = current->data;
-            if (target_port->type == E_PORT_SINGLE)
-            {
-                port_nbr++;
-                dispatched_ports++;
-                if (add_port(&thread_template->ports,
-                        target_port->data.port) == FAILURE)
-                    return (NULL);
-                if (generate_filter_port_single(thread_template,
-                        target_port->data.port) == FAILURE)
-                    return (NULL);
-                if (port_nbr == target->port_per_thread)
-                {
-                    if (create_thread(&threads, thread_template) == SUCCESS)
-                        port_nbr = 0;
-                    else
-                    {
-                        //FIXME: Free previous on failure
-                        return (NULL);
-                    }
-                }
-            }
-            else
-            {
-                set_range(target_port, &min_port, &max_port);
-                start_port = min_port;
-                while (min_port <= max_port)
-                {
-                    port_nbr++;
-                    dispatched_ports++;
-                    if (add_port(&thread_template->ports, min_port) == FAILURE)
-                        return (NULL);
-                    if (port_nbr == target->port_per_thread)
-                    {
-                        if (start_port != min_port)
-                        {
-                            if (generate_filter_port_range(thread_template,
-                                    start_port, min_port) == FAILURE)
-                                return (NULL);
-                        }
-                        else
-                        {
-                            if (generate_filter_port_single(thread_template,
-                                    min_port) == FAILURE)
-                                return (NULL);
-                        }
-                        start_port = min_port + 1;
-                        if (create_thread(&threads, thread_template) == SUCCESS)
-                            port_nbr = 0;
-                        else
-                        {
-                            //FIXME: Free previous on failure
-                            return (NULL);
-                        }
-                    }
-                    min_port++;
-                    if (dispatched_ports >= target->port_nbr - target->port_leftover)
-                    {
-                        if (dispatch_leftovers(current, threads, min_port) == FAILURE)
-                            return (NULL);
-                        return(threads);
-                    }
-                }
-            }
-            if (port_nbr != 0)
-                generator_filter_or(thread_template);
-        }
-    }
-    return (threads);
-}
-
-int     scan_target(void *data, void *context)
+int             scan_target(void *data, void *context)
 {
     t_nmap      *nmap       = context;
     t_target    *target     = data;
     t_list      *threads    = NULL;
     t_list      *threads_id = NULL;
-    t_thread     thread_data_template;
+    t_list      *results    = NULL;
 
-    print_target(target);
+    #ifdef DEBUG
+        debug_target(target);
+    #endif
 
     // Reset global
     g_nmap.seq      = 0;
@@ -251,41 +97,51 @@ int     scan_target(void *data, void *context)
     // 2: Launch threads and collect their identifiers in a list of pthread_t
     for (t_list *tmp = threads; tmp; tmp = tmp->next)
     {
-        // Thread identifier
         pthread_t   tid = 0;
-        int         result;
 
-        result = pthread_create(&tid, NULL, scan_thread, tmp->data);
-        if (result != SUCCESS
+        if (pthread_create(&tid, NULL, scan_thread, tmp->data) != SUCCESS
             || ft_lstaddback(&threads_id, ft_lstnew(&tid, sizeof(pthread_t)))
                 != SUCCESS)
-        {
-            ft_strdel(&thread_data_template.filter.buffer);
-            ft_lstdel(&threads, delete_thread);
-            ft_lstdel(&threads_id, NULL);
-            return (FAILURE);
-        }
+            break ;
     }
-
 
     // 3: Join on each launched thread
     for (t_list *tmp = threads_id; tmp; tmp = tmp->next)
     {
         pthread_t   *tid = tmp->data;
-        int         result;
 
-        result = pthread_join(*tid, NULL);
-        if (result != SUCCESS)
+        if (pthread_join(*tid, NULL) != SUCCESS)
+            break ;
+    }
+
+    if (close_fds(threads->data) != SUCCESS)
+    {
+        dprintf(STDERR_FILENO, "ft_nmap: close_fds(): failed\n");
+        ft_lstdel(&threads, delete_thread);
+        ft_lstdel(&threads_id, NULL);
+        return (FAILURE);
+    }
+    else
+    {
+        for (t_list *tmp = threads; tmp; tmp = tmp->next)
         {
-            ft_strdel(&thread_data_template.filter.buffer);
-            ft_lstdel(&threads, delete_thread);
-            ft_lstdel(&threads_id, NULL);
+            t_thread *thread = tmp->data;
+
+            /* Add results to the local target results list */
+            ft_lstmerge(&results, thread->results);
+            thread->results = NULL;
         }
+
+        /* Sort results by port*/
+        ft_mergesort(&results, sort_target);
+
+        /* Display results */
+        ft_lstiter(results, display_results);
     }
 
     // 4: Cleanup and exit
-    ft_strdel(&thread_data_template.filter.buffer);
     ft_lstdel(&threads, delete_thread);
     ft_lstdel(&threads_id, NULL);
+    ft_lstdel(&results, NULL);
     return (SUCCESS);
 }
