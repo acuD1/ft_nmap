@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 08:50:53 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 13:46:22 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ static uint8_t  fetch_udp_packet(t_thread *thread, void *bytes)
 
     return (SUCCESS);
 }
+
+
 
 
 static void     packet_handler(u_char *data, const struct pcap_pkthdr *h,
