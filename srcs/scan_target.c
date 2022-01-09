@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 17:29:57 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:47:15 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,13 @@ int             scan_target(void *data, void *context)
     {
         pthread_t   tid = 0;
 
+        if (g_nmap.is_canceld == TRUE)
+        {
+            ft_lstdel(&threads, delete_thread);
+            ft_lstdel(&threads_id, NULL);
+            return (FAILURE);
+        }
+
         if (pthread_create(&tid, NULL, scan_thread, tmp->data) != SUCCESS
             || ft_lstaddback(&threads_id, ft_lstnew(&tid, sizeof(pthread_t)))
                 != SUCCESS)
@@ -106,8 +113,16 @@ int             scan_target(void *data, void *context)
     {
         pthread_t   *tid = tmp->data;
 
+
         if (pthread_join(*tid, NULL) != SUCCESS)
             break ;
+    }
+
+    if (g_nmap.is_canceld == TRUE)
+    {
+        ft_lstdel(&threads, delete_thread);
+        ft_lstdel(&threads_id, NULL);
+        return (FAILURE);
     }
 
     if (close_fds(threads->data) != SUCCESS)

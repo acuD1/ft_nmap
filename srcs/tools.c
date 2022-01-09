@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/09 15:58:34 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 18:22:25 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:52:54 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ uint16_t    in_cksum(void *buffer, size_t len)
     return ((uint16_t)~sum);
 }
 
-bool   is_tcp_scan(uint8_t scan)
+bool        is_tcp_scan(uint8_t scan)
 {
     if (scan & SCAN_SYN)
         return (true);
@@ -48,7 +48,7 @@ bool   is_tcp_scan(uint8_t scan)
     return (false);
 }
 
-uint8_t is_loopback(struct sockaddr_in *addr)
+uint8_t     is_loopback(struct sockaddr_in *addr)
 {
     uint8_t first_byte = (uint8_t)(addr->sin_addr.s_addr);
     if (first_byte == (uint8_t)0x7f || addr->sin_addr.s_addr == 0)
@@ -56,7 +56,7 @@ uint8_t is_loopback(struct sockaddr_in *addr)
     return (FAILURE);
 }
 
-void signal_handler(int signo)
+void        signal_handler(int signo)
 {
     if (signo == SIGINT)
     {

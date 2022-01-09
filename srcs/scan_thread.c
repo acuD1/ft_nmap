@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 18:33:28 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:50:45 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,7 +264,8 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
     while (time < window && fds)
     {
         if (g_nmap.is_canceld)
-                close_thread(sniffer, compiled_filter);
+            close_thread(sniffer, compiled_filter);
+
         if (poll(pfds, MAX_SCAN, window) > 0)
         {
             for (size_t i = 0; i < MAX_SCAN; i++)
@@ -281,6 +282,9 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
 
                         while (time < window)
                         {
+                            if (g_nmap.is_canceld)
+                                close_thread(sniffer, compiled_filter);
+
                             if (pcap_dispatch(sniffer, 1,
                                               packet_handler,
                                               (u_char *)thread) == -1)
@@ -363,6 +367,10 @@ static uint8_t wait_udp_handler(void)
 
     while (end - start < 1.0)
     {
+
+        if (g_nmap.is_canceld)
+            return (FAILURE);
+
         if (gettimeofday(&udp_ready, NULL) < 0)
         {
             dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
@@ -451,6 +459,9 @@ void            *scan_thread(void *data)
         for (t_list *tmp = thread->results; tmp; tmp = tmp->next)
         {
             t_result        *result = (t_result *)tmp->data;
+
+            if (g_nmap.is_canceld)
+                close_thread(sniffer, &compiled_filter);
 
             pthread_mutex_lock(&(g_nmap.lock));
 
