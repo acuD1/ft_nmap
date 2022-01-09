@@ -342,6 +342,7 @@ uint8_t                         generate_threads(t_list **threads,
                                                  uint8_t scan);
 const char                      *services_tcp(uint16_t port);
 const char                      *services_udp(uint16_t port);
+bool                            is_tcp_scan(uint8_t scan);
 
 
 /* Print */
@@ -357,13 +358,8 @@ bool                            is_set_state(t_lexer *lexer);
 bool                            is_source_finished(t_lexer *lexer);
 bool                            is_exit_state(t_lexer *lexer);
 
-/* DEBUG */
-void                            debug_scan_type(uint8_t scan);
-void                            debug_ports(t_list *ports);
-void                            debug_targets(void *data);
-void                            debug_threads(t_nmap *nmap);
-bool                            is_tcp_scan(uint8_t scan);
 
+/* DEBUG */
 # ifdef DEBUG
 const char                      *debug_scan(t_scan_type scan);
 void                            debug_target(void *data);
