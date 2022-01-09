@@ -304,6 +304,8 @@ uint8_t                         generate_filter_port_range(t_thread *thread,
                                                             uint16_t end);
 uint8_t                         generate_filter_src(t_list *threads);
 uint8_t                         generator_filter_or(t_thread *thread);
+uint8_t                         send_udp(t_thread *thread, t_scan_type scan);
+uint8_t                         send_tcp(t_thread *thread, t_scan_type scan);
 uint8_t                         scan_ports(t_thread *thread);
 uint8_t                         is_loopback(struct sockaddr_in *addr);
 void                            udp_payload(t_udp_payload *udp_payload,
