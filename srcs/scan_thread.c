@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/02 14:32:11 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 08:50:53 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,176 +14,333 @@
 #include "memory.h"
 #include "str.h"
 
-static uint8_t setup_sockfd(struct sockaddr_in *dst, int *sockfd, uint8_t protocol)
+static int      find_port(void *current, void *to_find)
 {
-    if ((*sockfd = socket(dst->sin_family, SOCK_RAW, protocol)) == -1)
-    {
-        dprintf(STDERR_FILENO, "ft_nmap: socket(): %s", strerror(errno));
+    t_result    *result         = (t_result *)current;
+    uint16_t    tmp_to_find     = *(uint16_t *)to_find;
+
+    return (result->port == tmp_to_find ? TRUE : FALSE);
+}
+
+
+static void     retrieve_port_icmp(uint16_t *port, void *bytes)
+{
+    struct udphdr *udp = (struct udphdr *)bytes;
+
+    *port = ntohs(udp->uh_dport);
+}
+
+static uint8_t  fetch_icmp_packet(t_thread *thread, void *bytes)
+{
+    struct icmphdr  *icmphdr    = (struct icmphdr *)bytes;
+    t_list          *result     = NULL;
+    t_result        *result_tmp = NULL;
+    uint16_t        port        = 0;
+
+    retrieve_port_icmp(&port, (char *)bytes + sizeof(struct icmphdr)
+                       + sizeof(struct iphdr));
+
+    #ifdef DEBUG
+        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Received ICMP: %hu\n",
+                pthread_self(), port);
+    #endif
+
+    if (!(result = ft_lstfind(thread->results, &port,
+                              (int (*)(void*, void*))find_port)))
         return (FAILURE);
+
+    result_tmp = (t_result *)result->data;
+
+    if (icmphdr->type == ICMP_DEST_UNREACH)
+    {
+        if (icmphdr->code == ICMP_PORT_UNREACH)
+            result_tmp->status[S_UDP] = E_CLOSED;
+        if (icmphdr->code ==
+                (ICMP_NET_UNREACH | ICMP_HOST_UNREACH | ICMP_PROT_UNREACH
+                    | ICMP_NET_ANO | ICMP_HOST_ANO | ICMP_PKT_FILTERED))
+            result_tmp->status[S_UDP] = E_FILTERED;
     }
+
     return (SUCCESS);
 }
 
-static void setup_th_flags(t_tcp_packet *template, t_scan_type scan)
+static uint8_t  fetch_tcp_packet(t_thread *thread, void *bytes)
 {
-    switch (scan)
-    {
-        case S_SYN:
-            template->tcpheader.th_flags = TH_SYN;
-            break ;
-        case S_FIN:
-            template->tcpheader.th_flags = TH_FIN;
-            break ;
-        case S_ACK:
-            template->tcpheader.th_flags = TH_ACK;
-            break ;
-        case S_XMAS:
-            template->tcpheader.th_flags |= TH_FIN;
-            template->tcpheader.th_flags |= TH_PUSH;
-            template->tcpheader.th_flags |= TH_URG;
-            break ;
-        case S_NULL:
-            template->tcpheader.th_flags = 0;
-            break ;
-       case S_UDP:
-            break ;
-    }
-}
+    struct tcphdr   *tcp        = (struct tcphdr *)bytes;
+    t_list          *result     = NULL;
+    t_result        *result_tmp = NULL;
+    uint16_t        port        = 0;
 
-//   -sS/sT/sA/sW/sM: TCP SYN/Connect()/ACK/Window/Maimon scans
-//   -sU: UDP Scan
-//   -sN/sF/sX: TCP Null, FIN, and Xmas scans
-//   --scanflags <flags>: Customize TCP scan flags
-//   -sI <zombie host[:probeport]>: Idle scan
-//   -sY/sZ: SCTP INIT/COOKIE-ECHO scans
-//   -sO: IP protocol scan
-//   -b <FTP relay host>: FTP bounce scan
+    port = ntohs(tcp->th_sport);
 
-static void init_tcp_packet(t_thread *thread, t_tcp_packet *template, t_scan_type scan)
-{
-    /* Pseudo Header */
-    template->saddr            = ((struct sockaddr_in *)&(thread->src))->sin_addr.s_addr;
-    template->daddr            = ((struct sockaddr_in *)&(thread->dst))->sin_addr.s_addr;
-    template->protocol         = IPPROTO_TCP;
-    template->tot_len          = htons(sizeof(t_tcpheader));
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->tcpheader.th_sport  = htons(g_nmap.src_port + (uint16_t)scan);
-    pthread_mutex_unlock(&(g_nmap.lock));
-}
+    #ifdef DEBUG
+        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Received TCP: %hu\n",
+                pthread_self(), port);
+    #endif
 
-static void init_udp_packet(t_thread *thread, t_udp_packet *template, t_scan_type scan)
-{
-    /* Pseudo Header */
-    template->saddr            = ((struct sockaddr_in *)&(thread->src))->sin_addr.s_addr;
-    template->daddr            = ((struct sockaddr_in *)&(thread->dst))->sin_addr.s_addr;
-    template->protocol         = IPPROTO_UDP;
-    template->tot_len          = htons(sizeof(t_udpheader));
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->udpheader.source       = htons(g_nmap.src_port + (uint16_t)scan);
-    pthread_mutex_unlock(&(g_nmap.lock));
-}
-
-static void update_tcp(t_tcp_packet *template, uint16_t port, t_scan_type scan)
-{
-    /* TCP Header */
-    pthread_mutex_lock(&(g_nmap.lock));
-    template->tcpheader.th_seq    = htonl(g_nmap.seq++);
-    pthread_mutex_unlock(&(g_nmap.lock));
-    template->tcpheader.th_dport  = htons(port);
-    template->tcpheader.th_off    = sizeof(t_tcpheader) / 4;
-    setup_th_flags(template, scan);
-    template->tcpheader.th_win    = htons(1024);
-    template->tcpheader.th_sum    = in_cksum(template, sizeof(t_tcp_packet));
-}
-
-static void update_udp(t_udp_packet *template, uint16_t port)
-{
-    /* UDP Header */
-
-    template->udpheader.dest         = htons(port);
-    template->udpheader.len          = htons(8);
-    template->udpheader.check        = in_cksum(template, sizeof(t_udp_packet));
-}
-
-static uint8_t send_tcp(t_thread *thread, t_scan_type scan)
-{
-    t_tcp_packet    template;
-    ssize_t         bytes_sent  = 0;
-
-    ft_bzero(&template, sizeof(template));
-    init_tcp_packet(thread, &template, scan);
-    if (setup_sockfd((struct sockaddr_in *)&(thread->dst), thread->sockets + scan, IPPROTO_TCP) != SUCCESS)
+    if (!(result = ft_lstfind(thread->results, &port,
+                              (int (*)(void*, void*))find_port)))
         return (FAILURE);
-    for(t_list *tmp = thread->ports; tmp; tmp = tmp->next)
-    {
-        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Sending packet to %s:%d\t|%s|\n",
-                pthread_self(), inet_ntoa(((struct sockaddr_in *)&(thread->dst))->sin_addr),
-                *(uint16_t *)tmp->data, debug_scan(scan));
 
-        update_tcp(&template, *(uint16_t *)tmp->data, scan);
-        if ((bytes_sent = sendto(thread->sockets[scan], &template.tcpheader, sizeof(t_tcpheader), 0,
-                                (struct sockaddr_in *)&(thread->dst), sizeof(struct sockaddr_in))) == -1)
+    result_tmp = (t_result *)result->data;
+
+    if (tcp->th_flags & TH_ACK && tcp->th_flags & TH_SYN)
+        result_tmp->status[S_SYN]   = E_OPEN;
+    if (tcp->th_flags & TH_RST)
+    {
+        result_tmp->status[S_SYN]   = E_CLOSED;
+        result_tmp->status[S_NULL]  = E_CLOSED;
+        result_tmp->status[S_FIN]   = E_CLOSED;
+        result_tmp->status[S_XMAS]  = E_CLOSED;
+        result_tmp->status[S_ACK]   = E_UNFILTERED;
+    }
+
+    return (SUCCESS);
+}
+
+static uint8_t  fetch_udp_packet(t_thread *thread, void *bytes)
+{
+    struct udphdr   *udp        = (struct udphdr *)bytes;
+    t_list          *result     = NULL;
+    t_result        *result_tmp = NULL;
+    uint16_t        port        = 0;
+
+    port = ntohs(udp->uh_sport);
+
+    if (!(result = ft_lstfind(thread->results, &port,
+                              (int (*)(void*, void*))find_port)))
+        return (FAILURE);
+
+    result_tmp = (t_result *)result->data;
+    result_tmp->status[S_UDP] = E_OPEN;
+
+    return (SUCCESS);
+}
+
+
+static void     packet_handler(u_char *data, const struct pcap_pkthdr *h,
+                               const u_char *bytes)
+{
+    (void)h;
+    /**/
+    #pragma clang diagnostic ignored "-Wcast-align"
+    #pragma clang diagnostic ignored "-Wcast-qual"
+    /**/
+
+    t_thread        *thread = (t_thread *)data;
+    struct iphdr    *iphdr  = (struct iphdr *)(bytes
+                              + sizeof(struct ether_header));
+
+    if (iphdr->version == IPVERSION)
+    {
+        switch (iphdr->protocol)
         {
-            dprintf(STDERR_FILENO, "ft_nmap: sendto(): %s\n", strerror(errno));
-            return (FAILURE);
+            case IPPROTO_ICMP:
+                if (fetch_icmp_packet(thread, (char *)bytes
+                                      + sizeof(struct ether_header)
+                                      + sizeof(struct iphdr)) != SUCCESS)
+                   return ;
+                break;
+
+            case IPPROTO_TCP:
+                if (fetch_tcp_packet(thread, (char *)bytes
+                                     + sizeof(struct ether_header)
+                                     + sizeof(struct iphdr)) != SUCCESS)
+                    return ;
+                break;
+
+            case IPPROTO_UDP:
+                if (fetch_udp_packet(thread, (char *)bytes
+                                     + sizeof(struct ether_header)
+                                     + sizeof(struct iphdr)) != SUCCESS)
+                    return ;
+                break;
+
+            default:
+                break;
         }
     }
-    return (SUCCESS);
+
+    #ifdef DEBUG
+        dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] Received %d bytes\n",
+                pthread_self(), h->caplen);
+    #endif
 }
 
-static uint8_t send_udp(t_thread *thread, t_scan_type scan)
+static int      set_scan_window(t_thread *thread)
 {
-    t_udp_packet    template;
-    ssize_t         bytes_sent  = 0;
+    t_list  *tmp        = thread->results;
+    int     window      = 10;
+    uint8_t factor      = 1;
 
-    ft_bzero(&template, sizeof(template));
-    init_udp_packet(thread, &template, scan);
-    if (setup_sockfd((struct sockaddr_in *)&(thread->dst), thread->sockets + scan, IPPROTO_UDP) != SUCCESS)
-        return (FAILURE);
-    for(t_list *tmp = thread->ports; tmp; tmp = tmp->next)
-    {
-        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Sending packet to %s:%d\t|%s|\n",
-                pthread_self(), inet_ntoa(((struct sockaddr_in *)&(thread->dst))->sin_addr),
-                *(uint16_t *)tmp->data, debug_scan(scan));
+    window = window * (int)ft_lstlen(tmp);
 
-        update_udp(&template, *(uint16_t *)tmp->data);
-        if ((bytes_sent = sendto(thread->sockets[scan], &template.udpheader, sizeof(t_udpheader), 0,
-                                (struct sockaddr_in *)&(thread->dst), sizeof(struct sockaddr_in))) == -1)
-        {
-            dprintf(STDERR_FILENO, "ft_nmap: sendto(): %s\n", strerror(errno));
-            return (FAILURE);
-        }
-    }
-    return (SUCCESS);
-}
-
-uint8_t scan_ports(t_thread *thread)
-{
-    if (thread->scan & DEFAULT_SCAN)
-    {
-        for (int i = 0; i < 5; i++)
-            if (send_tcp(thread, (t_scan_type)i) == FAILURE)
-                return (FAILURE);
-        if ((send_udp(thread, S_UDP) != SUCCESS))
-            return (FAILURE);
-        return (SUCCESS);
-    }
     if (thread->scan & SCAN_SYN)
-        send_tcp(thread, S_SYN);
-    if (thread->scan & SCAN_NULL)
-        send_tcp(thread, S_NULL);
+        factor += 1;
     if (thread->scan & SCAN_ACK)
-        send_tcp(thread, S_ACK);
+        factor += 1;
     if (thread->scan & SCAN_FIN)
-        send_tcp(thread, S_FIN );
+        factor += 1;
     if (thread->scan & SCAN_XMAS)
-        send_tcp(thread, S_XMAS);
+        factor += 1;
+    if (thread->scan & SCAN_NULL)
+        factor += 1;
     if (thread->scan & SCAN_UDP)
-        send_udp(thread, S_UDP);
-    return (SUCCESS);
+        factor += 1;
+
+    window = window * factor + 1000;
+
+    #ifdef DEBUG
+        dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] Scan window: %d ms\n",
+                pthread_self(), window);
+    #endif
+
+    return (window);
 }
 
-void *scan_thread(void *data)
+static void     set_pollfds(t_thread *thread, struct pollfd *pfds)
+{
+    pfds[S_SYN].fd = thread->sockets[S_SYN];
+    pfds[S_SYN].events = POLLIN;
+    pfds[S_SYN].revents = 0;
+    pfds[S_ACK].fd = thread->sockets[S_ACK];
+    pfds[S_ACK].events = POLLIN;
+    pfds[S_ACK].revents = 0;
+    pfds[S_FIN].fd = thread->sockets[S_FIN];
+    pfds[S_FIN].events = POLLIN;
+    pfds[S_FIN].revents = 0;
+    pfds[S_XMAS].fd = thread->sockets[S_XMAS];
+    pfds[S_XMAS].events = POLLIN;
+    pfds[S_XMAS].revents = 0;
+    pfds[S_NULL].fd = thread->sockets[S_NULL];
+    pfds[S_NULL].events = POLLIN;
+    pfds[S_NULL].revents = 0;
+    pfds[S_UDP].fd = thread->sockets[S_UDP];
+    pfds[S_UDP].events = POLLIN;
+    pfds[S_UDP].revents = 0;
+    pfds[S_UDP_ICMP_RESPONSE].fd = thread->sockets[S_UDP_ICMP_RESPONSE];
+    pfds[S_UDP_ICMP_RESPONSE].events = POLLIN;
+    pfds[S_UDP_ICMP_RESPONSE].revents = 0;
+}
+
+static void __attribute__ ((noreturn)) close_thread(pcap_t *sniffer,
+                                                    struct bpf_program *filter)
+{
+    if (filter->bf_insns)
+        free(filter->bf_insns);
+    ft_bzero(filter, sizeof(struct bpf_program));
+
+    if (sniffer)
+        pcap_close(sniffer);
+
+    pthread_exit(NULL);
+}
+
+static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
+                                      struct bpf_program *compiled_filter)
+{
+    struct pollfd   pfds[MAX_SCAN];
+    struct timeval  t1, t2;
+    double time     = 0.0;
+    size_t fds      = MAX_SCAN;
+    int window      = set_scan_window(thread);
+
+    ft_memset(pfds, 0, sizeof(pfds));
+    ft_memset(&t1, 0, sizeof(struct timeval));
+    ft_memset(&t2, 0, sizeof(struct timeval));
+
+    set_pollfds(thread, pfds);
+
+
+    if (gettimeofday(&t1, NULL) < 0)
+    {
+        dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
+            strerror(errno));
+        close_thread(sniffer, compiled_filter);
+    }
+
+    while (time < window && fds)
+    {
+        if (poll(pfds, MAX_SCAN, window) > 0)
+        {
+            for (size_t i = 0; i < MAX_SCAN; i++)
+            {
+                if (pfds[i].revents != 0)
+                {
+                    if (pfds[i].revents & POLLIN)
+                    {
+                        #ifdef DEBUG
+                            dprintf(STDERR_FILENO,
+                                    "[DEBUG THREAD %lu] poll > s|%d| f|%zu|\n",
+                                    pthread_self(), pfds[i].fd, i);
+                        #endif
+
+                        while (time < window)
+                        {
+                            if (pcap_dispatch(sniffer, 1,
+                                              packet_handler,
+                                              (u_char *)thread) == -1)
+                            {
+                                dprintf(STDERR_FILENO,
+                                    "ft_nmap: pcap_dispatch(): %s\n",
+                                    pcap_geterr(sniffer));
+                                close_thread(sniffer, compiled_filter);
+                            }
+
+                            if (gettimeofday(&t2, NULL) < 0)
+                            {
+                                dprintf(STDERR_FILENO,
+                                    "ft_nmap: gettimeofday(): %s\n",
+                                    strerror(errno));
+                                close_thread(sniffer, compiled_filter);
+                            }
+
+                            time = ((double)t2.tv_sec
+                                    - (double)t1.tv_sec) * 1000.0;
+                            time += ((double)t2.tv_usec
+                                    - (double)t1.tv_usec) / 1000.0;
+
+                        }
+
+                        #ifdef DEBUG
+                            dprintf(STDOUT_FILENO,
+                                    "[DEBUG THREAD %lu] POLLING DONE ...\n",
+                                    pthread_self());
+                        #endif
+
+                        fds--;
+                        break;
+                    }
+                    else
+                        fds--;
+
+                }
+            }
+        }
+        else
+        {
+            #ifdef DEBUG
+                dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] TIMEOUT !\n",
+                        pthread_self());
+            #endif
+
+            break;
+        }
+
+        if (gettimeofday(&t2, NULL) < 0)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
+                    strerror(errno));
+            close_thread(sniffer, compiled_filter);
+        }
+
+        time = ((double)t2.tv_sec - (double)t1.tv_sec) * 1000.0;
+        time += ((double)t2.tv_usec - (double)t1.tv_usec) / 1000.0;
+    }
+
+}
+
+void            *scan_thread(void *data)
 {
     t_thread            *thread     = data;
     pcap_t              *sniffer    = NULL;
@@ -192,55 +349,72 @@ void *scan_thread(void *data)
     struct bpf_program  compiled_filter;
     char                errbuf[PCAP_ERRBUF_SIZE];
 
-    /* find a capture device if not specified on command-line */
-    dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n", pthread_self());
+    ft_bzero(errbuf, PCAP_ERRBUF_SIZE);
+    ft_bzero(&compiled_filter, sizeof(struct bpf_program));
 
-    dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] FILTER |%s|\n", pthread_self(), thread->filter.buffer);
+    #ifdef DEBUG
+        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n",
+                pthread_self());
+    #endif
 
-	/* get network number and mask associated with capture device */
-    if (pcap_lookupnet(g_nmap.device, &net, &mask, errbuf) == -1)
+    #ifdef DEBUG
+        dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] FILTER |%s|\n",
+                pthread_self(), thread->filter.buffer);
+    #endif
+
+    /* get network number and mask associated with capture device */
+    if (pcap_lookupnet(thread->device, &net, &mask, errbuf) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf, g_nmap.device);
-        pthread_exit(NULL);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf,
+                thread->device);
+        close_thread(sniffer, &compiled_filter);
     }
 
 	/* open capture device */
-    if (!(sniffer = pcap_open_live(g_nmap.device, TCP_MAXWIN, FALSE, 1000, errbuf)))
+    if (!(sniffer = pcap_open_live(thread->device, TCP_MAXWIN, FALSE, -1,
+                                   errbuf)))
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_open_live(): %s\n", errbuf);
-        pthread_exit(NULL);
+        close_thread(sniffer, &compiled_filter);
     }
 
 	/* compile the filter expression */
-    if (pcap_compile(sniffer, &compiled_filter, thread->filter.buffer, TRUE, mask) == -1)
+    if (pcap_compile(sniffer, &compiled_filter, thread->filter.buffer,
+                     TRUE, mask) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_compile(): %s: %s\n", pcap_geterr(sniffer), thread->filter.buffer);
-        pthread_exit(NULL);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_compile(): %s: %s\n",
+                pcap_geterr(sniffer), thread->filter.buffer);
+        close_thread(sniffer, &compiled_filter);
     }
 
 	/* apply the compiled filter */
     if (pcap_setfilter(sniffer, &compiled_filter) == -1)
     {
-        dprintf(STDERR_FILENO, "ft_nmap: pcap_setfilter(): %s: %s\n", pcap_geterr(sniffer), thread->filter.buffer);
-        pthread_exit(NULL);
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_setfilter(): %s: %s\n",
+                pcap_geterr(sniffer), thread->filter.buffer);
+        close_thread(sniffer, &compiled_filter);
+    }
+
+    if (pcap_setnonblock(sniffer, 1, errbuf) == -1)
+    {
+        dprintf(STDERR_FILENO, "ft_nmap: pcap_setnonblock(): %s\n", errbuf);
+        close_thread(sniffer, &compiled_filter);
     }
 
     /* Send packets */
     if (scan_ports(thread) != SUCCESS)
     {
-        if (compiled_filter.bf_insns)
-            free(compiled_filter.bf_insns);
-        pcap_close(sniffer);
-        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] SCAN PORT ERROR !\n", pthread_self());
-        pthread_exit(NULL);
+        dprintf(STDERR_FILENO, "ft_nmap: scan_ports(): Scan port error\n");
+        close_thread(sniffer, &compiled_filter);
     }
 
-    /* Recieve packets */
+    pcap_dispatch_handler(thread, sniffer, &compiled_filter);
 
-    /* Clean allocated ressources */
-    if (compiled_filter.bf_insns)
-        free(compiled_filter.bf_insns);
-    pcap_close(sniffer);
-    dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] END THREAD\n", pthread_self());
-    pthread_exit(NULL);
+    #ifdef DEBUG
+        dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] END THREAD\n",
+                pthread_self());
+    #endif
+
+    /* Clean allocated ressources and exit*/
+    close_thread(sniffer, &compiled_filter);
 }

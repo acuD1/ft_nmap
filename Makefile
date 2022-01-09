@@ -80,6 +80,7 @@ PATHS				+=	$(O_PATH)
 # Headers
 
 HDR					+=	ft_nmap.h
+HDR					+=	udp_payload.h
 
 # SOURCES
 
@@ -93,12 +94,17 @@ _SRCS				+= resolve.c
 _SRCS 				+= init.c
 _SRCS 				+= set_scan_type.c
 _SRCS 				+= exec_nmap.c
-# _SRCS 				+= send_packets.c
+_SRCS 				+= send_tcp.c
+_SRCS 				+= send_udp.c
+_SRCS 				+= scan_ports.c
+_SRCS 				+= setup_sockfd.c
 _SRCS 				+= tools.c
 _SRCS 				+= scan_target.c
 _SRCS 				+= scan_thread.c
 _SRCS 				+= debug.c
 _SRCS 				+= generate_filter.c
+_SRCS 				+= udp_payload.c
+_SRCS 				+= generate_threads.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c
@@ -119,7 +125,7 @@ LIB						=	$(L_PATH)$(LNAME)
 # Variables
 
 DEBUG				=
-CFLAGS				=	-Wall -Wextra -Werror #-std=$(STD)
+CFLAGS				=	-Wall -Wextra -Werror
 ifeq ($(DEBUG), g)
 	CFLAGS			+=	-g
 else ifeq ($(DEBUG), fsanitize)

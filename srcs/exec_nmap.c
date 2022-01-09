@@ -6,14 +6,13 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2021/12/23 17:40:50 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 11:52:17 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
-#include <stdio.h>
 
-void exec_nmap(t_nmap *nmap)
+void    exec_nmap(t_nmap *nmap)
 {
     if (getuid() != 0)
     {
@@ -21,17 +20,17 @@ void exec_nmap(t_nmap *nmap)
         exit_routine(nmap, FAILURE);
     }
 
-    /* Display information */
-    print_source_ip(nmap);
-
-    /* Portscan */
-    // if (nmap->options)
-    /* The return has to be controlled here  */
     for (t_list *target = nmap->targets; target; target = target->next)
     {
+
+        #ifdef DEBUG
+            debug_source_ip(target->data);
+        #endif
+
         if (scan_target(target->data, nmap) == FAILURE)
         {
-            dprintf(STDERR_FILENO, "[ERROR] on scan target\n");
+            dprintf(STDERR_FILENO, "ft_nmap: scan_target(): An error has occured\n");
+            exit_routine(nmap, EXIT_FAILURE);
         }
     }
 }

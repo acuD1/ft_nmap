@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/02 18:19:04 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/08 16:26:30 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static uint8_t set_opts_args_failure(t_opts_args *opts_args)
 
 static uint8_t get_threads(t_nmap *nmap, t_opt_set_db *tmp)
 {
+    int32_t threads;
+
     if (ft_isnumeric(tmp->arg) != TRUE)
     {
         dprintf(STDERR_FILENO,
@@ -33,15 +35,22 @@ static uint8_t get_threads(t_nmap *nmap, t_opt_set_db *tmp)
                 tmp->arg);
         return (FAILURE);
     }
-    // FIXME: Protection thread max = 255
-    nmap->threads = (uint8_t)ft_atoi(tmp->arg);
+    threads = ft_atoi(tmp->arg);
+    if (threads < 1 || threads > 250)
+    {
+        dprintf(STDERR_FILENO,
+                "ft_nmap: unsupported value '%d' for option '--speedup'\n",
+                threads);
+        return (FAILURE);
+    }
+    nmap->threads = (uint8_t)threads;
     return (SUCCESS);
 }
 
 static void sum_ports(void *data, void *acc)
 {
-    t_port *  port;
-    uint16_t *port_number;
+    t_port      *port;
+    uint16_t    *port_number;
 
     port = data;
     port_number = acc;
@@ -63,7 +72,7 @@ static uint8_t count_ports(t_nmap *nmap, t_target *target)
     if (target->port_nbr > 1024)
     {
         dprintf(STDERR_FILENO,
-                "ft_nmap: maximum ports to scan is 1024, tried %u",
+                "ft_nmap: maximum ports to scan is 1024, tried %u\n",
                 target->port_nbr);
         return (FAILURE);
     }
@@ -101,19 +110,27 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
         ft_freetab(&tab);
         return (FAILURE);
     }
+    if ((resolve_local_ipv4(&target) != SUCCESS))
+    {
+        ft_freetab(&tab);
+        return (FAILURE);
+    }
     if (parse_ports(&target, tab[1]) == FAILURE)
     {
+        ft_strdel(&target.device);
         ft_freetab(&tab);
         return (FAILURE);
     }
     if (count_ports(nmap, &target) == FAILURE)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         ft_freetab(&tab);
         return (FAILURE);
     }
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         ft_freetab(&tab);
         return (FAILURE);
@@ -167,6 +184,8 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     {
         if ((resolve_target_ipv4(&target, tmp->arg) != SUCCESS))
             return (FAILURE);
+        if ((resolve_local_ipv4(&target) != SUCCESS))
+            return (FAILURE);
     }
     else
         return (FAILURE);
@@ -175,16 +194,26 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     {
         if (parse_ports(&target, tmp->arg) == FAILURE)
         {
+            ft_strdel(&target.device);
             return (FAILURE);
         }
     }
+    else
+    {
+        t_port_data data = {.range = {1, 1024}};
+        target.ports = ft_lstnew(&(t_port){.type = E_PORT_RANGE, .data = data},
+                                 sizeof(t_port));
+        dprintf(STDERR_FILENO, "ft_nmap: no ports specified\n");
+    }
     if (count_ports(nmap, &target) == FAILURE)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         return (FAILURE);
     }
     if ((node = ft_lstnew(&target, sizeof(t_target))) == NULL)
     {
+        ft_strdel(&target.device);
         ft_lstdel(&target.ports, NULL);
         return (FAILURE);
     }
@@ -216,9 +245,9 @@ static int validate_opt(void *data, void *context)
 
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
 {
-    t_opts_args   opts_args;
-    t_opts_conf   opts_conf;
-    t_opt_set_db *tmp = NULL;
+    t_opts_args     opts_args;
+    t_opts_conf     opts_conf;
+    t_opt_set_db    *tmp = NULL;
 
     ft_bzero(&opts_args, sizeof(t_opts_conf));
     ft_bzero(&opts_conf, sizeof(t_opts_conf));
@@ -275,7 +304,14 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
             return (set_opts_args_failure(&opts_args));
     }
     else
-        nmap->scan = DEFAULT_SCAN; // Temporay fix
+    {
+        nmap->scan |= SCAN_ACK;
+        nmap->scan |= SCAN_FIN;
+        nmap->scan |= SCAN_XMAS;
+        nmap->scan |= SCAN_NULL;
+        nmap->scan |= SCAN_SYN;
+        nmap->scan |= SCAN_UDP;
+    }
 
     if ((tmp = get_opt_set_db(&opts_args.opt_set, FILE_STR)) != NULL)
     {
@@ -288,8 +324,6 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
             return (set_opts_args_failure(&opts_args));
     }
 
-    // debug_scan_type(nmap->scan);    /* DEBUG */
-    // debug_opts_args(&opts_args);    /* DEBUG */
     free_opts_args(&opts_args);
     return (SUCCESS);
 }
