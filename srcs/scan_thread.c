@@ -225,21 +225,7 @@ static void     set_pollfds(t_thread *thread, struct pollfd *pfds)
     pfds[S_UDP_ICMP_RESPONSE].revents = 0;
 }
 
-static void __attribute__ ((noreturn)) close_thread(pcap_t *sniffer,
-                                                    struct bpf_program *filter)
-{
-    if (filter->bf_insns)
-        free(filter->bf_insns);
-    ft_bzero(filter, sizeof(struct bpf_program));
-
-    if (sniffer)
-        pcap_close(sniffer);
-
-    pthread_exit(NULL);
-}
-
-static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
-                                      struct bpf_program *compiled_filter)
+static void     pcap_dispatch_handler(t_thread *thread, int window)
 {
     struct pollfd   pfds[MAX_SCAN];
     struct timeval  t1, t2;
@@ -258,7 +244,7 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
     {
         dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
             strerror(errno));
-        close_thread(sniffer, compiled_filter);
+        pthread_exit(NULL);
     }
 
     while (time < window && fds)
@@ -285,8 +271,8 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
                             {
                                 dprintf(STDERR_FILENO,
                                     "ft_nmap: pcap_dispatch(): %s\n",
-                                    pcap_geterr(sniffer));
-                                close_thread(sniffer, compiled_filter);
+                                    pcap_geterr(thread->sniffer));
+                                pthread_exit(NULL);
                             }
 
                             if (gettimeofday(&t2, NULL) < 0)
@@ -294,7 +280,7 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
                                 dprintf(STDERR_FILENO,
                                     "ft_nmap: gettimeofday(): %s\n",
                                     strerror(errno));
-                                close_thread(sniffer, compiled_filter);
+                                pthread_exit(NULL);
                             }
 
                             time = ((double)t2.tv_sec
@@ -333,7 +319,7 @@ static void     pcap_dispatch_handler(t_thread *thread, pcap_t *sniffer,
         {
             dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
                     strerror(errno));
-            close_thread(sniffer, compiled_filter);
+            pthread_exit(NULL);
         }
 
         time = ((double)t2.tv_sec - (double)t1.tv_sec) * 1000.0;
@@ -377,14 +363,10 @@ static uint8_t wait_udp_handler(void)
 void            *scan_thread(void *data)
 {
     t_thread            *thread     = data;
-    pcap_t              *sniffer    = NULL;
     bpf_u_int32         mask        = 0;
     bpf_u_int32         net         = 0;
     struct bpf_program  compiled_filter;
     char                errbuf[PCAP_ERRBUF_SIZE];
-
-    ft_bzero(errbuf, PCAP_ERRBUF_SIZE);
-    ft_bzero(&compiled_filter, sizeof(struct bpf_program));
 
     #ifdef DEBUG
         dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n",
@@ -401,45 +383,45 @@ void            *scan_thread(void *data)
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_lookupnet(): %s: %s\n", errbuf,
                 thread->device);
-        close_thread(sniffer, &compiled_filter);
+        pthread_exit(NULL);
     }
 
 	/* open capture device */
-    if (!(sniffer = pcap_open_live(thread->device, TCP_MAXWIN, FALSE, -1,
+    if (!(thread->sniffer = pcap_open_live(thread->device, TCP_MAXWIN, FALSE, -1,
                                    errbuf)))
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_open_live(): %s\n", errbuf);
-        close_thread(sniffer, &compiled_filter);
+        pthread_exit(NULL);
     }
 
 	/* compile the filter expression */
-    if (pcap_compile(sniffer, &compiled_filter, thread->filter.buffer,
+    if (pcap_compile(thread->sniffer, &thread->compiled_filter, thread->filter.buffer,
                      TRUE, mask) == -1)
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_compile(): %s: %s\n",
-                pcap_geterr(sniffer), thread->filter.buffer);
-        close_thread(sniffer, &compiled_filter);
+                pcap_geterr(thread->sniffer), thread->filter.buffer);
+        pthread_exit(NULL);
     }
 
 	/* apply the compiled filter */
-    if (pcap_setfilter(sniffer, &compiled_filter) == -1)
+    if (pcap_setfilter(thread->sniffer, &thread->compiled_filter) == -1)
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_setfilter(): %s: %s\n",
-                pcap_geterr(sniffer), thread->filter.buffer);
-        close_thread(sniffer, &compiled_filter);
+                pcap_geterr(thread->sniffer), thread->filter.buffer);
+        pthread_exit(NULL);
     }
 
-    if (pcap_setnonblock(sniffer, 1, errbuf) == -1)
+    if (pcap_setnonblock(thread->sniffer, 1, errbuf) == -1)
     {
         dprintf(STDERR_FILENO, "ft_nmap: pcap_setnonblock(): %s\n", errbuf);
-        close_thread(sniffer, &compiled_filter);
+        pthread_exit(NULL);
     }
 
     /* Send packets */
     if (scan_ports_tcp(thread) != SUCCESS)
     {
         dprintf(STDERR_FILENO, "ft_nmap: scan_ports(): Scan port error\n");
-        close_thread(sniffer, &compiled_filter);
+        pthread_exit(NULL);
     }
 
     pcap_dispatch_handler(thread, sniffer, &compiled_filter);
@@ -461,7 +443,10 @@ void            *scan_thread(void *data)
             pcap_dispatch_handler(thread, sniffer, &compiled_filter);
 
             if (wait_udp_handler() == FAILURE)
-                close_thread(sniffer, &compiled_filter);
+            {
+                pthread_mutex_unlock(&(g_nmap.lock));
+                break ;
+            }
 
             pthread_mutex_unlock(&(g_nmap.lock));
         }
@@ -473,5 +458,5 @@ void            *scan_thread(void *data)
     #endif
 
     /* Clean allocated ressources and exit*/
-    close_thread(sniffer, &compiled_filter);
+    pthread_exit(NULL);
 }

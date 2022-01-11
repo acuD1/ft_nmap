@@ -263,10 +263,12 @@ typedef struct                  s_thread
 {
     t_list                      *results;
     char                        *device;
-    t_vector                    filter;
+    pcap_t                      *sniffer;
     int                         sockets[7];
     uint8_t                     scan;
     char                        _padding[3];
+    t_vector                    filter;
+    struct bpf_program          compiled_filter;
     struct sockaddr_storage     src;
     struct sockaddr_storage     dst;
 }                               t_thread;
