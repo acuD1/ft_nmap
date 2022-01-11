@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:42:59 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 11:48:20 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/11 10:48:45 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,10 @@ uint8_t     send_tcp(t_thread *thread, t_scan_type scan)
 
     for (t_list *tmp = thread->results; tmp; tmp = tmp->next)
     {
+
+        if (g_nmap.is_canceld == TRUE)
+            return (FAILURE);
+
         #ifdef DEBUG
             dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] From %s\n",
                     pthread_self(),

@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 17:28:18 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/09 18:44:04 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ void    exec_nmap(t_nmap *nmap)
     for (t_list *target = nmap->targets; target; target = target->next)
     {
 
+        if (g_nmap.is_canceld == TRUE)
+            exit_routine(nmap, FAILURE);
+            
         #ifdef DEBUG
             debug_source_ip(target->data);
         #endif

@@ -6,13 +6,11 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 14:21:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/11 10:46:25 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
-#include "memory.h"
-#include "str.h"
 
 static int      find_port(void *current, void *to_find)
 {
@@ -231,7 +229,6 @@ static void     pcap_dispatch_handler(t_thread *thread, int window)
     struct timeval  t1, t2;
     double time     = 0.0;
     size_t fds      = MAX_SCAN;
-    int window      = set_scan_window(thread);
 
     ft_memset(pfds, 0, sizeof(pfds));
     ft_memset(&t1, 0, sizeof(struct timeval));
@@ -249,6 +246,9 @@ static void     pcap_dispatch_handler(t_thread *thread, int window)
 
     while (time < window && fds)
     {
+        if (g_nmap.is_canceld)
+            pthread_exit(NULL);
+
         if (poll(pfds, MAX_SCAN, window) > 0)
         {
             for (size_t i = 0; i < MAX_SCAN; i++)
@@ -265,7 +265,10 @@ static void     pcap_dispatch_handler(t_thread *thread, int window)
 
                         while (time < window)
                         {
-                            if (pcap_dispatch(sniffer, 1,
+                            if (g_nmap.is_canceld)
+                                pthread_exit(NULL);
+
+                            if (pcap_dispatch(thread->sniffer, 1,
                                               packet_handler,
                                               (u_char *)thread) == -1)
                             {
@@ -347,6 +350,10 @@ static uint8_t wait_udp_handler(void)
 
     while (end - start < 1.0)
     {
+
+        if (g_nmap.is_canceld)
+            return (FAILURE);
+
         if (gettimeofday(&udp_ready, NULL) < 0)
         {
             dprintf(STDERR_FILENO, "ft_nmap: gettimeofday(): %s\n",
@@ -365,7 +372,7 @@ void            *scan_thread(void *data)
     t_thread            *thread     = data;
     bpf_u_int32         mask        = 0;
     bpf_u_int32         net         = 0;
-    struct bpf_program  compiled_filter;
+    int window                      = set_scan_window(thread);
     char                errbuf[PCAP_ERRBUF_SIZE];
 
     #ifdef DEBUG
@@ -424,13 +431,16 @@ void            *scan_thread(void *data)
         pthread_exit(NULL);
     }
 
-    pcap_dispatch_handler(thread, sniffer, &compiled_filter);
+    pcap_dispatch_handler(thread, window);
 
     if (thread->scan & SCAN_UDP)
     {
         for (t_list *tmp = thread->results; tmp; tmp = tmp->next)
         {
             t_result        *result = (t_result *)tmp->data;
+
+            if (g_nmap.is_canceld)
+                pthread_exit(NULL);
 
             pthread_mutex_lock(&(g_nmap.lock));
 
@@ -440,7 +450,7 @@ void            *scan_thread(void *data)
                 break ;
             }
 
-            pcap_dispatch_handler(thread, sniffer, &compiled_filter);
+            pcap_dispatch_handler(thread, 1000);
 
             if (wait_udp_handler() == FAILURE)
             {
