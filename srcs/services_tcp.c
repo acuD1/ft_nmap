@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/09 15:06:59 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 15:31:44 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 19:05:45 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ const char  *services_tcp(uint16_t port)
             return "unknown";
         case 5:
             return "rje";
+        case 7:
+            return "echo";
+        case 9:
+            return "discard";
         case 11:
             return "systat";
         case 13:
@@ -36,10 +40,16 @@ const char  *services_tcp(uint16_t port)
             return "msp";
         case 19:
             return "chargen";
+        case 20:
+            return "ftp-data";
+        case 21:
+            return "ftp";
+        case 22:
+            return "ssh";
         case 23:
             return "telnet";
         case 24:
-            return "priv";
+            return "priv-mail";
         case 25:
             return "smtp";
         case 26:
@@ -47,13 +57,13 @@ const char  *services_tcp(uint16_t port)
         case 27:
             return "nsw";
         case 29:
-            return "msg";
+            return "msg-icp";
         case 31:
-            return "msg";
+            return "msg-auth";
         case 33:
             return "dsp";
         case 35:
-            return "priv";
+            return "priv-print";
         case 37:
             return "time";
         case 38:
@@ -79,35 +89,35 @@ const char  *services_tcp(uint16_t port)
         case 49:
             return "tacacs";
         case 50:
-            return "re";
+            return "re-mail-ck";
         case 51:
-            return "la";
+            return "la-maint";
         case 52:
-            return "xns";
+            return "xns-time";
         case 53:
             return "domain";
         case 54:
-            return "xns";
+            return "xns-ch";
         case 55:
-            return "isi";
+            return "isi-gl";
         case 56:
-            return "xns";
+            return "xns-auth";
         case 57:
-            return "priv";
+            return "priv-term";
         case 58:
-            return "xns";
+            return "xns-mail";
         case 59:
-            return "priv";
+            return "priv-file";
         case 61:
-            return "ni";
+            return "ni-mail";
         case 62:
             return "acas";
         case 63:
-            return "via";
+            return "via-ftp";
         case 64:
             return "covia";
         case 65:
-            return "tacacs";
+            return "tacacs-ds";
         case 66:
             return "sqlnet";
         case 67:
@@ -119,19 +129,19 @@ const char  *services_tcp(uint16_t port)
         case 70:
             return "gopher";
         case 71:
-            return "netrjs";
+            return "netrjs-1";
         case 72:
-            return "netrjs";
+            return "netrjs-2";
         case 73:
-            return "netrjs";
+            return "netrjs-3";
         case 74:
-            return "netrjs";
+            return "netrjs-4";
         case 75:
-            return "priv";
+            return "priv-dial";
         case 76:
             return "deos";
         case 77:
-            return "priv";
+            return "priv-rje";
         case 78:
             return "vettcp";
         case 79:
@@ -330,6 +340,8 @@ const char  *services_tcp(uint16_t port)
             return "xdmcp";
         case 178:
             return "nextstep";
+        case 179:
+            return "bgp";
         case 180:
             return "ris";
         case 181:
