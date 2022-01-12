@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/11 10:46:25 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 20:13:58 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,30 +67,53 @@ static uint8_t  fetch_tcp_packet(t_thread *thread, void *bytes)
     struct tcphdr   *tcp        = (struct tcphdr *)bytes;
     t_list          *result     = NULL;
     t_result        *result_tmp = NULL;
-    uint16_t        port        = 0;
+    uint16_t        s_port, d_port        = 0;
 
-    port = ntohs(tcp->th_sport);
+    s_port = ntohs(tcp->th_sport);
+    d_port = ntohs(tcp->th_dport);
 
     #ifdef DEBUG
         dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] Received TCP: %hu\n",
-                pthread_self(), port);
+                pthread_self(), s_port);
     #endif
 
-    if (!(result = ft_lstfind(thread->results, &port,
+    if (!(result = ft_lstfind(thread->results, &s_port,
                               (int (*)(void*, void*))find_port)))
         return (FAILURE);
 
     result_tmp = (t_result *)result->data;
 
-    if (tcp->th_flags & TH_ACK && tcp->th_flags & TH_SYN)
-        result_tmp->status[S_SYN]   = E_OPEN;
-    if (tcp->th_flags & TH_RST)
+    if (d_port == 33000)
     {
-        result_tmp->status[S_SYN]   = E_CLOSED;
-        result_tmp->status[S_NULL]  = E_CLOSED;
-        result_tmp->status[S_FIN]   = E_CLOSED;
-        result_tmp->status[S_XMAS]  = E_CLOSED;
-        result_tmp->status[S_ACK]   = E_UNFILTERED;
+        if (tcp->th_flags & TH_ACK && tcp->th_flags & TH_SYN)
+            result_tmp->status[S_SYN]   = E_OPEN;
+        if (tcp->th_flags & TH_RST && tcp->th_flags & TH_ACK)
+            result_tmp->status[S_SYN]   = E_CLOSED;
+    }
+    if (d_port == 33001)
+    {
+        // ACK
+        if (tcp->th_flags & TH_RST)
+            result_tmp->status[S_NULL]   = E_CLOSED;
+
+    }
+    if (d_port == 33002)
+    {
+        // FIN
+        if (tcp->th_flags & TH_RST)
+            result_tmp->status[S_ACK]   = E_UNFILTERED;
+    }
+    if (d_port == 33003)
+    {
+        // XMAS
+        if (tcp->th_flags & TH_RST)
+            result_tmp->status[S_FIN]  = E_CLOSED;
+    }
+    if (d_port == 33004)
+    {
+        // NULL
+        if (tcp->th_flags & TH_RST)
+            result_tmp->status[S_XMAS]  = E_CLOSED;
     }
 
     return (SUCCESS);
@@ -375,6 +398,9 @@ void            *scan_thread(void *data)
     int window                      = set_scan_window(thread);
     char                errbuf[PCAP_ERRBUF_SIZE];
 
+    // thread->filter.buffer = ft_strdup("tcp port 22 and src 45.33.32.156");
+    // thread->filter.buffer = ft_strdup("port 22 or icmp and src 45.33.32.156");
+
     #ifdef DEBUG
         dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n",
                 pthread_self());
@@ -384,6 +410,7 @@ void            *scan_thread(void *data)
         dprintf(STDOUT_FILENO, "[DEBUG THREAD %lu] FILTER |%s|\n",
                 pthread_self(), thread->filter.buffer);
     #endif
+
 
     /* get network number and mask associated with capture device */
     if (pcap_lookupnet(thread->device, &net, &mask, errbuf) == -1)
