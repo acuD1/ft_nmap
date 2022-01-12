@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/09 15:58:34 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/11 10:48:58 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 19:11:15 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool        is_tcp_scan(uint8_t scan)
 uint8_t     is_loopback(struct sockaddr_in *addr)
 {
     uint8_t first_byte = (uint8_t)(addr->sin_addr.s_addr);
-    if (first_byte == (uint8_t)0x7f || addr->sin_addr.s_addr == 0)
+    if (first_byte == (uint8_t)0x7f)
         return (SUCCESS);
     return (FAILURE);
 }
