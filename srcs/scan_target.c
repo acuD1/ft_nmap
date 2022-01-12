@@ -6,17 +6,11 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 17:29:57 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 10:41:28 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_nmap.h"
-#include "list.h"
-#include "str.h"
-#include "vector.h"
-#include <pthread.h>
-#include <stdio.h>
-#include <strings.h>
 
 // - scan_target
 //     - scan_thread
@@ -71,6 +65,24 @@ static uint8_t  close_fds(t_thread *thread)
     return (SUCCESS);
 }
 
+/* In case of sigint when creating threads, we need to join all threads
+before cleanup */
+static uint8_t  cleaner_joined_thread(t_list *threads, t_list *threads_id)
+{
+    for (t_list *tmp = threads_id; tmp; tmp = tmp->next)
+    {
+        pthread_t   *tid = tmp->data;
+
+        if (pthread_join(*tid, NULL) != SUCCESS)
+            dprintf(STDERR_FILENO,
+                "ft_nmap: pthread_join(): Error joining thread %lu\n", *tid);
+    }
+
+    ft_lstdel(&threads, delete_thread);
+    ft_lstdel(&threads_id, NULL);
+    return (FAILURE);
+}
+
 int             scan_target(void *data, void *context)
 {
     t_nmap      *nmap       = context;
@@ -78,6 +90,7 @@ int             scan_target(void *data, void *context)
     t_list      *threads    = NULL;
     t_list      *threads_id = NULL;
     t_list      *results    = NULL;
+    long long   result      = 0;
 
     #ifdef DEBUG
         debug_target(target);
@@ -90,15 +103,27 @@ int             scan_target(void *data, void *context)
         return (FAILURE);
     }
 
+    if (g_nmap.is_canceld == TRUE)
+    {
+        ft_lstdel(&threads, delete_thread);
+        return (FAILURE);
+    }
+
     // 2: Launch threads and collect their identifiers in a list of pthread_t
     for (t_list *tmp = threads; tmp; tmp = tmp->next)
     {
         pthread_t   tid = 0;
 
+        if (g_nmap.is_canceld == TRUE)
+            return (cleaner_joined_thread(threads, threads_id));
+
         if (pthread_create(&tid, NULL, scan_thread, tmp->data) != SUCCESS
             || ft_lstaddback(&threads_id, ft_lstnew(&tid, sizeof(pthread_t)))
                 != SUCCESS)
-            break ;
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: scan_target(): Error creating thread\n");
+            return (cleaner_joined_thread(threads, threads_id));
+        }
     }
 
     // 3: Join on each launched thread
@@ -106,8 +131,23 @@ int             scan_target(void *data, void *context)
     {
         pthread_t   *tid = tmp->data;
 
-        if (pthread_join(*tid, NULL) != SUCCESS)
-            break ;
+        pthread_join(*tid, (void *)&result);
+
+    }
+
+    if ((void *)result == PTHREAD_CANCELED)
+    {
+        ft_lstdel(&threads, delete_thread);
+        ft_lstdel(&threads_id, NULL);
+        return (FAILURE);
+    }
+
+
+    if (g_nmap.is_canceld == TRUE)
+    {
+        ft_lstdel(&threads, delete_thread);
+        ft_lstdel(&threads_id, NULL);
+        return (FAILURE);
     }
 
     if (close_fds(threads->data) != SUCCESS)
@@ -123,6 +163,14 @@ int             scan_target(void *data, void *context)
         {
             t_thread *thread = tmp->data;
 
+            if (g_nmap.is_canceld == TRUE)
+            {
+                ft_lstdel(&threads, delete_thread);
+                ft_lstdel(&threads_id, NULL);
+                ft_lstdel(&results, NULL);
+                return (FAILURE);
+            }
+
             /* Add results to the local target results list */
             ft_lstmerge(&results, thread->results);
             thread->results = NULL;
@@ -132,7 +180,6 @@ int             scan_target(void *data, void *context)
         ft_mergesort(&results, sort_target);
 
         /* Display results */
-
         dprintf(STDOUT_FILENO, "%s\n", BORDER);
         dprintf(STDOUT_FILENO, "%-*s| %-8s| %-16s| %-10s\n", 16,
                 "ADDRESS", "PORT", "SERVICE", "RESULT");
