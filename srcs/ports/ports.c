@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/25 16:21:28 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/09 18:07:30 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:09:46 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 
 static uint8_t init_lexer(t_lexer *lexer, char *ports)
 {
+    if (ports == NULL || *ports == '\0')
+        return (FAILURE);
     ft_bzero(lexer, sizeof(t_lexer));
     lexer->result = NULL;
     lexer->state = L_BASE;

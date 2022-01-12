@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 17:50:05 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:22:05 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ static uint8_t get_threads(t_nmap *nmap, t_opt_set_db *tmp)
 
 static void sum_ports(void *data, void *acc)
 {
-    t_port      *port;
-    uint16_t    *port_number;
+    t_port *  port;
+    uint16_t *port_number;
 
     port = data;
     port_number = acc;
@@ -91,9 +91,9 @@ static uint8_t count_ports(t_nmap *nmap, t_target *target)
 
 static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
 {
-    char        **tab   = NULL;
-    t_list      *node   = NULL;
-    t_target    target;
+    char **  tab = NULL;
+    t_list * node = NULL;
+    t_target target;
 
     ft_bzero(&target, sizeof(t_target));
 
@@ -114,7 +114,7 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
         ft_freetab(&tab);
         return (FAILURE);
     }
-    if (tab[1] != NULL )
+    if (tab[1] != NULL)
     {
         if (parse_ports(&target, tab[1]) == FAILURE)
         {
@@ -123,10 +123,12 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
             return (FAILURE);
         }
     }
-    else {
-        t_port_data data = {.range = {1, 1024}};
-        if (!(target.ports = ft_lstnew(&(t_port){.type = E_PORT_RANGE,
-                                                .data = data}, sizeof(t_port))))
+    else
+    {
+        t_port_data data = { .range = { 1, 1024 } };
+        if (!(target.ports
+              = ft_lstnew(&(t_port){ .type = E_PORT_RANGE, .data = data },
+                          sizeof(t_port))))
         {
             ft_strdel(&target.device);
             ft_freetab(&tab);
@@ -154,8 +156,9 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
 
 static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    char    *line   = NULL;
-    int     fd      = 0;
+    char *line = NULL;
+    int   fd = 0;
+    int   check = 0;
 
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)))
         return (FAILURE);
@@ -167,17 +170,24 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     {
         if ((fd = open(tmp->arg, O_RDONLY)) == -1)
             return (FAILURE);
-        while (ft_getdelim(fd, &line, '\n') == 1)
+        while ((check = ft_getdelim(fd, &line, '\n')) == 1)
         {
             if (get_target_data_from_line(nmap, line) == FAILURE)
             {
-                dprintf(STDERR_FILENO,
+                dprintf(
+                    STDERR_FILENO,
                     "ft_nmap: error while parsing target '%s' from file '%s'\n",
                     line, tmp->arg);
                 ft_strdel(&line);
                 return (FAILURE);
             }
             ft_strdel(&line);
+        }
+        if (check == -1)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: error while parsin file '%s'\n",
+                    tmp->arg);
+            return (FAILURE);
         }
         ft_getdelim(-1, NULL, '\0');
         if (line)
@@ -188,8 +198,8 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
 static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    t_target    target;
-    t_list      *node   = NULL;
+    t_target target;
+    t_list * node = NULL;
 
     ft_bzero(&target, sizeof(t_target));
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)) != NULL)
@@ -206,15 +216,19 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     {
         if (parse_ports(&target, tmp->arg) == FAILURE)
         {
+                dprintf(
+                    STDERR_FILENO,
+                    "ft_nmap: invalid --ports argument '%s'\n", tmp->arg);
             ft_strdel(&target.device);
             return (FAILURE);
         }
     }
     else
     {
-        t_port_data data = {.range = {1, 1024}};
-        if (!(target.ports = ft_lstnew(&(t_port){.type = E_PORT_RANGE,
-                                                 .data = data}, sizeof(t_port))))
+        t_port_data data = { .range = { 1, 1024 } };
+        if (!(target.ports
+              = ft_lstnew(&(t_port){ .type = E_PORT_RANGE, .data = data },
+                          sizeof(t_port))))
         {
             ft_strdel(&target.device);
             return (FAILURE);
@@ -238,8 +252,8 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
 static int validate_opt(void *data, void *context)
 {
-    t_opt_set_db    *option = (t_opt_set_db *)data;
-    t_opts_conf     *config = (t_opts_conf *)context;
+    t_opt_set_db *option = (t_opt_set_db *)data;
+    t_opts_conf * config = (t_opts_conf *)context;
 
     for (int i = 0; config->allowed_opt_tab_arg[i] != NULL; i++)
     {
@@ -258,9 +272,9 @@ static int validate_opt(void *data, void *context)
 
 uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
 {
-    t_opts_args     opts_args;
-    t_opts_conf     opts_conf;
-    t_opt_set_db    *tmp = NULL;
+    t_opts_args   opts_args;
+    t_opts_conf   opts_conf;
+    t_opt_set_db *tmp = NULL;
 
     ft_bzero(&opts_args, sizeof(t_opts_conf));
     ft_bzero(&opts_conf, sizeof(t_opts_conf));

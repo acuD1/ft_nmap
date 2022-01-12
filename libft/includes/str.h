@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:18 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/25 17:41:56 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:05:41 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define STR_H
 # include <string.h>
 # include <stdint.h>
+# include <unistd.h>
 # define VECTOR_BUFFER_SIZE 16
 
 typedef struct		s_magic
@@ -49,7 +50,7 @@ char				**ft_strsplit(char const *s, char *charset);
 char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strtrim(char const *s);
 char				*ft_strinsert(char **str, char c, size_t index);
-size_t				ft_strcspn(const char *s, const char *charset);
+ssize_t		        ft_strcspn(const char *s, const char *charset);
 size_t				ft_strspn(const char *s, const char *charset);
 size_t				ft_strlcat(char *dest, const char *src, size_t size);
 char				*ft_strchr(const char *s, int c);
