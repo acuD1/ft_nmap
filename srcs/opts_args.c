@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/12 18:31:57 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:33:18 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ static uint8_t get_threads(t_nmap *nmap, t_opt_set_db *tmp)
 
 static void sum_ports(void *data, void *acc)
 {
-    t_port *  port;
-    uint16_t *port_number;
+    t_port      *port;
+    uint16_t    *port_number;
 
     port = data;
     port_number = acc;
@@ -91,9 +91,9 @@ static uint8_t count_ports(t_nmap *nmap, t_target *target)
 
 static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
 {
-    char **  tab = NULL;
-    t_list * node = NULL;
-    t_target target;
+    char        **tab = NULL;
+    t_list      *node = NULL;
+    t_target    target;
 
     ft_bzero(&target, sizeof(t_target));
 
@@ -156,9 +156,9 @@ static uint8_t get_target_data_from_line(t_nmap *nmap, char *line)
 
 static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    char *line = NULL;
-    int   fd = 0;
-    int   check = 0;
+    char    *line   = NULL;
+    int     fd      = 0;
+    int     check   = 0;
 
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)))
     {
@@ -215,8 +215,8 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
 static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 {
-    t_target target;
-    t_list * node = NULL;
+    t_target    target;
+    t_list      *node = NULL;
 
     ft_bzero(&target, sizeof(t_target));
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)) != NULL)
@@ -269,8 +269,8 @@ static uint8_t get_ip_cli(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
 
 static int validate_opt(void *data, void *context)
 {
-    t_opt_set_db *option = (t_opt_set_db *)data;
-    t_opts_conf * config = (t_opts_conf *)context;
+    t_opt_set_db    *option = (t_opt_set_db *)data;
+    t_opts_conf     *config = (t_opts_conf *)context;
 
     for (int i = 0; config->allowed_opt_tab_arg[i] != NULL; i++)
     {
