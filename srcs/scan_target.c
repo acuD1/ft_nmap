@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/12 10:26:03 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 10:41:28 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static uint8_t  close_fds(t_thread *thread)
 
 /* In case of sigint when creating threads, we need to join all threads
 before cleanup */
-uint8_t         cleaner_joined_thread(t_list *threads, t_list *threads_id)
+static uint8_t  cleaner_joined_thread(t_list *threads, t_list *threads_id)
 {
     for (t_list *tmp = threads_id; tmp; tmp = tmp->next)
     {
