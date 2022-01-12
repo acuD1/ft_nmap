@@ -6,30 +6,32 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 03:12:32 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/24 17:06:40 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:05:55 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
 #include "str.h"
+#include <unistd.h>
 
-size_t		ft_strcspn(const char *s, const char *charset)
+ssize_t ft_strcspn(const char *s, const char *charset)
 {
-	size_t		i;
-	const char	*c;
+    ssize_t      i;
+    const char *c;
 
-	i = 0;
-	while (*s)
-	{
-		c = charset;
-		while (*c)
-		{
-			if (*s == *c)
-				return (i);
-			c++;
-		}
-		s++;
-		i++;
-	}
-	return (i);
+    i = 0;
+    if (!s || !charset)
+        return (-1);
+    while (*s)
+    {
+        c = charset;
+        while (*c)
+        {
+            if (*s == *c)
+                return (i);
+            c++;
+        }
+        s++;
+        i++;
+    }
+    return (i);
 }
