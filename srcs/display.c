@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 17:39:24 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:22:40 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 
 void        print_usage(void)
 {
-    dprintf(STDOUT_FILENO, "%s%s",
-            "ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] ",
-            "[--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]\n");
+    dprintf(STDOUT_FILENO, "%s%s%s%s",
+            "ft_nmap [--help] [--dry-run]\n",
+            "\t[--ip [ADRESSE]] [--ports [NOMBRE/PLAGE]] ",
+            "[--scan [TYPE]] [--speedup [NOMBRE]] \n",
+            "\t[--file [FICHIER]] [--scan [TYPE]] [--speedup [NOMBRE]]\n");
 }
 
 void        print_unallowed_opt(t_opts_args *opts_args)
