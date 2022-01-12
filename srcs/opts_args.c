@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/12 18:22:05 by cempassi         ###   ########.fr       */
+/*   Updated: 2022/01/12 18:31:57 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,15 +161,32 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
     int   check = 0;
 
     if ((tmp = get_opt_set_db(&opts->opt_set, IP_STR)))
+    {
+        dprintf(STDERR_FILENO,
+            "ft_nmap: cannot assign option --ip with --file\n");
+        print_usage();
         return (FAILURE);
+    }
     if ((tmp = get_opt_set_db(&opts->opt_set, PORTS_STR)))
+    {
+        dprintf(STDERR_FILENO,
+            "ft_nmap: cannot assign option --ports with --file\n");
+        print_usage();
         return (FAILURE);
+    }
     if ((tmp = get_opt_set_db(&opts->opt_set, FILE_STR)) == NULL)
+    {
+        dprintf(STDERR_FILENO,
+            "ft_nmap: missing argument for option --ip or a file with --file\n");
         return (FAILURE);
+    }
     else
     {
         if ((fd = open(tmp->arg, O_RDONLY)) == -1)
+        {
+            dprintf(STDERR_FILENO, "ft_nmap: cannot open file '%s'\n", tmp->arg);
             return (FAILURE);
+        }
         while ((check = ft_getdelim(fd, &line, '\n')) == 1)
         {
             if (get_target_data_from_line(nmap, line) == FAILURE)
@@ -348,7 +365,11 @@ uint8_t set_opts_args(t_nmap *nmap, int argc, char **argv)
     else
     {
         if (get_ip_cli(nmap, &opts_args, tmp) == FAILURE)
+        {
+            dprintf(STDERR_FILENO,
+                "ft_nmap: missing an ip with --ip or a file with --file\n");
             return (set_opts_args_failure(&opts_args));
+        }
     }
 
     free_opts_args(&opts_args);
