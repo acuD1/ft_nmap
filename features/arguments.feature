@@ -58,22 +58,22 @@ Feature: Arguments
         ft_nmap: unsupported type 'a' for option '--speedup'
         """
 
-    Scenario: run with an argument
-        Given the argument test1
-        When we run the program
-        Then we get an error
-        """
-        ft_nmap: extra argument 'test1'
-        """
-        Then we get usage
-        """
-        ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] [--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]
-        """
+    #Scenario: run with an argument
+    #    Given the argument test1
+    #    When we run the program
+    #    Then we get an error
+    #    """
+    #    ft_nmap: extra argument 'test1'
+    #    """
+    #    Then we get usage
+    #    """
+    #    ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] [--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]
+    #    """
 
-    Scenario: run with the --help option
-        Given the option --help
-        When we run the program
-        Then we get usage
-            """
-            ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] [--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]
-            """
+    #Scenario: run with the --help option
+    #    Given the option --help
+    #    When we run the program
+    #    Then we get usage
+    #        """
+    #        ft_nmap [--help] [--ports [NOMBRE/PLAGE]] [--dry-run] [--speedup [NOMBRE]] [--scan [TYPE]] --ip [ADRESSE]
+    #        """
