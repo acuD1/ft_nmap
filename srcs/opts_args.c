@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 18:42:04 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/12 18:33:18 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 16:20:36 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ static uint8_t get_ip_file(t_nmap *nmap, t_opts_args *opts, t_opt_set_db *tmp)
                     STDERR_FILENO,
                     "ft_nmap: error while parsing target '%s' from file '%s'\n",
                     line, tmp->arg);
+                ft_getdelim(-1, NULL, '\0');
                 ft_strdel(&line);
                 return (FAILURE);
             }
