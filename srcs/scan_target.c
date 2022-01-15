@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/15 23:27:15 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/12 10:41:28 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 17:40:50 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,8 @@ int             scan_target(void *data, void *context)
             || ft_lstaddback(&threads_id, ft_lstnew(&tid, sizeof(pthread_t)))
                 != SUCCESS)
         {
-            dprintf(STDERR_FILENO, "ft_nmap: scan_target(): Error creating thread\n");
+            dprintf(STDERR_FILENO,
+                    "ft_nmap: scan_target(): Error creating thread\n");
             return (cleaner_joined_thread(threads, threads_id));
         }
     }
@@ -172,19 +173,25 @@ int             scan_target(void *data, void *context)
             }
 
             /* Add results to the local target results list */
-            ft_lstmerge(&results, thread->results);
-            thread->results = NULL;
+            if (thread->error == FALSE)
+            {
+                ft_lstmerge(&results, thread->results);
+                thread->results = NULL;
+            }
         }
 
         /* Sort results by port*/
-        ft_mergesort(&results, sort_target);
+        if (results)
+        {
+            ft_mergesort(&results, sort_target);
 
-        /* Display results */
-        dprintf(STDOUT_FILENO, "%s\n", BORDER);
-        dprintf(STDOUT_FILENO, "%-*s| %-8s| %-16s| %-10s\n", 16,
-                "ADDRESS", "PORT", "SERVICE", "RESULT");
-        dprintf(STDOUT_FILENO, "%s\n", BORDER);
-        ft_lstiter(results, display_results);
+            /* Display results */
+            dprintf(STDOUT_FILENO, "%s\n", BORDER);
+            dprintf(STDOUT_FILENO, "%-*s| %-8s| %-16s| %-10s\n", 16,
+                    "ADDRESS", "PORT", "SERVICE", "RESULT");
+            dprintf(STDOUT_FILENO, "%s\n", BORDER);
+            ft_lstiter(results, display_results);
+        }
     }
 
     // 4: Cleanup and exit

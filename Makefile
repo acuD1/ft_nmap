@@ -107,6 +107,7 @@ _SRCS 				+= udp_payload.c
 _SRCS 				+= generate_threads.c
 _SRCS 				+= services_tcp.c
 _SRCS 				+= services_udp.c
+_SRCS 				+= test_target.c
 
 PORTS 				+= ports.c
 PORTS 				+= lexer_base.c

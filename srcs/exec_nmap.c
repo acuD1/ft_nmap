@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/26 12:30:31 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/12 11:00:04 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 17:39:56 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,23 @@ void    exec_nmap(t_nmap *nmap)
 
         t_target *target_data = (t_target *)target->data;
 
-        dprintf(STDOUT_FILENO, "Source IP: %s\n", inet_ntoa(((struct sockaddr_in *)&target_data->src)->sin_addr));
-        dprintf(STDOUT_FILENO, "Target IP: %s\n", inet_ntoa(((struct sockaddr_in *)&target_data->dst)->sin_addr));
+        dprintf(STDOUT_FILENO, "Source IP: %s\n",
+                inet_ntoa(((struct sockaddr_in *)&target_data->src)->sin_addr));
+        dprintf(STDOUT_FILENO, "Target IP: %s\n",
+                inet_ntoa(((struct sockaddr_in *)&target_data->dst)->sin_addr));
         dprintf(STDOUT_FILENO, "Number of ports: %d\n", target_data->port_nbr);
         dprintf(STDOUT_FILENO, "Device: %s\n", target_data->device);
         dprintf(STDOUT_FILENO, "Speedup: %d\n", nmap->threads);
         dprintf(STDOUT_FILENO, "Scan:");
         print_scans(nmap->scan);
+
+        /* Test invalid target */
+        if (test_target(target_data) != SUCCESS)
+        {
+            dprintf(STDOUT_FILENO, "%s\n", BORDER);
+            continue;
+        }
+
         dprintf(STDOUT_FILENO, "\nScanning ...\n");
 
         if (scan_target(target_data, nmap) == FAILURE)
