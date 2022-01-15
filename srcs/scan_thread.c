@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/19 17:57:49 by cempassi          #+#    #+#             */
-/*   Updated: 2022/01/12 20:13:58 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 14:15:24 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -397,9 +397,6 @@ void            *scan_thread(void *data)
     bpf_u_int32         net         = 0;
     int window                      = set_scan_window(thread);
     char                errbuf[PCAP_ERRBUF_SIZE];
-
-    // thread->filter.buffer = ft_strdup("tcp port 22 and src 45.33.32.156");
-    // thread->filter.buffer = ft_strdup("port 22 or icmp and src 45.33.32.156");
 
     #ifdef DEBUG
         dprintf(STDERR_FILENO, "[DEBUG THREAD %lu] STARTING THREAD ...\n",
