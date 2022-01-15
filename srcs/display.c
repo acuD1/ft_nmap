@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 19:30:22 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/12 18:22:40 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 16:01:52 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ void                display_results(void *data)
                     = inet_ntoa(((struct sockaddr_in *)&result->dst)->sin_addr);
 
     dprintf(STDOUT_FILENO, "%-*s  %-8d  %-16s  ", address_len, address,
-            result->port, services_tcp(result->port)
-                            ? services_tcp(result->port)
-                            : services_udp(result->port));
+            result->port,
+            result->scan & SCAN_UDP ? services_udp(result->port)
+                                    : services_tcp(result->port));
 
     if (result->scan & SCAN_SYN)
     {
