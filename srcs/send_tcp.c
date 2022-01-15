@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:42:59 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/11 10:48:45 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 16:58:04 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ uint8_t     send_tcp(t_thread *thread, t_scan_type scan)
                                  sizeof(struct sockaddr_in))) == -1)
         {
             dprintf(STDERR_FILENO, "ft_nmap: sendto(): %s\n", strerror(errno));
+            thread->error = TRUE;
             return (FAILURE);
         }
     }

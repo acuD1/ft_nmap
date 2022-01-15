@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/23 11:29:25 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/12 20:14:40 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 17:32:32 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,8 @@ typedef struct                  s_thread
     pcap_t                      *sniffer;
     int                         sockets[7];
     uint8_t                     scan;
-    char                        _padding[3];
+    uint8_t                     error;
+    char                        _padding[2];
     t_vector                    filter;
     struct bpf_program          compiled_filter;
     struct sockaddr_storage     src;
@@ -352,6 +353,7 @@ const char                      *services_tcp(uint16_t port);
 const char                      *services_udp(uint16_t port);
 bool                            is_tcp_scan(uint8_t scan);
 void                            signal_handler(int signo);
+uint8_t                         test_target(t_target *target);
 
 
 /* Print */

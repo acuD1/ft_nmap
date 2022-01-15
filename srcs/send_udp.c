@@ -6,7 +6,7 @@
 /*   By: arsciand <arsciand@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/26 16:42:16 by arsciand          #+#    #+#             */
-/*   Updated: 2022/01/09 14:07:14 by arsciand         ###   ########.fr       */
+/*   Updated: 2022/01/15 16:58:45 by arsciand         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ uint8_t     send_udp(t_thread *thread, uint16_t port, t_scan_type scan)
                             sizeof(struct sockaddr_in))) == -1)
     {
         dprintf(STDERR_FILENO, "ft_nmap: sendto(): %s\n", strerror(errno));
+        thread->error = TRUE;
         return (FAILURE);
     }
     return (SUCCESS);
